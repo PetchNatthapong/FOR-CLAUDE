@@ -153,6 +153,7 @@
   <button class="stock-btn" id="btn-avgo" onclick="showStock('avgo')">AVGO</button>
   <button class="stock-btn" id="btn-alab" onclick="showStock('alab')">ALAB</button>
   <button class="stock-btn" id="btn-asml" onclick="showStock('asml')">ASML</button>
+  <button class="stock-btn" id="btn-topdown" onclick="showStock('topdown')" style="margin-left:16px;border-style:dashed">🔍 Top-Down</button>
 </div>
 
 <!-- ════════════════════════ TSM ════════════════════════ -->
@@ -961,6 +962,285 @@
   </div>
 </div><!-- end ASML panel -->
 
+<!-- ════════════════════════ TOP-DOWN ════════════════════════ -->
+<div class="stock-panel" id="panel-topdown" style="max-width:1200px">
+
+  <div style="margin-bottom:20px">
+    <h2 style="font-size:1.5rem;font-weight:800;color:var(--text)">🔍 Top-Down Analysis — AI Core &amp; Infrastructure</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin-top:4px">Industry mega-trend validation → stock screening → financial comparison → SWOT → final ranking</p>
+  </div>
+
+  <!-- STEP 1: MEGA-TREND -->
+  <div class="chart-card wide" style="margin-bottom:16px">
+    <h3>STEP 1 — Industry Mega-Trend Validation: AI Core Infrastructure</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:12px">
+      <div style="background:rgba(16,185,129,0.08);border:1px solid #10B981;border-radius:8px;padding:14px">
+        <div style="font-size:11px;color:#10B981;font-weight:700;margin-bottom:8px">✅ MEGA-TREND CONFIRMED</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">
+          <strong style="color:var(--text)">Industry:</strong> AI Semiconductor Infrastructure — the physical layer enabling all AI workloads.<br><br>
+          Every AI model trained needs: TSMC silicon → AVGO/ALAB interconnects → ASML EUV to manufacture the chips. These 4 companies are the essential supply chain of the AI era.<br><br>
+          <strong style="color:var(--text)">Structural thesis:</strong> AI CAPEX supercycle ($300B+ in 2026) flows directly to these companies before reaching software.
+        </div>
+      </div>
+      <div style="background:rgba(30,144,255,0.08);border:1px solid #1E90FF;border-radius:8px;padding:14px">
+        <div style="font-size:11px;color:#1E90FF;font-weight:700;margin-bottom:8px">📈 LONG-TERM GROWTH DRIVERS</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">
+          ▸ <strong>N2/N3 chip demand:</strong> Every AI accelerator (NVDA, AMD, Apple) needs TSMC's leading-edge nodes<br>
+          ▸ <strong>Custom ASICs:</strong> Hyperscalers building in-house chips → AVGO XPU wins<br>
+          ▸ <strong>PCIe 6 / CXL:</strong> AI cluster connectivity bottleneck → ALAB pure-play<br>
+          ▸ <strong>EUV expansion:</strong> TSMC, Samsung, Intel all expanding advanced fabs → ASML monopoly<br>
+          ▸ <strong>Sovereign AI:</strong> Every nation needs its own fab/chip capability
+        </div>
+      </div>
+      <div style="background:rgba(239,68,68,0.08);border:1px solid #ef4444;border-radius:8px;padding:14px">
+        <div style="font-size:11px;color:#ef4444;font-weight:700;margin-bottom:8px">⚠️ MACRO RISKS</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">
+          ▸ Geopolitical: Taiwan strait tension → TSM biggest risk<br>
+          ▸ Export controls: US restricting ASML EUV + NVDA chips to China<br>
+          ▸ CapEx cycle: If hyperscalers pull back 2027, entire chain impacted<br>
+          ▸ Cyclicality: Semi equipment (ASML) and foundry (TSM) are cyclical<br>
+          ▸ Concentration: AI build-out is ~60-90% of revenue for all 4
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: SCREENING TABLE -->
+  <div class="chart-card wide" style="margin-bottom:16px">
+    <h3>STEP 2 — Initial Stock Screening (AI Infrastructure Universe)</h3>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Screened 20+ companies across Foundry, ASIC, Connectivity, Equipment sub-sectors. Filter: AI revenue &gt;30%, positive FCF, market cap &gt;$5B, durable moat.</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:#1f2937">
+          <th style="padding:8px 12px;text-align:left;color:var(--muted)">Company</th>
+          <th style="padding:8px 12px;text-align:center;color:var(--muted)">Sub-Sector</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--muted)">Mkt Cap</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--muted)">ATH Pullback</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--muted)">Rev Growth</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--muted)">Gross Margin</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--muted)">ROIC</th>
+          <th style="padding:8px 12px;text-align:center;color:var(--muted)">Selected?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(30,144,255,0.05)">
+          <td style="padding:7px 12px;font-weight:700;color:var(--tsm)">Taiwan Semiconductor (TSM)</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">Foundry</td>
+          <td style="padding:7px 12px;text-align:right">$2.1T</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">-12% from peak</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">+35%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">66.2%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">31-52%</td>
+          <td style="padding:7px 12px;text-align:center">✅ 8.3/10</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(255,107,53,0.05)">
+          <td style="padding:7px 12px;font-weight:700;color:var(--avgo)">Broadcom (AVGO)</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">ASIC + Software</td>
+          <td style="padding:7px 12px;text-align:right">$1.99T</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">-4% (near ATH)</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">+30%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">79.1%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">25%+</td>
+          <td style="padding:7px 12px;text-align:center">✅ 7.5/10</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(168,85,247,0.05)">
+          <td style="padding:7px 12px;font-weight:700;color:var(--alab)">Astera Labs (ALAB)</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">AI Connectivity</td>
+          <td style="padding:7px 12px;text-align:right">$38B</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">-8% from peak</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">+93%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">78%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">Growing</td>
+          <td style="padding:7px 12px;text-align:center">⚠️ 7.2/10</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(16,185,129,0.05)">
+          <td style="padding:7px 12px;font-weight:700;color:var(--asml)">ASML Holding (ASML)</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">Litho Equipment</td>
+          <td style="padding:7px 12px;text-align:right">$340B</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">-9% from peak</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">+39%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">53%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">40%+</td>
+          <td style="padding:7px 12px;text-align:center">⚠️ 7.0/10</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:7px 12px;color:var(--red)">Samsung Foundry</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">Foundry</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--muted)">N/A (division)</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">—</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">-15%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">38%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">&lt;10%</td>
+          <td style="padding:7px 12px;text-align:center">❌ Eliminated</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:7px 12px;color:var(--red)">Intel Foundry (IFS)</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">Foundry</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--muted)">$95B total</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">-72%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">-8%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">Negative</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--red)">Negative</td>
+          <td style="padding:7px 12px;text-align:center">❌ Eliminated</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:7px 12px;color:var(--muted)">Marvell (MRVL)</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">ASIC/Network</td>
+          <td style="padding:7px 12px;text-align:right">$60B</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">-35%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">+52%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">55%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">12%</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--yellow)">⚠️ Watch</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 12px;color:var(--muted)">Applied Materials (AMAT)</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--muted)">Equipment</td>
+          <td style="padding:7px 12px;text-align:right">$130B</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--green)">-28%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">+18%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">47%</td>
+          <td style="padding:7px 12px;text-align:right;color:var(--yellow)">28%</td>
+          <td style="padding:7px 12px;text-align:center;color:var(--yellow)">⚠️ Watch</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div style="margin-top:10px;background:#1f2937;border-radius:6px;padding:8px 12px;font-size:11px;color:var(--muted)">
+      <strong>Elimination rationale:</strong> Samsung Foundry — inferior yield vs TSMC at 3nm+. Intel IFS — negative FCF, no competitive 3nm product. MRVL &amp; AMAT — Watch list: MRVL could be added as ASIC #2; AMAT is strong but ASML has unmatched moat.
+    </div>
+  </div>
+
+  <!-- STEP 3: FINANCIAL COMPARISON -->
+  <div class="chart-card wide" style="margin-bottom:16px">
+    <h3>STEP 3 — Financial Performance Deep-Dive</h3>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:#1f2937">
+          <th style="padding:8px 12px;text-align:left;color:var(--muted)">Metric</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--tsm)">TSM</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--avgo)">AVGO</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--alab)">ALAB</th>
+          <th style="padding:8px 12px;text-align:right;color:var(--asml)">ASML</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">Rev Growth YoY</td><td style="padding:7px 12px;text-align:right;color:var(--green)">+35%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">+30%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">+93%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">+39%</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">3-Yr Rev CAGR</td><td style="padding:7px 12px;text-align:right;color:var(--green)">+28%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">+38%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">N/A (IPO 2024)</td><td style="padding:7px 12px;text-align:right;color:var(--yellow)">+9%</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">Gross Margin</td><td style="padding:7px 12px;text-align:right;color:var(--green)">66.2%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">79.1%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">78%</td><td style="padding:7px 12px;text-align:right;color:var(--yellow)">53%</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">Operating Margin</td><td style="padding:7px 12px;text-align:right;color:var(--green)">57.6%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">65%</td><td style="padding:7px 12px;text-align:right;color:var(--yellow)">35%</td><td style="padding:7px 12px;text-align:right;color:var(--yellow)">32%</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">ROIC</td><td style="padding:7px 12px;text-align:right;color:var(--green)">31-52%</td><td style="padding:7px 12px;text-align:right;color:var(--green)">25%+</td><td style="padding:7px 12px;text-align:right;color:var(--yellow)">Growing</td><td style="padding:7px 12px;text-align:right;color:var(--green)">40%+</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">FCF Profile</td><td style="padding:7px 12px;text-align:right;color:var(--yellow)">After $40B CAPEX</td><td style="padding:7px 12px;text-align:right;color:var(--green)">$45B FCF</td><td style="padding:7px 12px;text-align:right;color:var(--green)">Capital-light</td><td style="padding:7px 12px;text-align:right;color:var(--green)">Strong FCF</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">Balance Sheet</td><td style="padding:7px 12px;text-align:right;color:var(--green)">Net Cash</td><td style="padding:7px 12px;text-align:right;color:var(--red)">Net Debt $63B</td><td style="padding:7px 12px;text-align:right;color:var(--green)">Net Cash</td><td style="padding:7px 12px;text-align:right;color:var(--green)">Net Cash</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 12px;color:var(--muted)">Fwd P/E</td><td style="padding:7px 12px;text-align:right">32x</td><td style="padding:7px 12px;text-align:right">30x</td><td style="padding:7px 12px;text-align:right;color:var(--red)">145x</td><td style="padding:7px 12px;text-align:right">41x</td></tr>
+        <tr><td style="padding:7px 12px;color:var(--muted)">Moat Score</td><td style="padding:7px 12px;text-align:right;color:var(--green)">9.5/10</td><td style="padding:7px 12px;text-align:right;color:var(--green)">8.5/10</td><td style="padding:7px 12px;text-align:right;color:var(--yellow)">7.0/10</td><td style="padding:7px 12px;text-align:right;color:var(--green)">10.0/10</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- STEP 4: SWOT GRID -->
+  <div class="chart-card wide" style="margin-bottom:16px">
+    <h3>STEP 4 — Comparative SWOT Summary</h3>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px">
+      <!-- TSM SWOT -->
+      <div>
+        <div style="font-size:12px;font-weight:800;color:var(--tsm);margin-bottom:8px;border-bottom:2px solid var(--tsm);padding-bottom:4px">TSM SWOT</div>
+        <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">✅ Strengths</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">Only 3nm/2nm at volume · 60% market share · CUDA-class switching cost · 52% ROIC</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">❌ Weaknesses</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">100% Taiwan geography · $40B+ CAPEX commitment</div>
+        <div style="font-size:11px;color:var(--yellow);font-weight:700;margin-bottom:4px">🚀 Opportunities</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">N2 ramp · CoWoS advanced packaging · Arizona fab long-term</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ Threats</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6">Taiwan strait geopolitics · US-China tensions · Samsung closing gap</div>
+      </div>
+      <!-- AVGO SWOT -->
+      <div>
+        <div style="font-size:12px;font-weight:800;color:var(--avgo);margin-bottom:8px;border-bottom:2px solid var(--avgo);padding-bottom:4px">AVGO SWOT</div>
+        <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">✅ Strengths</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">XPU TAM $60-90B · VM ware recurring revenue · 79% gross margin · serial acquirer</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">❌ Weaknesses</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">$63B net debt · 3 hyperscalers = 50% revenue · Marvell ASIC competition</div>
+        <div style="font-size:11px;color:var(--yellow);font-weight:700;margin-bottom:4px">🚀 Opportunities</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">4th hyperscaler XPU win · VMware price increase · networking silicon (Tomahawk 6)</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ Threats</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6">Debt burden limits M&amp;A · Export controls · Hyperscaler in-house ASIC plans</div>
+      </div>
+      <!-- ALAB SWOT -->
+      <div>
+        <div style="font-size:12px;font-weight:800;color:var(--alab);margin-bottom:8px;border-bottom:2px solid var(--alab);padding-bottom:4px">ALAB SWOT</div>
+        <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">✅ Strengths</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">First PCIe 6 retimer · NVIDIA GB200 rack qualified · 93% growth · no debt · 78% GM</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">❌ Weaknesses</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">Single product · 3 customers = 90% revenue · P/E 145x · IPO 2024 (short track record)</div>
+        <div style="font-size:11px;color:var(--yellow);font-weight:700;margin-bottom:4px">🚀 Opportunities</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">CXL memory pooling switch · PCIe 7 roadmap · New hyperscaler wins beyond top-3</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ Threats</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6">Marvell PAXB retimer · Microchip competing · valuation pricing perfection</div>
+      </div>
+      <!-- ASML SWOT -->
+      <div>
+        <div style="font-size:12px;font-weight:800;color:var(--asml);margin-bottom:8px;border-bottom:2px solid var(--asml);padding-bottom:4px">ASML SWOT</div>
+        <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">✅ Strengths</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">100% EUV monopoly · 5,000 patents · €36B+ backlog · Service revenue 45% · Carl Zeiss optics</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">❌ Weaknesses</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">Revenue lumpy (system delivery) · China ban ~30% revenue lost · HNA margin dilution</div>
+        <div style="font-size:11px;color:var(--yellow);font-weight:700;margin-bottom:4px">🚀 Opportunities</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">High-NA EUV (2nm+) ramp · Intel Fab 18 · TSMC N2 Arizona · Samsung 2nm</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ Threats</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6">Geopolitical (NL-US-CN) · Cycle downturn delays orders · EUR/USD FX exposure</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: FINAL RANKING -->
+  <div class="chart-card wide">
+    <h3>STEP 5 — Final Ranking &amp; Portfolio Allocation Rationale</h3>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px;margin-bottom:16px">
+      <div style="background:rgba(30,144,255,0.1);border:2px solid var(--tsm);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:var(--tsm)">🥇 #1</div>
+        <div style="font-size:16px;font-weight:800;color:var(--tsm);margin-top:4px">TSM</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Score: 8.3/10</div>
+        <div style="font-size:11px;font-weight:700;color:var(--green);margin-top:6px">STRONG BUY</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">Irreplaceable foundry monopoly. Highest ROIC + growth. Worth geopolitical premium.</div>
+      </div>
+      <div style="background:rgba(255,107,53,0.1);border:2px solid var(--avgo);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:var(--avgo)">🥈 #2</div>
+        <div style="font-size:16px;font-weight:800;color:var(--avgo);margin-top:4px">AVGO</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Score: 7.5/10</div>
+        <div style="font-size:11px;font-weight:700;color:var(--green);margin-top:6px">BUY</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">Best margin profile. XPU + VMware = diversified AI moat. Debt is manageable risk.</div>
+      </div>
+      <div style="background:rgba(168,85,247,0.1);border:2px solid var(--alab);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:var(--alab)">🥉 #3</div>
+        <div style="font-size:16px;font-weight:800;color:var(--alab);margin-top:4px">ALAB</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Score: 7.2/10</div>
+        <div style="font-size:11px;font-weight:700;color:var(--yellow);margin-top:6px">CONDITIONAL</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">Highest growth (93%). Valuation demands perfection. Small position only (&lt;3%).</div>
+      </div>
+      <div style="background:rgba(16,185,129,0.1);border:2px solid var(--asml);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:var(--asml)">4️⃣ #4</div>
+        <div style="font-size:16px;font-weight:800;color:var(--asml);margin-top:4px">ASML</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Score: 7.0/10</div>
+        <div style="font-size:11px;font-weight:700;color:var(--yellow);margin-top:6px">CONDITIONAL</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">Perfect moat (10/10). Lumpy revenue + China risk explains lower score. Long-term accumulate.</div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(30,144,255,0.1),rgba(16,185,129,0.05));border:2px solid rgba(30,144,255,0.4);border-radius:10px;padding:16px;text-align:center">
+      <div style="font-size:11px;color:#1E90FF;font-weight:700;letter-spacing:2px;margin-bottom:6px">TOP-DOWN FRAMEWORK CONCLUSION</div>
+      <div style="font-size:16px;font-weight:800;color:var(--text)">AI Core Infrastructure = Structural Mega-Trend · All 4 Stocks Confirmed</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6">
+        TSM is the highest-conviction pick (widest moat + highest ROIC + only supplier for AI chip manufacturing). AVGO is core for AI ASIC + enterprise software hybrid. ALAB is the high-beta growth bet for the AI connectivity bottleneck. ASML is the ultra-long-term compunder — buy on weakness, never sell.
+      </div>
+      <div style="font-size:10px;color:#4b5563;margin-top:8px">Methodology: Top-Down Mega-Trend Validation → 8-stock universe → Screening filters → Financial deep-dive → SWOT → INVESTX Framework scoring</div>
+    </div>
+  </div>
+
+</div><!-- end topdown panel -->
+
 <div style="height:40px"></div>
 
 <script>
@@ -970,16 +1250,19 @@ const accent = { tsm: '#1E90FF', avgo: '#FF6B35', alab: '#A855F7', asml: '#10B98
 const charts = {};
 
 function showStock(stock) {
-  ['tsm','avgo','alab','asml'].forEach(s => {
+  ['tsm','avgo','alab','asml','topdown'].forEach(s => {
     C('panel-'+s).classList.remove('active');
     const btn = C('btn-'+s);
+    if (!btn) return;
     btn.className = 'stock-btn';
+    if (s === 'topdown') btn.style.cssText = 'margin-left:16px;border-style:dashed';
     if (s === stock) {
-      btn.classList.add('active-'+s);
+      if (s !== 'topdown') btn.classList.add('active-'+s);
+      else { btn.style.cssText = 'margin-left:16px;border-style:dashed;border-color:#60a5fa;color:#60a5fa;background:rgba(96,165,250,0.1)'; }
       C('panel-'+s).classList.add('active');
     }
   });
-  initChartsFor(stock);
+  if (stock !== 'topdown') initChartsFor(stock);
 }
 
 function showSubTab(stock, idx, el) {

@@ -535,6 +535,7 @@
   <button class="tab-btn" onclick="switchTab(2)">💰 Valuation</button>
   <button class="tab-btn" onclick="switchTab(3)">🛡 Moat & Risk</button>
   <button class="tab-btn" onclick="switchTab(4)">📋 Framework</button>
+  <button class="tab-btn" onclick="switchTab(5)">🔍 Top-Down</button>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
@@ -1162,6 +1163,252 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════
+     TAB 5 — TOP-DOWN ANALYSIS
+══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-5">
+<div class="main-grid">
+
+  <!-- STEP 1: INDUSTRY -->
+  <div class="card nvda span-3" style="grid-column:1/-1">
+    <div class="card-title"><span class="dot dot-nvda"></span>STEP 1 — Industry Mega-Trend Validation</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div style="background:var(--card2);border-radius:8px;padding:14px;">
+        <div style="font-size:11px;color:var(--nvda);font-weight:700;margin-bottom:6px;">✅ MEGA-TREND CONFIRMED</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.6">
+          <strong>Industry:</strong> AI Accelerated Computing &amp; GPU Infrastructure<br>
+          <strong>Thesis:</strong> Every major software workload is transitioning to AI-accelerated hardware. Training LLMs, inference at scale, and AI-native applications require GPU clusters that only NVIDIA can supply at volume today.<br>
+          <strong>TAM:</strong> AI accelerator market ~$200B by 2027 (Gartner); GPU data center TAM $500B+ by 2028
+        </div>
+      </div>
+      <div style="background:var(--card2);border-radius:8px;padding:14px;">
+        <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:6px;">📈 LONG-TERM GROWTH DRIVERS</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.6">
+          ▸ Hyperscaler AI CAPEX: $300B+ in 2026 (Meta, Google, Microsoft, Amazon)<br>
+          ▸ Sovereign AI: 40+ countries building national AI infrastructure<br>
+          ▸ Edge AI: Every device needing local inference capability<br>
+          ▸ Robotics &amp; Autonomous Vehicles: Physical AI = next frontier<br>
+          ▸ AI Drug Discovery: Pharma R&amp;D compute explosion
+        </div>
+      </div>
+      <div style="background:var(--card2);border-radius:8px;padding:14px;">
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:6px;">⚠️ MAJOR RISKS TO MONITOR</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.6">
+          ▸ CapEx cycle reversal if AI ROI disappoints<br>
+          ▸ Custom ASIC threat: Google TPU, AWS Trainium, Meta MTIA<br>
+          ▸ China export restrictions → structural revenue ceiling<br>
+          ▸ DeepSeek-style efficiency → fewer GPUs needed per workload<br>
+          ▸ Interest rate environment → tech multiple compression
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: SCREENING TABLE -->
+  <div class="card span-3" style="grid-column:1/-1">
+    <div class="card-title">STEP 2 — Initial Stock Screening (AI Semiconductor Universe)</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Criteria: ATH pullback &gt;15%, strong AI revenue exposure, mid/large-cap, positive FCF</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:#1e2d45">
+          <th style="padding:8px 10px;text-align:left;color:#94a3b8">Company</th>
+          <th style="padding:8px 10px;text-align:center;color:#94a3b8">Ticker</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">Market Cap</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">Price (May'26)</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">ATH Pullback</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">Rev Growth (YoY)</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">EPS Growth</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">AI Revenue %</th>
+          <th style="padding:8px 10px;text-align:center;color:#94a3b8">Shortlisted?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #1e2d45;background:rgba(118,185,0,0.06)">
+          <td style="padding:8px 10px;font-weight:700;color:var(--nvda)">NVIDIA</td>
+          <td style="padding:8px 10px;text-align:center;font-weight:700;color:var(--nvda)">NVDA</td>
+          <td style="padding:8px 10px;text-align:right">$5.47T</td>
+          <td style="padding:8px 10px;text-align:right">$222.75</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">-18% from peak</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">+122%</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">+145%</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">~88%</td>
+          <td style="padding:8px 10px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e2d45">
+          <td style="padding:8px 10px;font-weight:700;color:#94a3b8">Advanced Micro Devices</td>
+          <td style="padding:8px 10px;text-align:center">AMD</td>
+          <td style="padding:8px 10px;text-align:right">$220B</td>
+          <td style="padding:8px 10px;text-align:right">$135</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">-42% from ATH</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">+24%</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">+58%</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">~35%</td>
+          <td style="padding:8px 10px;text-align:center;font-size:14px">⚠️</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e2d45">
+          <td style="padding:8px 10px;font-weight:700;color:#94a3b8">Marvell Technology</td>
+          <td style="padding:8px 10px;text-align:center">MRVL</td>
+          <td style="padding:8px 10px;text-align:right">$60B</td>
+          <td style="padding:8px 10px;text-align:right">$70</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">-35% from ATH</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">+52%</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">+89%</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">~45%</td>
+          <td style="padding:8px 10px;text-align:center;font-size:14px">⚠️</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e2d45">
+          <td style="padding:8px 10px;font-weight:700;color:#94a3b8">Broadcom</td>
+          <td style="padding:8px 10px;text-align:center">AVGO</td>
+          <td style="padding:8px 10px;text-align:right">$1.99T</td>
+          <td style="padding:8px 10px;text-align:right">$240</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">-4% from ATH</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">+29%</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">+30%</td>
+          <td style="padding:8px 10px;text-align:right;color:#f59e0b">~44%</td>
+          <td style="padding:8px 10px;text-align:center;font-size:14px">⚠️</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e2d45">
+          <td style="padding:8px 10px;font-weight:700;color:var(--red)">Intel</td>
+          <td style="padding:8px 10px;text-align:center;color:var(--red)">INTC</td>
+          <td style="padding:8px 10px;text-align:right">$95B</td>
+          <td style="padding:8px 10px;text-align:right">$22</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--red)">-72% (fundamental)</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--red)">-8%</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--red)">-150% (loss)</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--red)">&lt;5%</td>
+          <td style="padding:8px 10px;text-align:center;font-size:14px">❌</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;font-weight:700;color:#6b7280">Qualcomm</td>
+          <td style="padding:8px 10px;text-align:center;color:#6b7280">QCOM</td>
+          <td style="padding:8px 10px;text-align:right;color:#6b7280">$175B</td>
+          <td style="padding:8px 10px;text-align:right;color:#6b7280">$160</td>
+          <td style="padding:8px 10px;text-align:right;color:#6b7280">-20%</td>
+          <td style="padding:8px 10px;text-align:right;color:#6b7280">+17%</td>
+          <td style="padding:8px 10px;text-align:right;color:#6b7280">+21%</td>
+          <td style="padding:8px 10px;text-align:right;color:#6b7280">~15%</td>
+          <td style="padding:8px 10px;text-align:center;font-size:14px">❌</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text-dim);background:var(--card2);padding:8px 12px;border-radius:6px;">
+      <strong>Screening Notes:</strong> INTC eliminated — negative revenue growth &amp; FCF burn. QCOM eliminated — mobile-dependent, low AI exposure. AMD, MRVL, AVGO advanced to Step 3 for financial deep-dive. NVDA dominates on all criteria.
+    </div>
+  </div>
+
+  <!-- STEP 3: FINANCIAL COMPARISON -->
+  <div class="card span-3" style="grid-column:1/-1">
+    <div class="card-title">STEP 3 — Financial Performance Comparison (Shortlisted Candidates)</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:#1e2d45">
+          <th style="padding:8px 10px;text-align:left;color:#94a3b8">Metric</th>
+          <th style="padding:8px 10px;text-align:right;color:var(--nvda)">NVDA ⭐</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">AMD</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">MRVL</th>
+          <th style="padding:8px 10px;text-align:right;color:#94a3b8">AVGO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">Revenue Growth (YoY)</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">+122%</td><td style="padding:7px 10px;text-align:right">+24%</td><td style="padding:7px 10px;text-align:right">+52%</td><td style="padding:7px 10px;text-align:right">+30%</td></tr>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">3-Year Rev CAGR</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">+85%</td><td style="padding:7px 10px;text-align:right">+18%</td><td style="padding:7px 10px;text-align:right">+30%</td><td style="padding:7px 10px;text-align:right">+38%</td></tr>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">Gross Margin</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">71.3%</td><td style="padding:7px 10px;text-align:right">47%</td><td style="padding:7px 10px;text-align:right">55%</td><td style="padding:7px 10px;text-align:right">79%</td></tr>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">Operating Margin</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">62%</td><td style="padding:7px 10px;text-align:right">4%</td><td style="padding:7px 10px;text-align:right">22%</td><td style="padding:7px 10px;text-align:right">65%</td></tr>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">Free Cash Flow ($B)</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">$96.6B</td><td style="padding:7px 10px;text-align:right">$2.1B</td><td style="padding:7px 10px;text-align:right">$1.8B</td><td style="padding:7px 10px;text-align:right">$45B</td></tr>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">ROIC</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">113.8%</td><td style="padding:7px 10px;text-align:right">8%</td><td style="padding:7px 10px;text-align:right">12%</td><td style="padding:7px 10px;text-align:right">25%</td></tr>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">Net Debt / Cash</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">Net Cash $34.7B</td><td style="padding:7px 10px;text-align:right">Net Cash $3.8B</td><td style="padding:7px 10px;text-align:right">Net Debt $9B</td><td style="padding:7px 10px;text-align:right">Net Debt $63B</td></tr>
+        <tr style="border-bottom:1px solid #1e2d45"><td style="padding:7px 10px;color:#94a3b8">Fwd P/E</td><td style="padding:7px 10px;text-align:right">28x</td><td style="padding:7px 10px;text-align:right">22x</td><td style="padding:7px 10px;text-align:right">28x</td><td style="padding:7px 10px;text-align:right">30x</td></tr>
+        <tr><td style="padding:7px 10px;color:#94a3b8">PEG Ratio</td><td style="padding:7px 10px;text-align:right;color:var(--green);font-weight:700">0.42x</td><td style="padding:7px 10px;text-align:right">0.92x</td><td style="padding:7px 10px;text-align:right">0.54x</td><td style="padding:7px 10px;text-align:right">1.00x</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- STEP 4: SWOT -->
+  <div class="card red">
+    <div class="card-title">🔴 WEAKNESSES</div>
+    <ul style="list-style:none;font-size:12px;color:var(--text-muted);line-height:1.8">
+      <li>⚠️ Single-product dependence — GPU still 88% of revenue</li>
+      <li>⚠️ Customer concentration — top 4 hyperscalers ~50% revenue</li>
+      <li>⚠️ No margin of safety at current price ($222 vs DCF $210)</li>
+      <li>⚠️ China export ban = $5-15B annual revenue ceiling</li>
+      <li>⚠️ TSMC dependency — 100% outsourced to single fab</li>
+      <li>⚠️ Beta 1.64 — high volatility, not for weak hands</li>
+    </ul>
+  </div>
+  <div class="card green">
+    <div class="card-title">🟢 STRENGTHS</div>
+    <ul style="list-style:none;font-size:12px;color:var(--text-muted);line-height:1.8">
+      <li>✅ CUDA ecosystem — 20-year moat, 4M+ developers locked in</li>
+      <li>✅ Jensen Huang leadership — founder-led, visionary, 5% owner</li>
+      <li>✅ Blackwell architecture — 10x performance/watt over H100</li>
+      <li>✅ ROIC 113.8% — best capital efficiency in semiconductors</li>
+      <li>✅ FCF $96.6B — extraordinary cash generation machine</li>
+      <li>✅ 10 consecutive quarterly earnings beats</li>
+    </ul>
+  </div>
+  <div class="card yellow">
+    <div class="card-title">🟡 OPPORTUNITIES</div>
+    <ul style="list-style:none;font-size:12px;color:var(--text-muted);line-height:1.8">
+      <li>🚀 Sovereign AI: 40+ countries building national GPU fleets</li>
+      <li>🚀 Blackwell Ultra (B300) — 2H 2026 ramp, higher ASPs</li>
+      <li>🚀 Rubin (R100) — 2027 roadmap, generational leap</li>
+      <li>🚀 Physical AI: Robotics + Isaac platform = $10B+ TAM</li>
+      <li>🚀 NIM microservices — recurring software revenue layer</li>
+      <li>🚀 DRIVE Thor: Automotive AI — Mercedes, BYD, XPENG</li>
+    </ul>
+  </div>
+  <div class="card blue">
+    <div class="card-title">🔵 THREATS</div>
+    <ul style="list-style:none;font-size:12px;color:var(--text-muted);line-height:1.8">
+      <li>🔴 Custom ASIC: Google TPU v6, AWS Trainium 3, Meta MTIA</li>
+      <li>🔴 AMD MI325X/MI350 closing performance gap slowly</li>
+      <li>🔴 Geopolitical: US-China tech war escalation</li>
+      <li>🔴 CapEx cycle risk: Hyperscalers slow AI spending in 2027</li>
+      <li>🔴 Open-source models: DeepSeek R2 efficiency → fewer GPUs</li>
+      <li>🔴 Regulatory: EU AI Act, US export regime tightening</li>
+    </ul>
+  </div>
+
+  <!-- STEP 5: FINAL WINNER -->
+  <div class="card nvda span-3" style="grid-column:1/-1">
+    <div class="card-title"><span class="dot dot-nvda"></span>STEP 5 — Final Winner: Why NVDA Stands Above All Competitors</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+      <div>
+        <div style="font-size:11px;color:var(--nvda);font-weight:700;margin-bottom:8px;">WHY NVDA OUTPERFORMS AMD, MRVL, AVGO</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
+          <strong style="color:var(--text)">1. Platform vs Product:</strong> NVDA is the only AI chip company that owns the full stack (CUDA + cuDNN + NIM + Omniverse). AMD sells chips; NVDA sells an ecosystem.<br><br>
+          <strong style="color:var(--text)">2. Revenue Acceleration:</strong> +122% YoY vs AMD +24%, MRVL +52% — NVDA is widening the gap, not narrowing it.<br><br>
+          <strong style="color:var(--text)">3. Capital Efficiency:</strong> ROIC 113.8% vs AMD 8%, MRVL 12%, AVGO 25%. Every dollar invested creates extraordinary value.<br><br>
+          <strong style="color:var(--text)">4. Margin Profile:</strong> GM 71.3% and OM 62% achieved at $200B+ revenue scale — exceptional at this size.<br><br>
+          <strong style="color:var(--text)">5. FCF Machine:</strong> $96.6B FCF — more than AMD's entire market cap generated in cash annually.
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#f59e0b;font-weight:700;margin-bottom:8px;">KEY RISKS TO MONITOR (Howard Marks Second-Level Thinking)</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
+          <strong style="color:var(--text)">Watch #1:</strong> Hyperscaler capex guidance — any reduction &gt;15% triggers re-rating<br><br>
+          <strong style="color:var(--text)">Watch #2:</strong> Custom ASIC adoption rate — if Google/Meta cut GPU orders by 30%+ in 2027<br><br>
+          <strong style="color:var(--text)">Watch #3:</strong> AMD Instinct MI350 adoption in inference workloads<br><br>
+          <strong style="color:var(--text)">Watch #4:</strong> TSMC CoWoS capacity — NVDA supply constraints if TSMC can't ramp<br><br>
+          <strong style="color:var(--text)">Watch #5:</strong> NIM &amp; software revenue as % of total — key to re-rating multiple higher
+        </div>
+      </div>
+    </div>
+    <div style="padding:14px;background:linear-gradient(135deg,rgba(118,185,0,0.15),rgba(16,185,129,0.05));border:2px solid var(--nvda);border-radius:10px;text-align:center;">
+      <div style="font-size:11px;color:var(--nvda);font-weight:700;letter-spacing:2px;margin-bottom:4px;">TOP-DOWN CONCLUSION</div>
+      <div style="font-size:18px;font-weight:900;color:var(--nvda)">NVDA = #1 Ranked in AI Semiconductor Universe</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">6 candidates screened → 4 shortlisted → NVDA wins on Revenue Growth, ROIC, Moat, FCF, and Management Quality. Conditional on AI capex cycle not peaking in 2026.</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:6px">Methodology: Top-Down Mega-Trend → Quality Screen → Financial Deep-Dive → SWOT → INVESTX Framework</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
      FOOTER
 ══════════════════════════════════════════════════════ -->
 <div class="footer">
@@ -1187,6 +1434,7 @@ function switchTab(idx) {
   if (idx === 1 && !window._tab1) { window._tab1=true; initTab1Charts(); }
   if (idx === 2 && !window._tab2) { window._tab2=true; initTab2Charts(); }
   if (idx === 3 && !window._tab3) { window._tab3=true; initTab3Charts(); }
+  // Tab 5 (Top-Down) is static HTML — no charts to init
 }
 
 // Chart defaults
