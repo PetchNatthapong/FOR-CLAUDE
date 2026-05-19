@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NVDA · Pre-Earnings Analysis | May 19, 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --card2: #1a2235;
+    --border: #1e2d45;
+    --green: #10b981;
+    --green-dim: rgba(16,185,129,0.12);
+    --yellow: #f59e0b;
+    --yellow-dim: rgba(245,158,11,0.12);
+    --red: #ef4444;
+    --red-dim: rgba(239,68,68,0.12);
+    --blue: #3b82f6;
+    --blue-dim: rgba(59,130,246,0.12);
+    --purple: #8b5cf6;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --nvda: #76b900;
+    --nvda-dim: rgba(118,185,0,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Pro Display', -apple-system, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0d1f12 60%, #111827 100%);
+    border-bottom: 1px solid var(--nvda);
+    padding: 24px 32px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-left { display:flex; align-items:center; gap:20px; }
+  .ticker-badge {
+    background: var(--nvda);
+    color: #000;
+    font-size: 28px;
+    font-weight: 900;
+    padding: 8px 20px;
+    border-radius: 10px;
+    letter-spacing: 2px;
+  }
+  .company-info h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .company-info p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .price-block { text-align:right; }
+  .current-price {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--nvda);
+    line-height: 1;
+  }
+  .price-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .price-change {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  /* ── EARNINGS ALERT ── */
+  .earnings-alert {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));
+    border: 1px solid var(--yellow);
+    border-radius: 10px;
+    margin: 16px 32px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .alert-icon { font-size: 24px; }
+  .alert-text strong { color: var(--yellow); font-size: 14px; }
+  .alert-text span { color: var(--text-muted); font-size: 13px; margin-left: 8px; }
+
+  /* ── GRID LAYOUT ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 16px;
+    padding: 16px 32px 24px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .card.green::before { background: var(--green); }
+  .card.yellow::before { background: var(--yellow); }
+  .card.red::before { background: var(--red); }
+  .card.blue::before { background: var(--blue); }
+  .card.nvda::before { background: var(--nvda); }
+  .card.purple::before { background: var(--purple); }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-title .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot-green { background: var(--green); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-red { background: var(--red); }
+  .dot-blue { background: var(--blue); }
+  .dot-nvda { background: var(--nvda); }
+  .dot-purple { background: var(--purple); }
+
+  /* ── KPI ROW ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 0 32px 0;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .kpi-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .kpi-green { color: var(--green); }
+  .kpi-yellow { color: var(--yellow); }
+  .kpi-red { color: var(--red); }
+  .kpi-nvda { color: var(--nvda); }
+  .kpi-blue { color: var(--blue); }
+
+  /* ── VERDICT CARD ── */
+  .verdict-card {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(118,185,0,0.1), rgba(16,185,129,0.05));
+    border: 2px solid var(--nvda);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .verdict-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--nvda);
+    margin-bottom: 8px;
+  }
+  .verdict-main {
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--nvda);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .verdict-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+  .score-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+  }
+  .score-ring canvas { width: 100px !important; height: 100px !important; }
+  .score-ring-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .score-big {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--nvda);
+    text-align: center;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .check-label { font-weight: 600; color: var(--text); }
+  .check-val { color: var(--text-dim); font-size: 12px; }
+
+  /* ── METRICS TABLE ── */
+  .metrics-table { width: 100%; border-collapse: collapse; }
+  .metrics-table tr { border-bottom: 1px solid var(--border); }
+  .metrics-table tr:last-child { border-bottom: none; }
+  .metrics-table td {
+    padding: 8px 4px;
+    font-size: 13px;
+  }
+  .metrics-table td:first-child { color: var(--text-muted); }
+  .metrics-table td:last-child {
+    text-align: right;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* ── SCORE BAR ── */
+  .score-bar-container { margin-bottom: 10px; }
+  .score-bar-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: var(--text-muted);
+  }
+  .score-bar-header span:last-child {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .score-bar-track {
+    background: var(--border);
+    border-radius: 4px;
+    height: 7px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  /* ── CHART CONTAINERS ── */
+  .chart-wrap { position: relative; }
+  .chart-wrap canvas { max-height: 220px; }
+
+  /* ── ANALYST CONSENSUS ── */
+  .consensus-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .consensus-label { font-size: 12px; color: var(--text-muted); width: 90px; flex-shrink: 0; }
+  .consensus-bar-track {
+    flex: 1;
+    background: var(--border);
+    border-radius: 4px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .consensus-bar-fill { height: 100%; border-radius: 4px; }
+  .consensus-count { font-size: 12px; font-weight: 700; color: var(--text); width: 30px; text-align: right; }
+
+  /* ── RISK FACTORS ── */
+  .risk-item {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .risk-level {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .risk-high { background: var(--red-dim); color: var(--red); }
+  .risk-med { background: var(--yellow-dim); color: var(--yellow); }
+  .risk-low { background: var(--green-dim); color: var(--green); }
+  .risk-text { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .risk-text strong { color: var(--text); }
+
+  /* ── MOAT ── */
+  .moat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .moat-item:last-child { border-bottom: none; }
+  .moat-icon { font-size: 18px; }
+  .moat-label { font-weight: 600; color: var(--text); flex: 1; }
+  .moat-strength {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .moat-wide { background: var(--green-dim); color: var(--green); }
+  .moat-narrow { background: var(--yellow-dim); color: var(--yellow); }
+
+  /* ── EARNINGS SECTION ── */
+  .earnings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .earn-box {
+    background: var(--card2);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .earn-label { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .earn-value { font-size: 18px; font-weight: 800; color: var(--text); }
+  .earn-estimate { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .earn-yoy { font-size: 11px; font-weight: 700; color: var(--green); }
+
+  /* ── DCF SECTION ── */
+  .dcf-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .dcf-row:last-child { border-bottom: none; }
+  .dcf-key { color: var(--text-muted); }
+  .dcf-val { font-weight: 700; color: var(--text); }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 16px 32px;
+    font-size: 11px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .footer a { color: var(--nvda); text-decoration: none; }
+
+  /* ── SPAN HELPERS ── */
+  .span-2 { grid-column: span 2; }
+  .span-3 { grid-column: span 3; }
+  .col-1 { grid-column: 1; }
+  .col-2 { grid-column: 2; }
+  .col-3 { grid-column: 3; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    margin: 0 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: var(--nvda);
+    border-bottom-color: var(--nvda);
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: contents; }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr 1fr; padding: 12px 16px; }
+    .kpi-row { grid-template-columns: 1fr 1fr; margin: 0 16px; }
+    .header { padding: 16px; }
+    .earnings-alert { margin: 12px 16px; }
+    .tab-bar { margin: 0 16px; }
+    .span-2, .span-3 { grid-column: span 2; }
+  }
+  @media (max-width: 600px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .span-2, .span-3 { grid-column: 1; }
+    .verdict-card { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <div class="ticker-badge">NVDA</div>
+    <div class="company-info">
+      <h1>NVIDIA Corporation</h1>
+      <p>Semiconductors · NASDAQ · AI Infrastructure Leader</p>
+    </div>
+  </div>
+  <div class="price-block">
+    <div class="current-price">$222.75</div>
+    <div class="price-meta">
+      <span class="price-change">+72.5% YTD</span>
+      &nbsp;·&nbsp; As of May 19, 2026
+    </div>
+    <div class="price-meta">52W: $129.16 – $236.54 &nbsp;·&nbsp; Mkt Cap: $5.47T</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     EARNINGS ALERT
+══════════════════════════════════════════════════════ -->
+<div class="earnings-alert">
+  <div class="alert-icon">⚡</div>
+  <div class="alert-text">
+    <strong>EARNINGS TOMORROW · May 20, 2026 After Market Close</strong>
+    <span>Q1 FY27 consensus: Revenue $78.8B (+78.7% YoY) · EPS $1.77 (+118.5%) · Beat probability: 90% (Polymarket)</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     KPI ROW
+══════════════════════════════════════════════════════ -->
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-label">ROIC</div>
+    <div class="kpi-value kpi-green">113.8%</div>
+    <div class="kpi-sub">WACC ~9% · Spread: +104pp</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Gross Margin</div>
+    <div class="kpi-value kpi-nvda">71.3%</div>
+    <div class="kpi-sub">FY2026 · Best-in-class semis</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">P/E (TTM)</div>
+    <div class="kpi-value kpi-yellow">46x</div>
+    <div class="kpi-sub">PEG: 0.42 (growth-adj fair)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">FCF FY2026</div>
+    <div class="kpi-value kpi-blue">$96.6B</div>
+    <div class="kpi-sub">FCF Yield ~1.8% at mkt cap</div>
+  </div>
+</div>
+
+<div style="height:16px;"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     TAB BAR
+══════════════════════════════════════════════════════ -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab(0)">📊 Overview</button>
+  <button class="tab-btn" onclick="switchTab(1)">🏗 Financials</button>
+  <button class="tab-btn" onclick="switchTab(2)">💰 Valuation</button>
+  <button class="tab-btn" onclick="switchTab(3)">🛡 Moat & Risk</button>
+  <button class="tab-btn" onclick="switchTab(4)">📋 Framework</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 0 — OVERVIEW
+══════════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-0">
+<div class="main-grid">
+
+  <!-- VERDICT -->
+  <div class="verdict-card" style="grid-column: 1 / -1;">
+    <div>
+      <div class="verdict-label">⚖️ INVESTX Framework Verdict</div>
+      <div class="verdict-main">CONDITIONAL BUY</div>
+      <div class="verdict-sub">Exceptional fundamentals (ROIC 113% vs WACC 9%). Earnings catalyst tomorrow creates asymmetric upside. Position sizing caution recommended — near 52W high, limited margin of safety at $222. Add 30% position pre-earnings; scale to 50-75% post-beat confirmation.</div>
+    </div>
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+      <div class="score-ring">
+        <canvas id="ringChart"></canvas>
+        <div class="score-big">7.5/10</div>
+        <div class="score-ring-label">Composite Score</div>
+      </div>
+      <div style="min-width:160px;">
+        <div class="score-bar-container">
+          <div class="score-bar-header"><span>Momentum</span><span style="color:var(--green)">8.5</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:85%;background:var(--green);"></div></div>
+        </div>
+        <div class="score-bar-container">
+          <div class="score-bar-header"><span>Valuation</span><span style="color:var(--yellow)">6.5</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:65%;background:var(--yellow);"></div></div>
+        </div>
+        <div class="score-bar-container">
+          <div class="score-bar-header"><span>Quality/ROIC</span><span style="color:var(--nvda)">9.5</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:95%;background:var(--nvda);"></div></div>
+        </div>
+        <div class="score-bar-container">
+          <div class="score-bar-header"><span>Moat</span><span style="color:var(--blue)">9.0</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:90%;background:var(--blue);"></div></div>
+        </div>
+        <div class="score-bar-container">
+          <div class="score-bar-header"><span>Risk</span><span style="color:var(--red)">5.5</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:55%;background:var(--red);"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICE CHART -->
+  <div class="card nvda span-2">
+    <div class="card-title"><span class="dot dot-nvda"></span>Price Performance vs Key Benchmarks</div>
+    <div class="chart-wrap">
+      <canvas id="priceChart"></canvas>
+    </div>
+  </div>
+
+  <!-- EARNINGS PREVIEW -->
+  <div class="card yellow">
+    <div class="card-title"><span class="dot dot-yellow"></span>Earnings Preview Q1 FY27</div>
+    <div class="earnings-grid">
+      <div class="earn-box">
+        <div class="earn-label">Revenue Est.</div>
+        <div class="earn-value">$78.8B</div>
+        <div class="earn-estimate">Q1 FY26: $44.1B</div>
+        <div class="earn-yoy">+78.7% YoY</div>
+      </div>
+      <div class="earn-box">
+        <div class="earn-label">EPS Est.</div>
+        <div class="earn-value">$1.77</div>
+        <div class="earn-estimate">Q1 FY26: $0.81</div>
+        <div class="earn-yoy">+118.5% YoY</div>
+      </div>
+      <div class="earn-box">
+        <div class="earn-label">Data Center</div>
+        <div class="earn-value">$73-75B</div>
+        <div class="earn-estimate">Blackwell demand</div>
+        <div class="earn-yoy">~95% of revenue</div>
+      </div>
+      <div class="earn-box">
+        <div class="earn-label">Beat Probability</div>
+        <div class="earn-value" style="color:var(--green);">90%</div>
+        <div class="earn-estimate">Polymarket consensus</div>
+        <div class="earn-yoy">Beat 10 of last 10 Qs</div>
+      </div>
+    </div>
+    <div style="margin-top:12px; padding:10px; background:var(--card2); border-radius:8px;">
+      <div style="font-size:12px; color:var(--text-muted);">🎯 <strong style="color:var(--yellow);">Key Watch:</strong> Q2 FY27 guidance. Street expecting $78-82B. Whisper number $85B+. Guidance beat = stock +10-15%. Miss = −15-25%.</div>
+    </div>
+  </div>
+
+  <!-- ANALYST CONSENSUS -->
+  <div class="card blue span-2">
+    <div class="card-title"><span class="dot dot-blue"></span>Analyst Consensus (37 Analysts)</div>
+    <div style="margin-bottom:14px;">
+      <div class="consensus-row">
+        <div class="consensus-label">Strong Buy</div>
+        <div class="consensus-bar-track"><div class="consensus-bar-fill" style="width:57%;background:var(--green);"></div></div>
+        <div class="consensus-count" style="color:var(--green);">21</div>
+      </div>
+      <div class="consensus-row">
+        <div class="consensus-label">Buy</div>
+        <div class="consensus-bar-track"><div class="consensus-bar-fill" style="width:38%;background:var(--nvda);"></div></div>
+        <div class="consensus-count" style="color:var(--nvda);">14</div>
+      </div>
+      <div class="consensus-row">
+        <div class="consensus-label">Hold</div>
+        <div class="consensus-bar-track"><div class="consensus-bar-fill" style="width:5%;background:var(--yellow);"></div></div>
+        <div class="consensus-count" style="color:var(--yellow);">2</div>
+      </div>
+      <div class="consensus-row">
+        <div class="consensus-label">Sell</div>
+        <div class="consensus-bar-track"><div class="consensus-bar-fill" style="width:0%;background:var(--red);"></div></div>
+        <div class="consensus-count" style="color:var(--text-dim);">0</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+      <div style="text-align:center; padding:8px; background:var(--card2); border-radius:8px;">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:4px;">LOW TARGET</div>
+        <div style="font-size:16px; font-weight:800; color:var(--text);">$135</div>
+      </div>
+      <div style="text-align:center; padding:8px; background:var(--nvda-dim); border-radius:8px; border:1px solid var(--nvda);">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:4px;">AVG TARGET</div>
+        <div style="font-size:16px; font-weight:800; color:var(--nvda);">$173</div>
+        <div style="font-size:10px; color:var(--text-dim);">Range $215–278</div>
+      </div>
+      <div style="text-align:center; padding:8px; background:var(--card2); border-radius:8px;">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:4px;">HIGH TARGET</div>
+        <div style="font-size:16px; font-weight:800; color:var(--green);">$278</div>
+      </div>
+    </div>
+    <div style="margin-top:10px; font-size:11px; color:var(--text-dim);">⚠️ Note: Avg target $173 below current $222 reflects pre-rally estimates. High-conviction bulls target $250-278.</div>
+  </div>
+
+  <!-- POSITION SIZING -->
+  <div class="card green">
+    <div class="card-title"><span class="dot dot-green"></span>Position Sizing Guide</div>
+    <table class="metrics-table">
+      <tr><td>Max Portfolio Weight</td><td style="color:var(--yellow);">8-10%</td></tr>
+      <tr><td>Pre-earnings Entry</td><td style="color:var(--nvda);">30% of target</td></tr>
+      <tr><td>Post-beat Scale-up</td><td style="color:var(--green);">50-75%</td></tr>
+      <tr><td>Stop Loss Level</td><td style="color:var(--red);">$190 (−14.7%)</td></tr>
+      <tr><td>Take Profit Zone</td><td style="color:var(--green);">$260-278</td></tr>
+      <tr><td>Time Horizon</td><td style="color:var(--blue);">12-18 months</td></tr>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 1 — FINANCIALS
+══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-1">
+<div class="main-grid">
+
+  <!-- REVENUE CHART -->
+  <div class="card nvda span-2">
+    <div class="card-title"><span class="dot dot-nvda"></span>Revenue & Net Income Growth (FY2022-FY2026)</div>
+    <div class="chart-wrap">
+      <canvas id="revenueChart"></canvas>
+    </div>
+  </div>
+
+  <!-- FINANCIAL SNAPSHOT -->
+  <div class="card green">
+    <div class="card-title"><span class="dot dot-green"></span>FY2026 Financial Snapshot</div>
+    <table class="metrics-table">
+      <tr><td>Revenue</td><td style="color:var(--nvda);">$215.9B</td></tr>
+      <tr><td>YoY Growth</td><td style="color:var(--green);">+65.1%</td></tr>
+      <tr><td>Gross Profit</td><td style="color:var(--text);">$153.9B</td></tr>
+      <tr><td>Gross Margin</td><td style="color:var(--nvda);">71.3%</td></tr>
+      <tr><td>Operating Income</td><td style="color:var(--text);">$133.9B</td></tr>
+      <tr><td>Operating Margin</td><td style="color:var(--green);">62.0%</td></tr>
+      <tr><td>Net Income</td><td style="color:var(--text);">$72.9B</td></tr>
+      <tr><td>FCF</td><td style="color:var(--green);">$96.6B</td></tr>
+      <tr><td>ROIC</td><td style="color:var(--nvda);">113.77%</td></tr>
+      <tr><td>ROE</td><td style="color:var(--text);">115%+</td></tr>
+    </table>
+  </div>
+
+  <!-- MARGIN RADAR -->
+  <div class="card blue span-2">
+    <div class="card-title"><span class="dot dot-blue"></span>Quality Radar — vs Sector Peers</div>
+    <div class="chart-wrap">
+      <canvas id="radarChart" style="max-height:250px;"></canvas>
+    </div>
+  </div>
+
+  <!-- SEGMENT BREAKDOWN -->
+  <div class="card purple">
+    <div class="card-title"><span class="dot dot-purple"></span>Revenue Segments</div>
+    <div class="chart-wrap">
+      <canvas id="segmentChart" style="max-height:180px;"></canvas>
+    </div>
+    <div style="margin-top:12px;">
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+        <div>🟢 <strong>Data Center</strong> — $195B est (90.3%) · Blackwell GPU + NVLink</div>
+        <div>🔵 <strong>Gaming</strong> — $12B (5.6%) · RTX 5090 launch</div>
+        <div>🟡 <strong>Professional</strong> — $6B (2.8%) · OmniVerse, workstations</div>
+        <div>🔴 <strong>Auto + OEM</strong> — $3B (1.4%) · DRIVE platform</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORICAL MARGINS -->
+  <div class="card yellow span-2">
+    <div class="card-title"><span class="dot dot-yellow"></span>Margin Trend (FY2022-FY2026)</div>
+    <div class="chart-wrap">
+      <canvas id="marginChart"></canvas>
+    </div>
+  </div>
+
+  <!-- BALANCE SHEET -->
+  <div class="card red">
+    <div class="card-title"><span class="dot dot-red"></span>Balance Sheet Health</div>
+    <table class="metrics-table">
+      <tr><td>Cash & Equivalents</td><td style="color:var(--green);">$43.2B</td></tr>
+      <tr><td>Total Debt</td><td style="color:var(--red);">$8.5B</td></tr>
+      <tr><td>Net Cash Position</td><td style="color:var(--green);">+$34.7B</td></tr>
+      <tr><td>Debt/Equity</td><td style="color:var(--green);">0.11x</td></tr>
+      <tr><td>Interest Coverage</td><td style="color:var(--green);">>100x</td></tr>
+      <tr><td>Capex (FY2026)</td><td style="color:var(--text);">$3.1B</td></tr>
+      <tr><td>R&D Spend</td><td style="color:var(--blue);">$12.9B</td></tr>
+      <tr><td>Buybacks FY2026</td><td style="color:var(--nvda);">$33.5B</td></tr>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 2 — VALUATION
+══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-2">
+<div class="main-grid">
+
+  <!-- VALUATION MULTIPLES CHART -->
+  <div class="card nvda span-2">
+    <div class="card-title"><span class="dot dot-nvda"></span>Valuation Multiples vs Peers</div>
+    <div class="chart-wrap">
+      <canvas id="multiplesChart"></canvas>
+    </div>
+  </div>
+
+  <!-- MULTIPLES TABLE -->
+  <div class="card yellow">
+    <div class="card-title"><span class="dot dot-yellow"></span>Current Multiples</div>
+    <table class="metrics-table">
+      <tr><td>P/E (TTM)</td><td style="color:var(--yellow);">46x</td></tr>
+      <tr><td>Forward P/E (FY27)</td><td style="color:var(--green);">28x</td></tr>
+      <tr><td>PEG Ratio</td><td style="color:var(--green);">0.42</td></tr>
+      <tr><td>EV/EBITDA</td><td style="color:var(--yellow);">38x</td></tr>
+      <tr><td>EV/Sales</td><td style="color:var(--yellow);">24x</td></tr>
+      <tr><td>Price/FCF</td><td style="color:var(--yellow);">57x</td></tr>
+      <tr><td>Price/Book</td><td style="color:var(--red);">45x</td></tr>
+      <tr><td>Earnings Yield</td><td style="color:var(--yellow);">2.17%</td></tr>
+    </table>
+  </div>
+
+  <!-- DCF MODEL -->
+  <div class="card blue span-2">
+    <div class="card-title"><span class="dot dot-blue"></span>DCF Intrinsic Value Estimate (Damodaran Framework)</div>
+    <div class="earnings-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+      <div class="earn-box">
+        <div class="earn-label">Base FCF (FY26)</div>
+        <div class="earn-value">$96.6B</div>
+      </div>
+      <div class="earn-box">
+        <div class="earn-label">FCF Growth (Y1-5)</div>
+        <div class="earn-value" style="color:var(--green);">30%</div>
+        <div class="earn-estimate">Bull: 40% / Bear: 15%</div>
+      </div>
+      <div class="earn-box">
+        <div class="earn-label">Terminal Growth</div>
+        <div class="earn-value">4%</div>
+      </div>
+      <div class="earn-box">
+        <div class="earn-label">WACC</div>
+        <div class="earn-value">9.0%</div>
+        <div class="earn-estimate">Risk-free 4.24%+ERP</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:12px;">
+      <div style="background:var(--red-dim); border:1px solid var(--red); border-radius:8px; padding:12px; text-align:center;">
+        <div style="font-size:10px; color:var(--red); font-weight:700; margin-bottom:4px;">BEAR CASE</div>
+        <div style="font-size:22px; font-weight:800; color:var(--text);">$145</div>
+        <div style="font-size:11px; color:var(--text-dim);">FCF growth 15%</div>
+        <div style="font-size:11px; color:var(--red);">−34.9% downside</div>
+      </div>
+      <div style="background:var(--yellow-dim); border:1px solid var(--yellow); border-radius:8px; padding:12px; text-align:center;">
+        <div style="font-size:10px; color:var(--yellow); font-weight:700; margin-bottom:4px;">BASE CASE</div>
+        <div style="font-size:22px; font-weight:800; color:var(--text);">$210</div>
+        <div style="font-size:11px; color:var(--text-dim);">FCF growth 30%</div>
+        <div style="font-size:11px; color:var(--yellow);">−5.7% vs current</div>
+      </div>
+      <div style="background:var(--green-dim); border:1px solid var(--green); border-radius:8px; padding:12px; text-align:center;">
+        <div style="font-size:10px; color:var(--green); font-weight:700; margin-bottom:4px;">BULL CASE</div>
+        <div style="font-size:22px; font-weight:800; color:var(--text);">$310</div>
+        <div style="font-size:11px; color:var(--text-dim);">FCF growth 40%</div>
+        <div style="font-size:11px; color:var(--green);">+39.2% upside</div>
+      </div>
+    </div>
+    <div style="margin-top:10px; padding:10px; background:var(--card2); border-radius:8px; font-size:12px; color:var(--text-muted);">
+      ⚠️ <strong style="color:var(--yellow);">Graham Margin of Safety:</strong> At $222, base DCF ($210) implies <strong style="color:var(--red);">−5.7% overvaluation</strong>. No traditional margin of safety. Justified by: ROIC/WACC spread +104pp, secular AI capex cycle, near-monopoly positioning. Risk: any deceleration compresses multiple sharply.
+    </div>
+  </div>
+
+  <!-- EPV -->
+  <div class="card green">
+    <div class="card-title"><span class="dot dot-green"></span>EPV (Greenwald — No Growth)</div>
+    <table class="metrics-table">
+      <tr><td>Normalized EBIT</td><td>$133.9B</td></tr>
+      <tr><td>Tax Rate</td><td>12%</td></tr>
+      <tr><td>NOPAT</td><td>$117.8B</td></tr>
+      <tr><td>÷ WACC (9%)</td><td>11.1x</td></tr>
+      <tr><td>Enterprise EPV</td><td style="color:var(--green);">$1,308B</td></tr>
+      <tr><td>+ Net Cash ($34.7B)</td><td></td></tr>
+      <tr><td>Equity EPV</td><td style="color:var(--nvda);">$1,342B</td></tr>
+      <tr><td>EPV/Share</td><td style="color:var(--nvda);">~$55</td></tr>
+    </table>
+    <div style="margin-top:8px; font-size:11px; color:var(--text-dim);">EPV $55 << Price $222 — <strong style="color:var(--yellow);">75% of value is growth premium.</strong> Requires sustained hypergrowth to justify.</div>
+  </div>
+
+  <!-- PRICE SCENARIO CHART -->
+  <div class="card purple span-2">
+    <div class="card-title"><span class="dot dot-purple"></span>Earnings Reaction Scenarios</div>
+    <div class="chart-wrap">
+      <canvas id="scenarioChart"></canvas>
+    </div>
+    <div style="margin-top:10px; font-size:12px; color:var(--text-muted); line-height:1.6;">
+      <strong style="color:var(--green);">Beat + Strong Guide:</strong> Revenue beat $80B+, Q2 guide $85B+ → $245-265 (+10-19%) &nbsp;|&nbsp;
+      <strong style="color:var(--yellow);">In-line:</strong> Beat but cautious guide → $220-235 (flat) &nbsp;|&nbsp;
+      <strong style="color:var(--red);">Miss or Weak Guide:</strong> Revenue &lt;$76B or Q2 &lt;$75B → $185-200 (−15-17%)
+    </div>
+  </div>
+
+  <!-- MAGIC FORMULA -->
+  <div class="card red">
+    <div class="card-title"><span class="dot dot-red"></span>Magic Formula (Greenblatt)</div>
+    <div class="dcf-row">
+      <div class="dcf-key">Earnings Yield (EBIT/EV)</div>
+      <div class="dcf-val">2.5%</div>
+    </div>
+    <div class="dcf-row">
+      <div class="dcf-key">ROIC</div>
+      <div class="dcf-val" style="color:var(--green);">113.8%</div>
+    </div>
+    <div class="dcf-row">
+      <div class="dcf-key">Magic Formula Score</div>
+      <div class="dcf-val" style="color:var(--yellow);">116.3</div>
+    </div>
+    <div class="dcf-row">
+      <div class="dcf-key">Quality Rank (ROIC)</div>
+      <div class="dcf-val" style="color:var(--nvda);">Top 1%</div>
+    </div>
+    <div class="dcf-row">
+      <div class="dcf-key">Cheapness Rank</div>
+      <div class="dcf-val" style="color:var(--red);">Bottom 20%</div>
+    </div>
+    <div style="margin-top:10px; padding:8px; background:var(--card2); border-radius:6px; font-size:12px; color:var(--text-muted);">
+      World-class quality at expensive price. Greenblatt formula would rank NVDA high on quality but low on cheapness. Hold if owned; buy cautiously if not.
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 3 — MOAT & RISK
+══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-3">
+<div class="main-grid">
+
+  <!-- MOAT ANALYSIS -->
+  <div class="card blue span-2">
+    <div class="card-title"><span class="dot dot-blue"></span>Economic Moat Analysis (Morningstar 5-Source Framework)</div>
+    <div class="moat-item">
+      <div class="moat-icon">🔗</div>
+      <div class="moat-label">Network Effects</div>
+      <div>
+        <div style="font-size:12px; color:var(--text-muted);">CUDA ecosystem: 4M+ developers, 3,500+ apps. More users → more tools → more users. 20-year first-mover advantage in GPU computing.</div>
+      </div>
+      <div class="moat-strength moat-wide">WIDE</div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">🔒</div>
+      <div class="moat-label">Switching Costs</div>
+      <div>
+        <div style="font-size:12px; color:var(--text-muted);">Rewriting ML code from CUDA to ROCm/Metal costs 12-24 months for hyperscalers. Training runs on H100/B100 → inference on same stack (locked-in).</div>
+      </div>
+      <div class="moat-strength moat-wide">WIDE</div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">🧠</div>
+      <div class="moat-label">Intangible Assets</div>
+      <div>
+        <div style="font-size:12px; color:var(--text-muted);">CUDA IP, NVLink interconnect patents, Blackwell architecture, cuDNN libraries, DLSS tech. R&D: $12.9B/yr compounding.</div>
+      </div>
+      <div class="moat-strength moat-wide">WIDE</div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">⚡</div>
+      <div class="moat-label">Cost / Performance Advantage</div>
+      <div>
+        <div style="font-size:12px; color:var(--text-muted);">Blackwell GB200: 10x throughput per MW vs H100. TSMC 4nm → 3nm next gen. Competitors (AMD MI300, Intel Gaudi) 2-3 generations behind.</div>
+      </div>
+      <div class="moat-strength moat-wide">WIDE</div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">📐</div>
+      <div class="moat-label">Efficient Scale</div>
+      <div>
+        <div style="font-size:12px; color:var(--text-muted);">Hyperscaler supply agreement (MSFT, Meta, Google, Amazon). NVLink SuperPOD clusters create economies unavailable to others. Market: ~80% AI training GPU share.</div>
+      </div>
+      <div class="moat-strength moat-wide">WIDE</div>
+    </div>
+    <div style="margin-top:12px; padding:10px; background:var(--nvda-dim); border:1px solid var(--nvda); border-radius:8px;">
+      <div style="font-size:13px; color:var(--nvda); font-weight:700;">⭐ WIDE MOAT — All 5 Morningstar Sources Present</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Rare achievement. Only ~1-2% of stocks qualify as wide moat across all 5 dimensions. NVDA joins MSFT, GOOGL, AAPL in this elite tier.</div>
+    </div>
+  </div>
+
+  <!-- PORTER 5 FORCES -->
+  <div class="card purple">
+    <div class="card-title"><span class="dot dot-purple"></span>Porter's 5 Forces</div>
+    <div class="chart-wrap">
+      <canvas id="porterChart" style="max-height:230px;"></canvas>
+    </div>
+  </div>
+
+  <!-- RISK FACTORS -->
+  <div class="card red span-2">
+    <div class="card-title"><span class="dot dot-red"></span>Risk Register (Howard Marks Framework)</div>
+
+    <div class="risk-item">
+      <div class="risk-level risk-high">HIGH</div>
+      <div class="risk-text"><strong>US Export Controls on AI Chips</strong> — China revenue cut from 20% to ~5% after BIS rules. Any escalation (H20 ban extension) = −5-10% revenue. Geopolitical wildcard pre-earnings.</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-level risk-high">HIGH</div>
+      <div class="risk-text"><strong>Customer Concentration (Hyperscalers)</strong> — Top 4 (MSFT, META, GOOGL, AMZN) = ~50% revenue. Any capex pullback = significant demand shock. Q1 2026 showed risk: MSFT paused some DC expansions.</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-level risk-med">MED</div>
+      <div class="risk-text"><strong>Competition Acceleration</strong> — AMD MI300X gaining traction in inference. Google TPU v5e, AWS Trainium 2 in-house chips reduce captive demand. Custom silicon 3-5 year threat, not immediate.</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-level risk-med">MED</div>
+      <div class="risk-text"><strong>Valuation / Multiple Compression</strong> — At 46x P/E near ATH with no margin of safety. If AI capex cycle slows or DeepSeek-style efficiency disrupts demand, P/E could compress to 25-30x = stock −35-40%.</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-level risk-med">MED</div>
+      <div class="risk-text"><strong>Supply Chain Concentration</strong> — 100% reliance on TSMC 3/4nm. Any Taiwan disruption = immediate supply shock. TSMC Arizona fab = partial hedge (3nm 2028).</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-level risk-low">LOW</div>
+      <div class="risk-text"><strong>Gross Margin Pressure</strong> — Blackwell ramp initially had yield issues (now resolved). Any production problems or COGS increase could compress 71% gross margin. Historical range 56-76%.</div>
+    </div>
+  </div>
+
+  <!-- RISK MATRIX CHART -->
+  <div class="card yellow">
+    <div class="card-title"><span class="dot dot-yellow"></span>Risk-Adjusted Scenarios (Howard Marks)</div>
+    <div class="chart-wrap">
+      <canvas id="riskChart" style="max-height:200px;"></canvas>
+    </div>
+    <div style="margin-top:10px; font-size:12px; color:var(--text-muted);">
+      Expected Value = (0.60 × $255) + (0.25 × $222) + (0.15 × $185) = <strong style="color:var(--nvda);">$237</strong> → +6.4% upside
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 4 — FRAMEWORK CHECKLIST
+══════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-4">
+<div class="main-grid">
+
+  <!-- MUST PASS -->
+  <div class="card red span-2">
+    <div class="card-title"><span class="dot dot-red"></span>🔴 MUST PASS — Deal-Breakers (7 items)</div>
+    <ul class="checklist">
+      <li>
+        <span class="check-icon">✅</span>
+        <div><span class="check-label">Positive FCF (last 3 years)</span><br><span class="check-val">FY24: $27.0B · FY25: $60.9B · FY26: $96.6B — PASS</span></div>
+      </li>
+      <li>
+        <span class="check-icon">✅</span>
+        <div><span class="check-label">Revenue growth positive (&gt;0% YoY)</span><br><span class="check-val">+65% FY26, +122% FY25, +16% FY24 — PASS</span></div>
+      </li>
+      <li>
+        <span class="check-icon">✅</span>
+        <div><span class="check-label">Gross margin &gt;40% (or improving)</span><br><span class="check-val">71.3% — EXCEPTIONAL PASS</span></div>
+      </li>
+      <li>
+        <span class="check-icon">✅</span>
+        <div><span class="check-label">Debt/Equity &lt;1.5x or manageable</span><br><span class="check-val">D/E = 0.11x, Net Cash $34.7B — PASS</span></div>
+      </li>
+      <li>
+        <span class="check-icon">✅</span>
+        <div><span class="check-label">ROIC &gt; WACC (value creation)</span><br><span class="check-val">ROIC 113.8% vs WACC 9.0% → +104pp spread — EXCEPTIONAL PASS</span></div>
+      </li>
+      <li>
+        <span class="check-icon">✅</span>
+        <div><span class="check-label">No accounting red flags (revenue recognition, related-party)</span><br><span class="check-val">Big 4 audited (PwC), no restatements, clean 10-K — PASS</span></div>
+      </li>
+      <li>
+        <span class="check-icon">⚠️</span>
+        <div><span class="check-label">Margin of safety ≥25% (Graham)</span><br><span class="check-val">Base DCF $210 vs Price $222 → −5.7% (no safety margin). Bull case $310 = +39.2% upside. CONDITIONAL — growth must materialize.</span></div>
+      </li>
+    </ul>
+    <div style="margin-top:10px; padding:8px; background:var(--green-dim); border-radius:6px; font-size:13px;">
+      <strong style="color:var(--green);">6/7 MUST PASS ✓</strong> — Only margin of safety is conditional. All fundamental deal-breakers cleared.
+    </div>
+  </div>
+
+  <!-- SHOULD HAVE -->
+  <div class="card yellow">
+    <div class="card-title"><span class="dot dot-yellow"></span>🟡 SHOULD HAVE — Quality (9 items)</div>
+    <ul class="checklist" style="font-size:12px;">
+      <li><span class="check-icon">✅</span><div><span class="check-label">Wide economic moat</span><br><span class="check-val">All 5 Morningstar sources — WIDE</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Founder/CEO aligned</span><br><span class="check-val">Jensen Huang: $90B stake, ~5% shares — PASS</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Pricing power</span><br><span class="check-val">H100 sold at $30K; B100 $35-40K. Rising ASP — PASS</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Capital allocation (buybacks/dividends)</span><br><span class="check-val">$33.5B buybacks FY26, $0.04/share dividend — PASS</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Operating leverage</span><br><span class="check-val">Op margin expanded 25pp to 62% in 2 years — PASS</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">TAM expansion</span><br><span class="check-val">AI infra TAM $500B → $1T+ by 2028 — PASS</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">R&D investment sustainable</span><br><span class="check-val">$12.9B R&D (6% of rev), consistent 2-yr roadmap — PASS</span></div></li>
+      <li><span class="check-icon">⚠️</span><div><span class="check-label">Customer diversification</span><br><span class="check-val">Top 4 hyperscalers ~50% rev — CONCENTRATION RISK</span></div></li>
+      <li><span class="check-icon">⚠️</span><div><span class="check-label">Geographic diversification</span><br><span class="check-val">China export restrictions, Taiwan supply — GEOPOLITICAL RISK</span></div></li>
+    </ul>
+    <div style="margin-top:8px; padding:6px; background:var(--green-dim); border-radius:6px; font-size:12px;">
+      <strong style="color:var(--green);">7/9 SHOULD HAVE ✓</strong>
+    </div>
+  </div>
+
+  <!-- VALUATION CHECK -->
+  <div class="card blue">
+    <div class="card-title"><span class="dot dot-blue"></span>🔵 VALUATION CHECK (7 items)</div>
+    <ul class="checklist" style="font-size:12px;">
+      <li><span class="check-icon">✅</span><div><span class="check-label">PEG ratio &lt;2</span><br><span class="check-val">PEG = 0.42 — PASS (growth-adjusted cheap)</span></div></li>
+      <li><span class="check-icon">⚠️</span><div><span class="check-label">P/E &lt;25x (or sector-justified)</span><br><span class="check-val">P/E 46x — sector-justified for 65%+ growth</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">EV/EBITDA reasonable vs sector</span><br><span class="check-val">38x vs SOX avg 22x — premium justified</span></div></li>
+      <li><span class="check-icon">⚠️</span><div><span class="check-label">Price &lt; intrinsic value (DCF)</span><br><span class="check-val">$222 vs base DCF $210 — slight overvaluation</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Forward P/E declining (earnings growing faster)</span><br><span class="check-val">FY27 P/E = 28x vs TTM 46x — PASS</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">ROIC/WACC spread positive and growing</span><br><span class="check-val">+104pp spread — EXCEPTIONAL</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Earnings power value vs price</span><br><span class="check-val">EPV $55 — growth premium 75%. Justified by AI cycle.</span></div></li>
+    </ul>
+    <div style="margin-top:8px; padding:6px; background:var(--yellow-dim); border-radius:6px; font-size:12px;">
+      <strong style="color:var(--yellow);">5/7 VALUATION CHECK ✓</strong>
+    </div>
+  </div>
+
+  <!-- RISK CHECK -->
+  <div class="card green span-2">
+    <div class="card-title"><span class="dot dot-green"></span>🟢 RISK CHECK (6 items)</div>
+    <ul class="checklist">
+      <li><span class="check-icon">✅</span><div><span class="check-label">Beta manageable (&lt;1.5)</span><br><span class="check-val">Beta 1.64 — slightly elevated, but acceptable for growth</span></div></li>
+      <li><span class="check-icon">⚠️</span><div><span class="check-label">Geopolitical exposure manageable</span><br><span class="check-val">China export restrictions ongoing. H20 chip banned. Revenue impact: ~$5-15B potential — ELEVATED</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Regulatory moat (no antitrust risk)</span><br><span class="check-val">DOJ/FTC scrutiny minimal vs GOOGL/META. ARM acquisition blocked 2022, no new M&A red flags.</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Liquidity risk low (listed, large cap)</span><br><span class="check-val">$5.47T market cap, avg volume $50B/day. Highly liquid — PASS</span></div></li>
+      <li><span class="check-icon">⚠️</span><div><span class="check-label">Earnings volatility manageable</span><br><span class="check-val">±5-15% moves on earnings common. Pre-earnings position caution recommended.</span></div></li>
+      <li><span class="check-icon">✅</span><div><span class="check-label">Narrative vs fundamentals check</span><br><span class="check-val">Fundamentals confirm AI capex thesis. Not just story — revenue/FCF support valuation.</span></div></li>
+    </ul>
+    <div style="margin-top:8px; padding:8px; background:var(--green-dim); border-radius:6px; font-size:13px;">
+      <strong style="color:var(--green);">4/6 RISK CHECK ✓</strong> — Geopolitical & earnings volatility are known, managed risks.
+    </div>
+  </div>
+
+  <!-- FINAL FRAMEWORK SUMMARY -->
+  <div class="card nvda span-3" style="grid-column:1/-1;">
+    <div class="card-title"><span class="dot dot-nvda"></span>Framework Summary — INVESTX Academic Scorecard</div>
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:16px;">
+      <div style="text-align:center; padding:12px; background:var(--card2); border-radius:8px;">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:6px;">MUST PASS</div>
+        <div style="font-size:28px; font-weight:900; color:var(--green);">6/7</div>
+        <div style="font-size:11px; color:var(--text-muted);">Deal-breakers cleared</div>
+      </div>
+      <div style="text-align:center; padding:12px; background:var(--card2); border-radius:8px;">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:6px;">QUALITY</div>
+        <div style="font-size:28px; font-weight:900; color:var(--green);">7/9</div>
+        <div style="font-size:11px; color:var(--text-muted);">Quality enhancers</div>
+      </div>
+      <div style="text-align:center; padding:12px; background:var(--card2); border-radius:8px;">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:6px;">VALUATION</div>
+        <div style="font-size:28px; font-weight:900; color:var(--yellow);">5/7</div>
+        <div style="font-size:11px; color:var(--text-muted);">Valuation checks</div>
+      </div>
+      <div style="text-align:center; padding:12px; background:var(--card2); border-radius:8px;">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:6px;">RISK</div>
+        <div style="font-size:28px; font-weight:900; color:var(--yellow);">4/6</div>
+        <div style="font-size:11px; color:var(--text-muted);">Risk checks</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div style="padding:14px; background:var(--nvda-dim); border:1px solid var(--nvda); border-radius:8px;">
+        <div style="font-size:12px; font-weight:700; color:var(--nvda); margin-bottom:8px;">BULLISH THESIS (Jensen Huang's "One Chip" moat)</div>
+        <div style="font-size:12px; color:var(--text-muted); line-height:1.6;">
+          ✅ CUDA ecosystem = platform monopoly with 20yr moat<br>
+          ✅ ROIC 113% — capital creates enormous value<br>
+          ✅ Blackwell superchip 10x perf/watt advantage<br>
+          ✅ Forward P/E 28x is reasonable for 50%+ grower<br>
+          ✅ Earnings beat streak: 10 consecutive quarters
+        </div>
+      </div>
+      <div style="padding:14px; background:var(--red-dim); border:1px solid var(--red); border-radius:8px;">
+        <div style="font-size:12px; font-weight:700; color:var(--red); margin-bottom:8px;">BEARISH RISKS (Howard Marks "Second Level")</div>
+        <div style="font-size:12px; color:var(--text-muted); line-height:1.6;">
+          ⚠️ No margin of safety — priced for perfection<br>
+          ⚠️ 75% value in growth premium (EPV only $55)<br>
+          ⚠️ Hyperscaler capex = NVDA's biggest single risk<br>
+          ⚠️ DeepSeek efficiency could reduce GPU demand<br>
+          ⚠️ China ban = structural revenue ceiling
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px; padding:14px; background:linear-gradient(135deg,rgba(118,185,0,0.15),rgba(16,185,129,0.05)); border:2px solid var(--nvda); border-radius:10px; text-align:center;">
+      <div style="font-size:11px; color:var(--nvda); font-weight:700; letter-spacing:2px; margin-bottom:4px;">INVESTX FRAMEWORK VERDICT</div>
+      <div style="font-size:22px; font-weight:900; color:var(--nvda);">CONDITIONAL BUY · 7.5/10 · 30% Position Pre-Earnings</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Scale to 50-75% on earnings beat + strong Q2 guidance. Stop-loss $190. Target $260-278 (12-18 months). Max portfolio weight 8-10%.</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-top:6px;">Framework: Damodaran DCF · Graham MoS · Mauboussin ROIC · Greenblatt Magic Formula · Greenwald EPV · Howard Marks Risk · Morningstar Moat</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════ -->
+<div class="footer">
+  INVESTX Analysis Suite &nbsp;·&nbsp; <strong>NVDA Pre-Earnings Report</strong> &nbsp;·&nbsp; May 19, 2026 &nbsp;·&nbsp;
+  <a href="https://petchnatthapong.github.io/FOR-CLAUDE/INVESTX_Deep_Analysis.html">Portfolio Dashboard</a> &nbsp;·&nbsp;
+  <a href="https://petchnatthapong.github.io/FOR-CLAUDE/valuation_framework.html">Valuation Framework</a>
+  <br>⚠️ For educational purposes only. Not financial advice. All data approximate — verify before trading.
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════════════════
+function switchTab(idx) {
+  document.querySelectorAll('.tab-panel').forEach((p,i) => {
+    p.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  // lazy-init charts
+  if (idx === 0 && !window._tab0) { window._tab0=true; initTab0Charts(); }
+  if (idx === 1 && !window._tab1) { window._tab1=true; initTab1Charts(); }
+  if (idx === 2 && !window._tab2) { window._tab2=true; initTab2Charts(); }
+  if (idx === 3 && !window._tab3) { window._tab3=true; initTab3Charts(); }
+}
+
+// Chart defaults
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e2d45';
+Chart.defaults.font.family = "'SF Pro Display', -apple-system, sans-serif";
+
+// ════════════════════════════════════════════════════
+// TAB 0 — OVERVIEW CHARTS
+// ════════════════════════════════════════════════════
+function initTab0Charts() {
+  // Ring chart
+  const ringCtx = document.getElementById('ringChart').getContext('2d');
+  new Chart(ringCtx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [7.5, 2.5],
+        backgroundColor: ['#76b900', '#1a2235'],
+        borderWidth: 0,
+        cutout: '78%'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      animation: { animateRotate: true, duration: 1200 }
+    }
+  });
+
+  // Price performance (simulated 12m data)
+  const months = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
+  const nvdaPrice = [130,138,152,167,145,172,188,195,179,201,218,223];
+  const sp500 = [100,103,106,104,108,110,112,108,111,113,116,118];
+  const soxPrice = [100,104,109,107,112,115,118,114,117,120,124,127];
+
+  const priceCtx = document.getElementById('priceChart').getContext('2d');
+  new Chart(priceCtx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'NVDA ($)',
+          data: nvdaPrice,
+          borderColor: '#76b900',
+          backgroundColor: 'rgba(118,185,0,0.08)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          yAxisID: 'y1'
+        },
+        {
+          label: 'S&P500 (indexed)',
+          data: sp500,
+          borderColor: '#3b82f6',
+          borderWidth: 1.5,
+          borderDash: [5,3],
+          fill: false,
+          tension: 0.4,
+          pointRadius: 2,
+          yAxisID: 'y2'
+        },
+        {
+          label: 'SOX (indexed)',
+          data: soxPrice,
+          borderColor: '#8b5cf6',
+          borderWidth: 1.5,
+          borderDash: [3,3],
+          fill: false,
+          tension: 0.4,
+          pointRadius: 2,
+          yAxisID: 'y2'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { backgroundColor: '#1a2235', borderColor: '#1e2d45', borderWidth: 1 }
+      },
+      scales: {
+        y1: { type: 'linear', position: 'left', title: { display: true, text: 'NVDA Price ($)', font: { size: 10 } } },
+        y2: { type: 'linear', position: 'right', title: { display: true, text: 'Indexed (100=Jun25)', font: { size: 10 } }, grid: { drawOnChartArea: false } }
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════
+// TAB 1 — FINANCIALS
+// ════════════════════════════════════════════════════
+function initTab1Charts() {
+  // Revenue + Net Income bar chart
+  const revCtx = document.getElementById('revenueChart').getContext('2d');
+  new Chart(revCtx, {
+    type: 'bar',
+    data: {
+      labels: ['FY2022', 'FY2023', 'FY2024', 'FY2025', 'FY2026'],
+      datasets: [
+        {
+          label: 'Revenue ($B)',
+          data: [26.9, 26.0, 60.9, 130.5, 215.9],
+          backgroundColor: 'rgba(118,185,0,0.7)',
+          borderColor: '#76b900',
+          borderWidth: 1,
+          borderRadius: 4
+        },
+        {
+          label: 'Net Income ($B)',
+          data: [4.3, 4.1, 29.8, 72.9, 72.9],
+          backgroundColor: 'rgba(16,185,129,0.5)',
+          borderColor: '#10b981',
+          borderWidth: 1,
+          borderRadius: 4
+        },
+        {
+          label: 'FCF ($B)',
+          data: [3.8, 3.8, 27.0, 60.9, 96.6],
+          backgroundColor: 'rgba(59,130,246,0.4)',
+          borderColor: '#3b82f6',
+          borderWidth: 1,
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { backgroundColor: '#1a2235', borderColor: '#1e2d45', borderWidth: 1 }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'USD Billions', font: { size: 10 } } }
+      }
+    }
+  });
+
+  // Radar chart — quality metrics
+  const radarCtx = document.getElementById('radarChart').getContext('2d');
+  new Chart(radarCtx, {
+    type: 'radar',
+    data: {
+      labels: ['Gross Margin', 'ROIC', 'FCF Conversion', 'Revenue Growth', 'Op Margin', 'R&D Intensity'],
+      datasets: [
+        {
+          label: 'NVDA',
+          data: [95, 99, 90, 95, 90, 75],
+          borderColor: '#76b900',
+          backgroundColor: 'rgba(118,185,0,0.15)',
+          borderWidth: 2,
+          pointBackgroundColor: '#76b900'
+        },
+        {
+          label: 'AMD',
+          data: [47, 35, 40, 55, 15, 60],
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,0.1)',
+          borderWidth: 1.5,
+          pointBackgroundColor: '#3b82f6'
+        },
+        {
+          label: 'INTC',
+          data: [38, 5, 25, 5, 2, 50],
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239,68,68,0.08)',
+          borderWidth: 1.5,
+          pointBackgroundColor: '#ef4444'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          grid: { color: '#1e2d45' },
+          ticks: { display: false },
+          pointLabels: { font: { size: 11 } }
+        }
+      }
+    }
+  });
+
+  // Segment donut
+  const segCtx = document.getElementById('segmentChart').getContext('2d');
+  new Chart(segCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Data Center', 'Gaming', 'Professional', 'Auto + OEM'],
+      datasets: [{
+        data: [90.3, 5.6, 2.7, 1.4],
+        backgroundColor: ['#76b900','#3b82f6','#f59e0b','#ef4444'],
+        borderColor: '#111827',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a2235',
+          callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` }
+        }
+      },
+      cutout: '65%'
+    }
+  });
+
+  // Margin trend
+  const marginCtx = document.getElementById('marginChart').getContext('2d');
+  new Chart(marginCtx, {
+    type: 'line',
+    data: {
+      labels: ['FY2022','FY2023','FY2024','FY2025','FY2026'],
+      datasets: [
+        {
+          label: 'Gross Margin %',
+          data: [64.9, 56.9, 72.7, 74.6, 71.3],
+          borderColor: '#76b900',
+          backgroundColor: 'rgba(118,185,0,0.1)',
+          fill: true, tension: 0.4, borderWidth: 2, pointRadius: 4
+        },
+        {
+          label: 'Operating Margin %',
+          data: [26.5, 16.1, 54.1, 62.0, 62.0],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16,185,129,0.1)',
+          fill: true, tension: 0.4, borderWidth: 2, pointRadius: 4
+        },
+        {
+          label: 'Net Margin %',
+          data: [16.0, 15.7, 48.9, 55.9, 33.8],
+          borderColor: '#3b82f6',
+          borderDash: [4,3],
+          fill: false, tension: 0.4, borderWidth: 1.5, pointRadius: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { backgroundColor: '#1a2235', borderColor: '#1e2d45', borderWidth: 1 }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Margin (%)', font: { size: 10 } }, min: 0, max: 100 }
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════
+// TAB 2 — VALUATION
+// ════════════════════════════════════════════════════
+function initTab2Charts() {
+  // Multiples comparison bar chart
+  const multCtx = document.getElementById('multiplesChart').getContext('2d');
+  new Chart(multCtx, {
+    type: 'bar',
+    data: {
+      labels: ['P/E (TTM)', 'Forward P/E', 'EV/EBITDA', 'EV/Sales', 'P/FCF'],
+      datasets: [
+        {
+          label: 'NVDA',
+          data: [46, 28, 38, 24, 57],
+          backgroundColor: 'rgba(118,185,0,0.7)',
+          borderColor: '#76b900',
+          borderWidth: 1,
+          borderRadius: 4
+        },
+        {
+          label: 'AMD',
+          data: [130, 35, 45, 6, 85],
+          backgroundColor: 'rgba(59,130,246,0.5)',
+          borderColor: '#3b82f6',
+          borderWidth: 1,
+          borderRadius: 4
+        },
+        {
+          label: 'SOX Sector Avg',
+          data: [22, 18, 22, 5, 30],
+          backgroundColor: 'rgba(139,92,246,0.4)',
+          borderColor: '#8b5cf6',
+          borderWidth: 1,
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { backgroundColor: '#1a2235', borderColor: '#1e2d45', borderWidth: 1 }
+      },
+      scales: { y: { beginAtZero: true, title: { display: true, text: 'Multiple (x)', font: { size: 10 } } } }
+    }
+  });
+
+  // Scenario waterfall
+  const scenCtx = document.getElementById('scenarioChart').getContext('2d');
+  new Chart(scenCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Bear: Miss', 'Bear: Weak Guide', 'In-line', 'Beat', 'Beat + Strong Guide', 'Bull: Blowout'],
+      datasets: [{
+        label: 'Price Target ($)',
+        data: [185, 195, 222, 238, 255, 270],
+        backgroundColor: ['#ef4444','#f97316','#f59e0b','#10b981','#76b900','#22c55e'],
+        borderColor: ['#ef4444','#f97316','#f59e0b','#10b981','#76b900','#22c55e'],
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a2235',
+          callbacks: {
+            label: ctx => ` Target: $${ctx.parsed.y} (${ctx.parsed.y > 222 ? '+' : ''}${((ctx.parsed.y - 222)/222*100).toFixed(1)}%)`
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 160,
+          title: { display: true, text: 'Price ($)', font: { size: 10 } },
+          ticks: { callback: v => '$' + v }
+        }
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════
+// TAB 3 — MOAT & RISK
+// ════════════════════════════════════════════════════
+function initTab3Charts() {
+  // Porter 5 Forces radar
+  const porterCtx = document.getElementById('porterChart').getContext('2d');
+  new Chart(porterCtx, {
+    type: 'radar',
+    data: {
+      labels: ['Supplier Power', 'Buyer Power', 'New Entrants', 'Substitutes', 'Rivalry'],
+      datasets: [{
+        label: 'Threat Level (1=Low, 10=High)',
+        data: [7, 5, 3, 4, 3],
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.15)',
+        borderWidth: 2,
+        pointBackgroundColor: '#f59e0b'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const labels = ['', 'Very Low', 'Low', 'Low-Med', 'Medium', 'Med-High', 'Med-High', 'High', 'High', 'Very High', 'Critical'];
+              return ` ${ctx.label}: ${labels[ctx.parsed.r] || ctx.parsed.r}`;
+            }
+          }
+        }
+      },
+      scales: {
+        r: {
+          min: 0, max: 10,
+          grid: { color: '#1e2d45' },
+          ticks: { display: false },
+          pointLabels: { font: { size: 10 } }
+        }
+      }
+    }
+  });
+
+  // Risk scenario probability chart
+  const riskCtx = document.getElementById('riskChart').getContext('2d');
+  new Chart(riskCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Bear ($185)', 'Neutral ($222)', 'Bull ($255)'],
+      datasets: [
+        {
+          label: 'Probability',
+          data: [15, 25, 60],
+          backgroundColor: ['rgba(239,68,68,0.6)','rgba(245,158,11,0.6)','rgba(118,185,0,0.6)'],
+          borderColor: ['#ef4444','#f59e0b','#76b900'],
+          borderWidth: 1,
+          borderRadius: 4,
+          yAxisID: 'y1'
+        },
+        {
+          label: 'Weighted Return',
+          data: [-14.7, 0, 14.6],
+          type: 'line',
+          borderColor: '#3b82f6',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointBackgroundColor: '#3b82f6',
+          yAxisID: 'y2'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { backgroundColor: '#1a2235', borderColor: '#1e2d45', borderWidth: 1 }
+      },
+      scales: {
+        y1: { type: 'linear', position: 'left', title: { display: true, text: 'Probability (%)', font: { size: 10 } } },
+        y2: { type: 'linear', position: 'right', title: { display: true, text: 'Return (%)', font: { size: 10 } }, grid: { drawOnChartArea: false } }
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  window._tab0 = true;
+  initTab0Charts();
+});
+</script>
+</body>
+</html>
