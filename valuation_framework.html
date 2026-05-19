@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INVESTX — Stock Valuation Framework & Checklist</title>
+<style>
+:root {
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;--green:#3fb950;--red:#f85149;
+  --yellow:#d29922;--blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6}
+.header{background:linear-gradient(135deg,#0d1117,#1a1f2e,#0d1117);border-bottom:1px solid var(--border);padding:32px 40px}
+.header h1{font-size:28px;font-weight:800;background:linear-gradient(90deg,#58a6ff,#bc8cff,#ffa657);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--muted);margin-top:8px;font-size:13px}
+.nav{display:flex;gap:6px;padding:16px 40px;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-wrap:wrap}
+.nav a{padding:6px 14px;border-radius:20px;font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);white-space:nowrap;transition:.2s}
+.nav a:hover,.nav a.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.container{max-width:1100px;margin:0 auto;padding:32px 40px}
+@media(max-width:700px){.container{padding:20px 16px}.header{padding:20px 16px}}
+
+h2{font-size:20px;font-weight:700;margin-bottom:4px;padding-top:8px}
+h3{font-size:15px;font-weight:700;color:var(--blue);margin:20px 0 8px}
+h4{font-size:13px;font-weight:600;color:var(--orange);margin:14px 0 6px}
+p{color:var(--muted);margin-bottom:10px;font-size:13px}
+.sub{color:var(--muted);font-size:12px;margin-bottom:24px}
+
+.section{margin-bottom:48px}
+.divider{height:1px;background:var(--border);margin:32px 0}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px}
+.card-blue{border-color:rgba(88,166,255,.3);background:rgba(88,166,255,.04)}
+.card-green{border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.04)}
+.card-yellow{border-color:rgba(210,153,34,.3);background:rgba(210,153,34,.04)}
+.card-purple{border-color:rgba(188,140,255,.3);background:rgba(188,140,255,.04)}
+.card-orange{border-color:rgba(255,166,87,.3);background:rgba(255,166,87,.04)}
+.card-red{border-color:rgba(248,81,73,.3);background:rgba(248,81,73,.04)}
+
+.ref{display:inline-block;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;color:var(--purple);font-family:monospace;margin-right:4px;margin-top:4px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+
+.checklist{list-style:none;margin:8px 0}
+.checklist li{padding:8px 12px;border-bottom:1px solid rgba(48,54,61,.5);display:flex;align-items:flex-start;gap:10px;font-size:13px}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:"☐";color:var(--blue);font-size:16px;flex-shrink:0;margin-top:-1px}
+.checklist li.pass::before{content:"✓";color:var(--green)}
+.checklist li.note{color:var(--muted);font-size:11px}
+.checklist li.note::before{content:"→";color:var(--yellow)}
+
+.formula{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-family:monospace;font-size:13px;color:var(--teal,#39d353);margin:10px 0;overflow-x:auto}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-right:4px}
+.b-must{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3)}
+.b-should{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid rgba(210,153,34,.3)}
+.b-nice{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3)}
+.b-quant{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th{text-align:left;padding:9px 12px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:9px 12px;border-bottom:1px solid rgba(48,54,61,.4)}
+tr:hover td{background:rgba(255,255,255,.02)}
+tr:last-child td{border-bottom:none}
+.up{color:var(--green)} .down{color:var(--red)} .mid{color:var(--yellow)}
+
+.author-tag{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;margin:3px;color:var(--text)}
+.author-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0}
+
+.score-row{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid rgba(48,54,61,.3)}
+.score-row:last-child{border:none}
+.score-row .label{flex:1;font-size:13px}
+.score-row .weight{font-size:11px;color:var(--muted);width:40px;text-align:right}
+.bar{flex:2;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+
+.toc-item{padding:6px 0;border-bottom:1px solid rgba(48,54,61,.3);display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer}
+.toc-item:hover{color:var(--blue)}
+.toc-num{width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📐 Stock & Asset Valuation Framework</h1>
+  <p>INVESTX Checklist — Academic-grade reference | Based on Damodaran · Graham · Mauboussin · Greenblatt · Fama-French · Marks | Updated May 2026</p>
+</div>
+
+<div class="nav">
+  <a href="#overview" class="active">Overview</a>
+  <a href="#intrinsic">1. Intrinsic Value (DCF)</a>
+  <a href="#quality">2. Quality & ROIC</a>
+  <a href="#relative">3. Relative Valuation</a>
+  <a href="#moat">4. Economic Moat</a>
+  <a href="#risk">5. Risk Framework</a>
+  <a href="#checklist">✅ Master Checklist</a>
+  <a href="#ref">References</a>
+</div>
+
+<div class="container">
+
+<!-- ===== OVERVIEW ===== -->
+<div id="overview" class="section">
+  <h2>🗺 Overview — The Valuation Philosophy Stack</h2>
+  <p class="sub">การประเมินมูลค่าที่ดีต้องผสม 3 มิติ: Intrinsic Value + Quality + Price Expectation</p>
+
+  <div class="card card-blue" style="margin-bottom:20px">
+    <h3 style="margin-top:0">The Golden Rule (Damodaran, 2012)</h3>
+    <p><strong style="color:var(--text)">"Every asset has an intrinsic value that can be estimated, based on its cash flows, growth, and risk. The gap between price and value is where alpha lives."</strong></p>
+    <p>— Aswath Damodaran, <em>Investment Valuation</em> (3rd ed.)</p>
+  </div>
+
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">💰</div>
+      <div style="font-weight:700;margin-bottom:4px">Pillar 1</div>
+      <div style="color:var(--blue);font-size:13px;font-weight:600">Intrinsic Value</div>
+      <p style="margin-top:8px">DCF / EPV / DDM<br>Cash flows discounted at WACC</p>
+      <div><span class="ref">Damodaran</span><span class="ref">Graham</span></div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">⚙️</div>
+      <div style="font-weight:700;margin-bottom:4px">Pillar 2</div>
+      <div style="color:var(--green);font-size:13px;font-weight:600">Business Quality</div>
+      <p style="margin-top:8px">ROIC vs WACC<br>Moat width + sustainability</p>
+      <div><span class="ref">Mauboussin</span><span class="ref">Greenblatt</span></div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🎯</div>
+      <div style="font-weight:700;margin-bottom:4px">Pillar 3</div>
+      <div style="color:var(--orange);font-size:13px;font-weight:600">Price Expectations</div>
+      <p style="margin-top:8px">What's priced in?<br>Margin of Safety</p>
+      <div><span class="ref">Mauboussin</span><span class="ref">Marks</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Framework ทั้ง 5 ระดับ (โดย Author)</h4>
+    <div class="toc-item"><div class="toc-num">1</div><div><strong>Intrinsic Value</strong> — DCF, EPV, DDM <span class="ref">Damodaran · Graham · Greenwald</span></div></div>
+    <div class="toc-item"><div class="toc-num">2</div><div><strong>Quality & ROIC</strong> — Return on Capital vs. Cost of Capital <span class="ref">Mauboussin · Greenblatt · Fama-French</span></div></div>
+    <div class="toc-item"><div class="toc-num">3</div><div><strong>Relative Valuation</strong> — Multiples: P/E, EV/EBITDA, P/FCF <span class="ref">Damodaran · Koller (McKinsey)</span></div></div>
+    <div class="toc-item"><div class="toc-num">4</div><div><strong>Economic Moat</strong> — Competitive Advantage Period <span class="ref">Porter · Buffett · Morningstar</span></div></div>
+    <div class="toc-item"><div class="toc-num">5</div><div><strong>Risk & Cycle</strong> — Second-level thinking, Market cycles <span class="ref">Marks · Damodaran · Taleb</span></div></div>
+  </div>
+
+  <div class="card card-yellow" style="margin-top:16px">
+    <h4>2026 Market Parameters (Damodaran, Jan 2026)</h4>
+    <div class="grid3">
+      <div><div style="font-size:11px;color:var(--muted)">Risk-Free Rate (10Y UST)</div><div style="font-size:18px;font-weight:700;color:var(--yellow)">4.24%</div></div>
+      <div><div style="font-size:11px;color:var(--muted)">Equity Risk Premium (ERP)</div><div style="font-size:18px;font-weight:700;color:var(--yellow)">4.23%</div></div>
+      <div><div style="font-size:11px;color:var(--muted)">Base Discount Rate (WACC)</div><div style="font-size:18px;font-weight:700;color:var(--yellow)">~8.5–10%</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== INTRINSIC VALUE ===== -->
+<div id="intrinsic" class="section">
+  <h2>1. 💰 Intrinsic Value Framework</h2>
+  <p class="sub">Graham (1934) → Damodaran (2012) → Greenwald (2001)</p>
+
+  <div class="card card-blue">
+    <h3 style="margin-top:0">A. Discounted Cash Flow (DCF)</h3>
+    <span class="ref">Damodaran, Investment Valuation 3rd Ed.</span>
+    <div class="formula">
+Intrinsic Value = Σ [FCF_t / (1 + WACC)^t] + Terminal Value / (1 + WACC)^n
+
+Terminal Value = FCF_n × (1 + g) / (WACC - g)
+where g = long-term growth ≤ nominal GDP growth
+
+WACC = Ke × (E/V) + Kd × (D/V) × (1 - Tax)
+Ke (Cost of Equity) = Rf + β × ERP
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <h4>Input ที่ต้องประมาณ</h4>
+        <ul class="checklist">
+          <li>Revenue growth rate (Year 1–5, 6–10)</li>
+          <li>Operating margin trajectory</li>
+          <li>Reinvestment rate (CapEx – D&A + ΔWWC)</li>
+          <li>WACC (ปรับตาม beta + capital structure)</li>
+          <li>Terminal growth rate (≤ 3% สำหรับ US)</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Sanity Check</h4>
+        <ul class="checklist">
+          <li>Sensitivity table: WACC ±1% vs g ±0.5%</li>
+          <li>Reverse DCF — ตลาดคิด growth เท่าไร?</li>
+          <li>FCF yield vs. 10Y bond yield</li>
+          <li>Compare ≥3 scenarios (Bull/Base/Bear)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3 style="margin-top:0">B. Earnings Power Value (EPV)</h3>
+    <span class="ref">Greenwald, Value Investing (2001) — Columbia Business School</span>
+    <p style="margin-top:10px">EPV สมมติ <strong style="color:var(--text)">zero growth</strong> — ถ้า EPV > Asset Value = มีคูน้ำ, ถ้า Price &lt; EPV = Undervalued แน่นอน</p>
+    <div class="formula">
+EPV = Adjusted EBIT × (1 - Tax Rate) / WACC
+
+Asset Value = Reproduction Cost of Assets (ต้นทุนที่คู่แข่งต้องใช้เพื่อสร้างบริษัทใหม่)
+
+Hierarchy:  Asset Value &lt; EPV &lt; Growth Value
+    </div>
+    <ul class="checklist" style="margin-top:10px">
+      <li>Normalize EBIT ให้พ้น one-time items</li>
+      <li>ใช้ average margin ย้อนหลัง 5–7 ปี ไม่ใช่ peak</li>
+      <li>ถ้า EPV/share > Price = Margin of Safety ทันที</li>
+    </ul>
+  </div>
+
+  <div class="card card-purple">
+    <h3 style="margin-top:0">C. Margin of Safety (Graham/Buffett)</h3>
+    <span class="ref">Graham, The Intelligent Investor Ch.20 (1949)</span><span class="ref">Buffett, Berkshire Letters 1977–2024</span>
+    <div class="formula">
+Margin of Safety = (Intrinsic Value - Market Price) / Intrinsic Value × 100%
+
+Target:  ≥ 25% for quality companies
+         ≥ 40% for cyclical / speculative
+         ≥ 50% for Graham-style deep value
+    </div>
+    <blockquote style="border-left:3px solid var(--purple);padding-left:14px;color:var(--muted);margin:12px 0;font-style:italic;font-size:13px">
+      "When you build a bridge, you insist it can carry 30,000 pounds, but you only drive 10,000 pound trucks across it. That same principle works in investing."
+      <br>— Warren Buffett
+    </blockquote>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">D. Dividend Discount Model (DDM) — สำหรับ Dividend Stocks</h3>
+    <span class="ref">Gordon Growth Model | Damodaran</span>
+    <div class="formula">
+Intrinsic Value = D1 / (Ke - g)
+D1 = Expected dividend next year
+Ke = Cost of equity (Rf + β × ERP)
+g  = sustainable growth = ROE × Retention Ratio
+
+Use when: Dividend payout stable, ROE predictable (Banks, Utilities, REITs)
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== QUALITY & ROIC ===== -->
+<div id="quality" class="section">
+  <h2>2. ⚙️ Quality & ROIC Framework</h2>
+  <p class="sub">Mauboussin (Morgan Stanley, 2014) · Greenblatt (2006) · Fama-French (2015)</p>
+
+  <div class="card card-green">
+    <h3 style="margin-top:0">The ROIC Rule (Mauboussin)</h3>
+    <span class="ref">Mauboussin, "ROIC and the Investment Process" — Morgan Stanley (2014)</span>
+    <div class="formula">
+ROIC = NOPAT / Invested Capital
+     = EBIT × (1-Tax) / (Equity + Debt - Cash)
+
+Value Creation:  ROIC > WACC  → Company destroys nothing, creates value
+Value Neutral:   ROIC = WACC  → Break even
+Value Destruction: ROIC &lt; WACC → Growth actually hurts
+
+Spread = ROIC - WACC  (ยิ่งบวกมาก ยิ่งดี)
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <h4>ROIC Benchmarks</h4>
+        <table>
+          <thead><tr><th>ROIC</th><th>Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td class="up">> 20%</td><td>Exceptional — likely moat</td></tr>
+            <tr><td class="up">15–20%</td><td>Excellent — investigate moat source</td></tr>
+            <tr><td class="mid">10–15%</td><td>Good — market average zone</td></tr>
+            <tr><td class="mid">8–10%</td><td>Mediocre — near WACC</td></tr>
+            <tr><td class="down">&lt; 8%</td><td>Value destroying (if WACC ~9%)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h4>Quality Factors — Fama-French (2015)</h4>
+        <span class="ref">Fama & French, Journal of Financial Economics (2015)</span>
+        <table>
+          <thead><tr><th>Factor</th><th>Metric</th></tr></thead>
+          <tbody>
+            <tr><td>RMW (Profitability)</td><td>High Op. Profit / Low</td></tr>
+            <tr><td>CMA (Investment)</td><td>Conservative / Aggressive CapEx</td></tr>
+            <tr><td>SMB (Size)</td><td>Small cap premium</td></tr>
+            <tr><td>HML (Value)</td><td>High B/M vs Low B/M</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-orange">
+    <h3 style="margin-top:0">Greenblatt Magic Formula — Quality + Value Screen</h3>
+    <span class="ref">Greenblatt, The Little Book That Still Beats the Market (2006)</span>
+    <p>USA 1988–2004: Magic Formula avg return <strong style="color:var(--green)">33%/yr</strong> vs market 12%/yr</p>
+    <div class="formula">
+Earnings Yield  = EBIT / Enterprise Value  (ยิ่งสูง ยิ่ง Cheap)
+Return on Capital = EBIT / (Net Working Capital + Net Fixed Assets)
+
+Strategy: Rank universe on both metrics → Buy Top 20-30 combined rank
+Rebalance: Annually | Hold: ≥3 years for statistical significance
+    </div>
+    <ul class="checklist" style="margin-top:10px">
+      <li>Earnings Yield > 10% = เริ่มน่าสนใจ</li>
+      <li>ROIC > 15% = Quality threshold</li>
+      <li>Combined rank ≤ 50 จากทั้ง universe</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Key Quality Metrics — Master Table</h3>
+    <table>
+      <thead><tr><th>Metric</th><th>Formula</th><th>Good</th><th>Excellent</th><th>Ref</th></tr></thead>
+      <tbody>
+        <tr><td>ROIC</td><td>NOPAT / Invested Capital</td><td class="mid">> 10%</td><td class="up">> 20%</td><td><span class="ref">Mauboussin</span></td></tr>
+        <tr><td>ROE</td><td>Net Income / Equity</td><td class="mid">> 15%</td><td class="up">> 25%</td><td><span class="ref">Buffett</span></td></tr>
+        <tr><td>FCF Margin</td><td>FCF / Revenue</td><td class="mid">> 10%</td><td class="up">> 20%</td><td><span class="ref">Damodaran</span></td></tr>
+        <tr><td>FCF Conversion</td><td>FCF / Net Income</td><td class="mid">> 80%</td><td class="up">> 100%</td><td><span class="ref">McKinsey</span></td></tr>
+        <tr><td>Gross Margin</td><td>Gross Profit / Revenue</td><td>Sector-dependent</td><td class="up">> 40% (tech/pharma)</td><td><span class="ref">Graham</span></td></tr>
+        <tr><td>Debt / EBITDA</td><td>Net Debt / EBITDA</td><td class="up">&lt; 2x</td><td class="up">&lt; 1x</td><td><span class="ref">Damodaran</span></td></tr>
+        <tr><td>Interest Coverage</td><td>EBIT / Interest</td><td class="mid">> 5x</td><td class="up">> 10x</td><td><span class="ref">Graham</span></td></tr>
+        <tr><td>Altman Z-Score</td><td>Multi-factor solvency</td><td class="mid">> 2.99 safe</td><td class="up">> 3.5</td><td><span class="ref">Altman (1968)</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== RELATIVE VALUATION ===== -->
+<div id="relative" class="section">
+  <h2>3. 📊 Relative Valuation (Multiples)</h2>
+  <p class="sub">Damodaran, Investment Valuation · McKinsey, Valuation: Measuring and Managing the Value of Companies (7th Ed.)</p>
+
+  <div class="card card-blue">
+    <h3 style="margin-top:0">Damodaran: "Every Multiple is a DCF in Disguise"</h3>
+    <p>Multiple ทุกตัวล้วนมีสมมติฐานเรื่อง growth, margin, risk ซ่อนอยู่ การใช้ multiple โดยไม่เข้าใจ story เบื้องหลัง = ผิดพลาด</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Earnings-Based Multiples</h4>
+      <table>
+        <thead><tr><th>Multiple</th><th>Formula</th><th>When to Use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>P/E</strong></td><td>Price / EPS</td><td>Stable earnings, mature co.</td></tr>
+          <tr><td><strong>PEG</strong></td><td>P/E / EPS Growth%</td><td>Growth companies — PEG &lt; 1 = cheap</td></tr>
+          <tr><td><strong>EV/EBIT</strong></td><td>EV / EBIT</td><td>Compare across leverage</td></tr>
+          <tr><td><strong>EV/EBITDA</strong></td><td>EV / EBITDA</td><td>Capital-intensive sectors</td></tr>
+          <tr><td><strong>EV/NOPAT</strong></td><td>EV / NOPAT</td><td>Most accurate earnings mult.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h4>Cash Flow & Asset Multiples</h4>
+      <table>
+        <thead><tr><th>Multiple</th><th>Formula</th><th>When to Use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>P/FCF</strong></td><td>Price / FCF/share</td><td>Capital-light businesses</td></tr>
+          <tr><td><strong>EV/FCF</strong></td><td>EV / FCF</td><td>Debt-heavy comparison</td></tr>
+          <tr><td><strong>P/B</strong></td><td>Price / Book Value</td><td>Banks, REITs, Asset-heavy</td></tr>
+          <tr><td><strong>P/S</strong></td><td>Price / Revenue</td><td>Pre-profit growth companies</td></tr>
+          <tr><td><strong>EV/Sales</strong></td><td>EV / Revenue</td><td>SaaS, high-growth tech</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px">
+    <h4>Sector-Appropriate Multiple Guide</h4>
+    <table>
+      <thead><tr><th>Sector</th><th>Primary Multiple</th><th>Secondary</th><th>Avoid</th></tr></thead>
+      <tbody>
+        <tr><td>Technology / SaaS</td><td>EV/Revenue, P/FCF</td><td>Rule of 40, NRR</td><td>P/E (often N/A)</td></tr>
+        <tr><td>Consumer / Retail</td><td>EV/EBITDA, P/E</td><td>EV/Sales</td><td>P/B</td></tr>
+        <tr><td>Banks / Finance</td><td>P/B, P/E</td><td>ROE vs Cost of Equity</td><td>EV/EBITDA</td></tr>
+        <tr><td>Healthcare / Pharma</td><td>P/E, EV/EBIT</td><td>Pipeline value (rNPV)</td><td>EV/Sales alone</td></tr>
+        <tr><td>Energy / Commodities</td><td>EV/EBITDA, P/CF</td><td>NAV, EV/Reserves</td><td>P/E (cyclical)</td></tr>
+        <tr><td>Utilities / REIT</td><td>P/FFO, EV/EBITDA</td><td>Dividend yield, P/B</td><td>P/E</td></tr>
+        <tr><td>Industrials</td><td>EV/EBIT, P/E</td><td>EV/EBITDA</td><td>P/S</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-yellow" style="margin-top:4px">
+    <h4>PEG Ratio — Peter Lynch (One Up on Wall Street, 1989)</h4>
+    <div class="formula">
+PEG = P/E ÷ EPS Growth Rate (%)
+
+PEG &lt; 1.0  → Potentially undervalued
+PEG = 1.0  → Fairly valued (growth priced in)
+PEG > 1.5  → Expensive relative to growth
+PEG > 2.0  → High risk unless moat justifies premium
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== ECONOMIC MOAT ===== -->
+<div id="moat" class="section">
+  <h2>4. 🏰 Economic Moat Analysis</h2>
+  <p class="sub">Porter (1980) · Buffett Letters · Morningstar Moat Framework · Mauboussin CAP</p>
+
+  <div class="card card-purple">
+    <h3 style="margin-top:0">Porter's 5 Forces — Industry Structure</h3>
+    <span class="ref">Porter, Competitive Strategy (1980) — Harvard Business School</span>
+    <div class="grid2" style="margin-top:12px">
+      <ul class="checklist">
+        <li>Threat of new entrants (Barriers to entry?)</li>
+        <li>Bargaining power of suppliers</li>
+        <li>Bargaining power of buyers/customers</li>
+      </ul>
+      <ul class="checklist">
+        <li>Threat of substitutes</li>
+        <li>Rivalry among existing competitors</li>
+        <li>อุตสาหกรรมที่ Porter's forces อ่อน = ROIC สูงยั่งยืน</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Morningstar's 5 Moat Sources</h3>
+    <span class="ref">Morningstar Economic Moat Rating Framework</span>
+    <table>
+      <thead><tr><th>Moat Source</th><th>Indicators</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Network Effects</strong></td><td>Value rises with users, high switching cost</td><td>Visa, Meta, Airbnb</td></tr>
+        <tr><td><strong>Intangible Assets</strong></td><td>Patents, brands, licenses, regulatory moat</td><td>LLY, AAPL, Coca-Cola</td></tr>
+        <tr><td><strong>Switching Costs</strong></td><td>Pain to switch > benefit of switching</td><td>MSFT, Salesforce, Oracle</td></tr>
+        <tr><td><strong>Cost Advantage</strong></td><td>Lower COGS, scale, superior process</td><td>AMZN, TSMC, Walmart</td></tr>
+        <tr><td><strong>Efficient Scale</strong></td><td>Niche market, unattractive to replicate</td><td>Utilities, rail, pipelines</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-orange">
+    <h3 style="margin-top:0">Competitive Advantage Period (CAP)</h3>
+    <span class="ref">Mauboussin & Rappaport, Expectations Investing (2001/2021)</span>
+    <div class="formula">
+CAP = Number of years ROIC is expected to remain > WACC
+
+Wide Moat:    CAP > 20 years  (NVDA, AAPL, V)
+Narrow Moat:  CAP 10–20 years
+No Moat:      CAP &lt; 10 years  (commodities, airlines)
+
+Key: Mean reversion pulls ROIC → WACC over time due to competition
+Exception: Companies with structural moats resist reversion
+    </div>
+    <ul class="checklist" style="margin-top:10px">
+      <li>Track ROIC trend ย้อนหลัง 10 ปี — ลดลงหรือไม่?</li>
+      <li>Market share trend vs. peers</li>
+      <li>R&D / Brand investment ต่อเนื่องหรือไม่?</li>
+      <li>Gross margin stability (สำคัญมาก — ถ้าลดลง moat กำลังสึก)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== RISK ===== -->
+<div id="risk" class="section">
+  <h2>5. ⚠️ Risk Assessment Framework</h2>
+  <p class="sub">Howard Marks (2011) · Damodaran · Nassim Taleb (2007)</p>
+
+  <div class="card card-red">
+    <h3 style="margin-top:0">Howard Marks: Second-Level Thinking</h3>
+    <span class="ref">Marks, The Most Important Thing (2011) — Oaktree Capital</span>
+    <blockquote style="border-left:3px solid var(--red);padding-left:14px;color:var(--muted);margin:12px 0;font-style:italic;font-size:13px">
+      "First-level thinking: This is a good company, let's buy. Second-level thinking: This is a good company, but everyone thinks so, so the price already reflects that — is the upside still there?"
+    </blockquote>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <h4>First-Level (Avoid)</h4>
+        <ul class="checklist">
+          <li class="note">บริษัทดี → ซื้อ</li>
+          <li class="note">กำไรโต → ซื้อ</li>
+          <li class="note">Analyst แนะนำ Buy → ซื้อ</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Second-Level (Require)</h4>
+        <ul class="checklist">
+          <li>ตลาดรู้เรื่องนี้แล้วหรือยัง?</li>
+          <li>Consensus คิดอย่างไร? เราต่างกันตรงไหน?</li>
+          <li>ถ้าถูก upside เท่าไร? ถ้าผิด downside เท่าไร?</li>
+          <li>ราคาปัจจุบัน bake in อะไรอยู่? (Reverse DCF)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Risk Metrics — Quantitative</h3>
+    <table>
+      <thead><tr><th>Metric</th><th>Formula / Definition</th><th>Threshold</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Beta</strong></td><td>Sensitivity to market move</td><td>β &lt; 1 = defensive, β > 1.5 = aggressive</td></tr>
+        <tr><td><strong>Sharpe Ratio</strong></td><td>(Return - Rf) / Std Dev</td><td>> 1.0 good, > 2.0 excellent</td></tr>
+        <tr><td><strong>Max Drawdown</strong></td><td>Peak to trough % loss</td><td>Know before you own</td></tr>
+        <tr><td><strong>VaR (95%)</strong></td><td>Max loss in 95% of scenarios</td><td>Size position accordingly</td></tr>
+        <tr><td><strong>Altman Z-Score</strong></td><td>Bankruptcy probability</td><td>&lt; 1.8 = distressed zone</td></tr>
+        <tr><td><strong>Debt/Equity</strong></td><td>Financial leverage</td><td>&lt; 1.0 preferred; sector-adjusted</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-yellow">
+    <h3 style="margin-top:0">Taleb's Fat Tail Risk (Black Swan)</h3>
+    <span class="ref">Taleb, The Black Swan (2007) · Antifragile (2012)</span>
+    <ul class="checklist">
+      <li>หลีกเลี่ยง single point of failure — diversify across uncorrelated assets</li>
+      <li>Optionality: ถือ position ที่ upside ไม่จำกัด downside จำกัด</li>
+      <li>Avoid overleverage — leverage ทำให้ Black Swan kills you</li>
+      <li>Stress test: ถ้า worst case เกิดขึ้น portfolio รอดไหม?</li>
+      <li>Barbell Strategy: 80-90% safe assets + 10-20% high-asymmetry bets</li>
+    </ul>
+  </div>
+
+  <div class="card card-blue">
+    <h3 style="margin-top:0">Market Cycle Framework</h3>
+    <span class="ref">Marks, Mastering the Market Cycle (2018)</span>
+    <table>
+      <thead><tr><th>Phase</th><th>Signal</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Early Cycle</td><td>VIX high, P/E low, sentiment bearish</td><td class="up">Aggressive buying</td></tr>
+        <tr><td>Mid Cycle</td><td>VIX normal, earnings growing</td><td class="mid">Hold, selective adding</td></tr>
+        <tr><td>Late Cycle</td><td>VIX low, P/E stretched, euphoria</td><td class="mid">Reduce risk, raise cash</td></tr>
+        <tr><td>Downturn</td><td>VIX spike, credit spread wide</td><td class="down">Defensive, prepare list</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px"><strong style="color:var(--text)">Current (May 2026):</strong> VIX 19.09 = Mid Cycle. Not euphoric but not cheap. Be selective.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== MASTER CHECKLIST ===== -->
+<div id="checklist" class="section">
+  <h2>✅ Master Valuation Checklist</h2>
+  <p class="sub">ใช้ก่อน deploy capital ทุกครั้ง — ต้องผ่าน MUST ทุกข้อ, SHOULD ≥70%</p>
+
+  <div class="card card-red" style="margin-bottom:20px">
+    <h3 style="margin-top:0">🔴 MUST PASS — Deal Breakers</h3>
+    <span class="ref">Graham (1934) · Buffett Letters · Damodaran</span>
+    <ul class="checklist">
+      <li><span class="badge b-must">MUST</span> เข้าใจ business model ได้ใน 2 ประโยค (Buffett: "Never invest in a business you can't understand")</li>
+      <li><span class="badge b-must">MUST</span> ROIC > WACC อย่างน้อย 3 ปีติดต่อกัน (Mauboussin)</li>
+      <li><span class="badge b-must">MUST</span> Debt/EBITDA < 3x หรือมี asset coverage ชัดเจน (Graham)</li>
+      <li><span class="badge b-must">MUST</span> Free Cash Flow เป็นบวก (ยกเว้น high-growth ที่ burn justified)</li>
+      <li><span class="badge b-must">MUST</span> ไม่มีประวัติ accounting irregularities หรือ fraud</li>
+      <li><span class="badge b-must">MUST</span> Management ถือ หุ้นบริษัทตัวเอง (Skin in the game — Taleb)</li>
+      <li><span class="badge b-must">MUST</span> ราคามี Margin of Safety ≥ 25% จาก intrinsic value (Graham)</li>
+    </ul>
+  </div>
+
+  <div class="card card-yellow" style="margin-bottom:20px">
+    <h3 style="margin-top:0">🟡 SHOULD HAVE — Quality Enhancers</h3>
+    <ul class="checklist">
+      <li><span class="badge b-should">SHOULD</span> มี identifiable moat ≥ 1 จาก 5 Morningstar sources</li>
+      <li><span class="badge b-should">SHOULD</span> Gross margin stable หรือ improving ย้อนหลัง 5 ปี</li>
+      <li><span class="badge b-should">SHOULD</span> Revenue growth ≥ GDP + inflation (real growth)</li>
+      <li><span class="badge b-should">SHOULD</span> FCF conversion > 80% (Net Income → Cash)</li>
+      <li><span class="badge b-should">SHOULD</span> ROE > 15% (Buffett threshold)</li>
+      <li><span class="badge b-should">SHOULD</span> Interest coverage > 5x (Graham)</li>
+      <li><span class="badge b-should">SHOULD</span> Earnings quality: Accruals ratio < 5% (no earnings manipulation)</li>
+      <li><span class="badge b-should">SHOULD</span> Insider buying (net) ในช่วง 12 เดือน</li>
+      <li><span class="badge b-should">SHOULD</span> Porter's 5 Forces — อุตสาหกรรมมีโครงสร้างที่ดี</li>
+    </ul>
+  </div>
+
+  <div class="card card-blue" style="margin-bottom:20px">
+    <h3 style="margin-top:0">🔵 VALUATION CHECK — Price vs. Value</h3>
+    <ul class="checklist">
+      <li><span class="badge b-nice">VALUE</span> DCF Base Case: ราคาต่ำกว่า intrinsic ≥ 25% (Damodaran)</li>
+      <li><span class="badge b-nice">VALUE</span> EPV > Market Price (Greenwald: ไม่ต้อง assume growth ก็ยัง cheap)</li>
+      <li><span class="badge b-nice">VALUE</span> EV/EBIT หรือ EV/EBITDA < sector median</li>
+      <li><span class="badge b-nice">VALUE</span> PEG < 1.5 สำหรับ growth stocks (Lynch)</li>
+      <li><span class="badge b-nice">VALUE</span> FCF Yield > 10Y Treasury yield (ปัจจุบัน > 4.24%)</li>
+      <li><span class="badge b-nice">VALUE</span> Reverse DCF: ตลาดสมมติ growth เป็นไป impossible หรือไม่?</li>
+      <li><span class="badge b-nice">VALUE</span> Earnings Yield (EBIT/EV) > 8% (Greenblatt)</li>
+    </ul>
+  </div>
+
+  <div class="card card-green" style="margin-bottom:20px">
+    <h3 style="margin-top:0">🟢 RISK & POSITION SIZING</h3>
+    <span class="ref">Marks · Kelly Criterion · Taleb</span>
+    <ul class="checklist">
+      <li><span class="badge b-quant">RISK</span> รู้ Max Downside scenario — ถ้าผิด 100% จะเสียเท่าไร?</li>
+      <li><span class="badge b-quant">RISK</span> Beta ของ position เหมาะกับ portfolio risk budget</li>
+      <li><span class="badge b-quant">RISK</span> Position size ≤ Kelly Criterion (f* = edge/odds)</li>
+      <li><span class="badge b-quant">RISK</span> Correlation กับ positions อื่นใน portfolio ไม่สูง (< 0.7)</li>
+      <li><span class="badge b-quant">RISK</span> Stress test: ถ้า market -30% position นี้ทำอะไร?</li>
+      <li><span class="badge b-quant">RISK</span> Exit plan: กำหนด sell trigger ล่วงหน้า (ราคา/fundamental)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">📐 Position Sizing Guidelines</h3>
+    <table>
+      <thead><tr><th>Asset Type</th><th>Max Single Position</th><th>Group Cap</th></tr></thead>
+      <tbody>
+        <tr><td>High conviction (score ≥ 8)</td><td class="up">8–10%</td><td>—</td></tr>
+        <tr><td>Core position (score 6–7)</td><td class="mid">4–7%</td><td>—</td></tr>
+        <tr><td>Speculative (beta > 3)</td><td class="down">2–4%</td><td class="down">≤ 15% total</td></tr>
+        <tr><td>ETF (diversified)</td><td class="up">10–20%</td><td>—</td></tr>
+        <tr><td>Gold / Hedge</td><td class="mid">5–10%</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== REFERENCES ===== -->
+<div id="ref" class="section">
+  <h2>📚 Academic References (Academic-Grade)</h2>
+  <p class="sub">Primary sources ที่ framework นี้อ้างอิง — ควรอ่านเรียงตามลำดับความสำคัญ</p>
+
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">📖 ต้องอ่าน (Core Texts)</h3>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">1. The Intelligent Investor</div>
+        <div style="color:var(--muted);font-size:12px">Benjamin Graham (1949/1973) — HarperCollins</div>
+        <div style="margin-top:6px;font-size:12px">Margin of safety, Mr. Market, defensive vs. enterprising investor. <strong style="color:var(--green)">Chapter 20 = ต้องอ่าน</strong></div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">2. Investment Valuation (3rd Ed.)</div>
+        <div style="color:var(--muted);font-size:12px">Aswath Damodaran (2012) — Wiley Finance | NYU Stern</div>
+        <div style="margin-top:6px;font-size:12px">DCF, multiples, WACC, ERP. Damodaran's data: <em>pages.stern.nyu.edu/~adamodar</em></div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">3. The Most Important Thing</div>
+        <div style="color:var(--muted);font-size:12px">Howard Marks (2011) — Columbia University Press</div>
+        <div style="margin-top:6px;font-size:12px">Second-level thinking, risk, market cycles, price vs. value</div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">4. Expectations Investing</div>
+        <div style="color:var(--muted);font-size:12px">Mauboussin & Rappaport (2001/2021) — Columbia Business School Press</div>
+        <div style="margin-top:6px;font-size:12px">Reverse DCF, price implied expectations, CAP framework</div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">5. The Little Book That Still Beats the Market</div>
+        <div style="color:var(--muted);font-size:12px">Joel Greenblatt (2006/2010) — Wiley</div>
+        <div style="margin-top:6px;font-size:12px">Magic Formula: Earnings Yield + ROIC — simple yet academically validated</div>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-top:0">📄 Academic Papers (Peer-Reviewed)</h3>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">A Five-Factor Asset Pricing Model</div>
+        <div style="color:var(--muted);font-size:12px">Fama & French — Journal of Financial Economics (2015)</div>
+        <div style="margin-top:6px;font-size:12px">RMW (profitability) + CMA (investment) extend the 3-factor model. Validates quality investing.</div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">ROIC and the Investment Process</div>
+        <div style="color:var(--muted);font-size:12px">Mauboussin & Callahan — Morgan Stanley Research (2014)</div>
+        <div style="margin-top:6px;font-size:12px">ROIC decomposition, WACC relationship, CAP measurement. Free PDF at morganstanley.com</div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">Financial Ratios and Bankruptcy Prediction</div>
+        <div style="color:var(--muted);font-size:12px">Altman — Journal of Finance (1968)</div>
+        <div style="margin-top:6px;font-size:12px">Altman Z-Score: still one of the best bankruptcy predictors 50+ years later</div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">Security Analysis (6th Ed.)</div>
+        <div style="color:var(--muted);font-size:12px">Graham & Dodd (1934) — McGraw-Hill</div>
+        <div style="margin-top:6px;font-size:12px">The original bible of fundamental analysis. Asset-based + earnings-based valuation</div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-weight:700">Berkshire Hathaway Annual Letters</div>
+        <div style="color:var(--muted);font-size:12px">Warren Buffett (1977–2024) — Free at berkshirehathaway.com</div>
+        <div style="margin-top:6px;font-size:12px">Real-world application of Graham principles. 1977, 1986, 2000, 2007, 2014 letters = essential reading</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-blue" style="margin-top:8px">
+    <h3 style="margin-top:0">🎓 Advanced / Supplementary</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+      <span class="author-tag"><span class="dot"></span>Greenwald — Value Investing: Graham to Buffett (2001)</span>
+      <span class="author-tag"><span class="dot" style="background:var(--green)"></span>McKinsey — Valuation: Measuring & Managing Value (7th Ed., 2020)</span>
+      <span class="author-tag"><span class="dot" style="background:var(--orange)"></span>Porter — Competitive Strategy (1980)</span>
+      <span class="author-tag"><span class="dot" style="background:var(--red)"></span>Taleb — The Black Swan (2007) + Antifragile (2012)</span>
+      <span class="author-tag"><span class="dot" style="background:var(--purple)"></span>Lynch — One Up on Wall Street (1989)</span>
+      <span class="author-tag"><span class="dot" style="background:var(--yellow)"></span>Munger — Poor Charlie's Almanack (2005)</span>
+      <span class="author-tag"><span class="dot" style="background:var(--blue)"></span>Piotroski — F-Score Paper, Journal of Accounting Research (2000)</span>
+      <span class="author-tag"><span class="dot" style="background:var(--green)"></span>Damodaran — Narrative and Numbers (2017)</span>
+    </div>
+  </div>
+
+  <div class="card card-yellow" style="margin-top:12px">
+    <h4>Free Data Sources ที่ Damodaran แนะนำ</h4>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+      <span class="author-tag"><span class="dot"></span>pages.stern.nyu.edu/~adamodar — Damodaran data (ERP, betas, multiples by sector)</span>
+      <span class="author-tag"><span class="dot"></span>berkshirehathaway.com — Buffett Annual Letters</span>
+      <span class="author-tag"><span class="dot"></span>morganstanley.com/im — Mauboussin research papers</span>
+      <span class="author-tag"><span class="dot"></span>oaktreecapital.com/insights — Howard Marks memos</span>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:24px;color:var(--muted);font-size:11px;border-top:1px solid var(--border);margin-top:20px">
+  INVESTX Valuation Framework · May 2026 · Built for NPC Portfolio ·
+  References: Damodaran (2012) · Graham (1949) · Mauboussin (2014) · Greenblatt (2006) · Fama-French (2015) · Marks (2011) · Porter (1980) ·
+  <strong style="color:var(--red)">Educational purposes only — Not financial advice</strong>
+</div>
+
+</div>
+</body>
+</html>
