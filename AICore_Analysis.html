@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Core & Infrastructure — Stock Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --border: #1f2937;
+    --text: #e5e7eb;
+    --muted: #6b7280;
+    --tsm: #1E90FF;
+    --avgo: #FF6B35;
+    --alab: #A855F7;
+    --asml: #10B981;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); padding: 24px 32px; border-bottom: 1px solid var(--border); }
+  .header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+  .header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+  .badge { display: inline-block; background: #1e3a5f; color: #60a5fa; font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; margin-left: 8px; font-weight: 600; }
+
+  /* Stock Selector */
+  .stock-selector { display: flex; gap: 8px; padding: 20px 32px 0; flex-wrap: wrap; }
+  .stock-btn {
+    padding: 10px 28px; border-radius: 8px; border: 2px solid var(--border);
+    background: var(--card); color: var(--muted); cursor: pointer;
+    font-size: 0.95rem; font-weight: 700; transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .stock-btn:hover { border-color: #374151; color: var(--text); }
+  .stock-btn.active-tsm { border-color: var(--tsm); color: var(--tsm); background: rgba(30,144,255,0.1); }
+  .stock-btn.active-avgo { border-color: var(--avgo); color: var(--avgo); background: rgba(255,107,53,0.1); }
+  .stock-btn.active-alab { border-color: var(--alab); color: var(--alab); background: rgba(168,85,247,0.1); }
+  .stock-btn.active-asml { border-color: var(--asml); color: var(--asml); background: rgba(16,185,129,0.1); }
+
+  /* Stock Panel */
+  .stock-panel { display: none; padding: 24px 32px; }
+  .stock-panel.active { display: block; }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; margin-bottom: 20px; }
+  .hero-left h2 { font-size: 1.8rem; font-weight: 800; }
+  .hero-left .subname { color: var(--muted); font-size: 0.9rem; margin-top: 2px; }
+  .hero-left .price { font-size: 2.2rem; font-weight: 700; margin-top: 8px; }
+  .hero-left .price-change { font-size: 0.9rem; margin-top: 2px; }
+  .verdict-box { text-align: center; padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); }
+  .verdict-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .verdict-text { font-size: 1.1rem; font-weight: 800; margin-top: 4px; }
+  .verdict-score { font-size: 2rem; font-weight: 800; margin-top: 4px; }
+  .verdict-target { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+  /* Sub-tabs */
+  .sub-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; }
+  .sub-tab {
+    padding: 10px 18px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+    color: var(--muted); border-bottom: 3px solid transparent; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .sub-tab:hover { color: var(--text); }
+  .sub-tab.active { color: var(--text); border-bottom-color: currentAccent; }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .card-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .card-value { font-size: 1.4rem; font-weight: 700; margin-top: 4px; }
+  .card-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .up { color: var(--green); }
+  .dn { color: var(--red); }
+
+  /* Chart containers */
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .chart-card h3 { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+  .chart-card canvas { max-height: 240px; }
+  .chart-card.wide { grid-column: 1 / -1; }
+
+  /* Tab content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Score ring */
+  .score-row { display: grid; grid-template-columns: 220px 1fr; gap: 20px; margin-bottom: 20px; align-items: start; }
+  .score-ring-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; }
+  .score-ring-card h3 { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+  .score-ring-canvas { width: 160px !important; height: 160px !important; margin: 0 auto; }
+  .score-number { font-size: 2rem; font-weight: 800; margin-top: 8px; }
+  .score-label { font-size: 0.75rem; color: var(--muted); }
+
+  /* Summary bullets */
+  .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .summary-card h3 { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+  .summary-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .summary-card ul li { font-size: 0.88rem; display: flex; align-items: flex-start; gap: 8px; }
+  .summary-card ul li::before { content: '▸'; flex-shrink: 0; margin-top: 1px; }
+
+  /* Checklist */
+  .checklist { display: flex; flex-direction: column; gap: 6px; }
+  .check-item { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; }
+  .check-icon { font-size: 1rem; flex-shrink: 0; }
+  .check-text { flex: 1; }
+  .check-score { font-size: 0.8rem; font-weight: 700; margin-left: auto; }
+  .section-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 12px 0 6px; font-weight: 700; }
+
+  /* DCF table */
+  .dcf-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .dcf-table th { background: #1f2937; padding: 8px 12px; text-align: left; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
+  .dcf-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .dcf-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Catalyst list */
+  .catalyst-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .catalyst-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .catalyst-item h4 { font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; }
+  .catalyst-item p { font-size: 0.78rem; color: var(--muted); }
+
+  /* Risk bars */
+  .risk-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .risk-bar-label { font-size: 0.8rem; width: 160px; flex-shrink: 0; }
+  .risk-bar-track { flex: 1; background: #1f2937; border-radius: 4px; height: 8px; }
+  .risk-bar-fill { height: 8px; border-radius: 4px; transition: width 0.4s; }
+  .risk-bar-val { font-size: 0.78rem; font-weight: 700; width: 32px; text-align: right; }
+
+  @media (max-width: 768px) {
+    .stock-selector { padding: 16px; }
+    .stock-panel { padding: 16px; }
+    .charts-row { grid-template-columns: 1fr; }
+    .score-row { grid-template-columns: 1fr; }
+    .hero { grid-template-columns: 1fr; }
+    .catalyst-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AI Core &amp; Infrastructure <span class="badge">INVESTX · May 2026</span></h1>
+  <p>Deep-dive analysis — TSM · AVGO · ALAB · ASML &nbsp;|&nbsp; INVESTX Framework · Damodaran DCF · Mauboussin ROIC</p>
+</div>
+
+<!-- ── STOCK SELECTOR ── -->
+<div class="stock-selector">
+  <button class="stock-btn active-tsm" id="btn-tsm" onclick="showStock('tsm')">TSM</button>
+  <button class="stock-btn" id="btn-avgo" onclick="showStock('avgo')">AVGO</button>
+  <button class="stock-btn" id="btn-alab" onclick="showStock('alab')">ALAB</button>
+  <button class="stock-btn" id="btn-asml" onclick="showStock('asml')">ASML</button>
+</div>
+
+<!-- ════════════════════════ TSM ════════════════════════ -->
+<div class="stock-panel active" id="panel-tsm">
+  <div class="hero">
+    <div class="hero-left">
+      <h2 style="color:var(--tsm)">TSM &nbsp;<span style="font-size:1rem;font-weight:400;color:var(--muted)">Taiwan Semiconductor Manufacturing Co.</span></h2>
+      <div class="subname">NYSE: TSM · ADR (1 share = 5 TWD shares) · Sector: Semiconductors</div>
+      <div class="price" style="color:var(--tsm)">$404.54</div>
+      <div class="price-change up">▲ +0.8% (19 May 2026) &nbsp;·&nbsp; 52-wk: $130 – $226 (TWD basis) &nbsp;·&nbsp; Market Cap ~$2.1T</div>
+    </div>
+    <div class="verdict-box">
+      <div class="verdict-label">INVESTX Verdict</div>
+      <div class="verdict-text" style="color:var(--green)">STRONG BUY</div>
+      <div class="verdict-score" style="color:var(--tsm)">8.3<span style="font-size:1rem;color:var(--muted)">/10</span></div>
+      <div class="verdict-target">Target: $450 &nbsp;·&nbsp; Upside: +11%</div>
+    </div>
+  </div>
+
+  <!-- Sub-tabs TSM -->
+  <div class="sub-tabs" id="subtabs-tsm">
+    <div class="sub-tab active" style="border-bottom-color:var(--tsm);color:var(--tsm)" onclick="showSubTab('tsm',0,this)">Overview</div>
+    <div class="sub-tab" onclick="showSubTab('tsm',1,this)">Financials</div>
+    <div class="sub-tab" onclick="showSubTab('tsm',2,this)">Valuation</div>
+    <div class="sub-tab" onclick="showSubTab('tsm',3,this)">Moat &amp; Risk</div>
+    <div class="sub-tab" onclick="showSubTab('tsm',4,this)">Framework</div>
+  </div>
+
+  <!-- Tab 0: Overview -->
+  <div class="tab-content active" id="tsm-tab0">
+    <div class="score-row">
+      <div class="score-ring-card">
+        <h3>Composite Score</h3>
+        <canvas class="score-ring-canvas" id="tsm-ring"></canvas>
+        <div class="score-number" style="color:var(--tsm)">8.3</div>
+        <div class="score-label">STRONG BUY</div>
+      </div>
+      <div class="summary-card">
+        <h3>Investment Thesis</h3>
+        <ul>
+          <li style="color:var(--green)">World's only high-volume 3nm / 2nm foundry — irreplaceable monopoly in advanced chips</li>
+          <li style="color:var(--green)">Q1 2026: Revenue $35.9B (+35.1% YoY), Gross Margin 66.2% — record levels</li>
+          <li style="color:var(--green)">2026 revenue guidance >30% growth; AI accelerator demand (NVIDIA, AMD, Apple) surging</li>
+          <li style="color:var(--green)">N2 (2nm) entering mass production 2025; CoWoS advanced packaging bottleneck easing</li>
+          <li style="color:var(--yellow)">Geopolitical risk: Taiwan strait tension — primary bear case (priced in partially)</li>
+          <li style="color:var(--yellow)">CAPEX $38-42B in 2026; Arizona fab on track but cost drag near-term</li>
+          <li style="color:var(--green)">18 analysts all Strong Buy; consensus target $430 — INVESTX target $450</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue Q1 2026</div><div class="card-value up">$35.9B</div><div class="card-sub">+35.1% YoY</div></div>
+      <div class="card"><div class="card-label">Gross Margin</div><div class="card-value up">66.2%</div><div class="card-sub">Record — vs 53.6% Q1'25</div></div>
+      <div class="card"><div class="card-label">ROIC (TTM)</div><div class="card-value up">31-52%</div><div class="card-sub">vs WACC ~8%</div></div>
+      <div class="card"><div class="card-label">P/E (Fwd)</div><div class="card-value">32-38x</div><div class="card-sub">PEG ~1.1x</div></div>
+      <div class="card"><div class="card-label">AI Revenue %</div><div class="card-value up">~60%</div><div class="card-sub">HPC + AI accelerators</div></div>
+      <div class="card"><div class="card-label">2026 Guide</div><div class="card-value up">>30%</div><div class="card-sub">Revenue growth</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Score Breakdown</h3>
+        <canvas id="tsm-radar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Key Catalysts</h3>
+        <div class="catalyst-grid" style="grid-template-columns:1fr">
+          <div class="catalyst-item"><h4 style="color:var(--green)">🚀 N2 Mass Production</h4><p>2nm ramp accelerating — Apple A20, NVIDIA Blackwell Ultra on N2 confirmed</p></div>
+          <div class="catalyst-item"><h4 style="color:var(--green)">💰 AI Capex Supercycle</h4><p>Hyperscaler CAPEX >$300B in 2026; TSM sole supplier for most AI chips</p></div>
+          <div class="catalyst-item"><h4 style="color:var(--yellow)">⚠️ Arizona Fab Timeline</h4><p>Fab 21 Ph1 (N4) producing; Ph2 (N2) targeted 2028 — cost higher than Taiwan</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 1: Financials -->
+  <div class="tab-content" id="tsm-tab1">
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue FY2025E</div><div class="card-value">~$100B</div><div class="card-sub">+32% YoY</div></div>
+      <div class="card"><div class="card-label">Revenue FY2026E</div><div class="card-value">~$130B</div><div class="card-sub">+30% YoY</div></div>
+      <div class="card"><div class="card-label">Op. Margin Q1'26</div><div class="card-value up">57.6%</div><div class="card-sub">vs 42.0% Q1'25</div></div>
+      <div class="card"><div class="card-label">Net Income Q1'26</div><div class="card-value up">$361.8B TWD</div><div class="card-sub">+60% YoY</div></div>
+      <div class="card"><div class="card-label">CAPEX 2026E</div><div class="card-value">$38-42B</div><div class="card-sub">Mostly N2/N3 capacity</div></div>
+      <div class="card"><div class="card-label">FCF Margin</div><div class="card-value">~25-30%</div><div class="card-sub">After heavy CAPEX</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Revenue by Technology Node (Q1 2026)</h3>
+        <canvas id="tsm-node-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Gross Margin Trend</h3>
+        <canvas id="tsm-margin-line"></canvas>
+      </div>
+      <div class="chart-card wide">
+        <h3>Annual Revenue Trend ($B)</h3>
+        <canvas id="tsm-rev-bar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Valuation -->
+  <div class="tab-content" id="tsm-tab2">
+    <div class="cards">
+      <div class="card"><div class="card-label">P/E (Trailing)</div><div class="card-value">38x</div><div class="card-sub">vs Semi avg 35x</div></div>
+      <div class="card"><div class="card-label">P/E (Forward)</div><div class="card-value">32x</div><div class="card-sub">FY2026E EPS ~$12.7</div></div>
+      <div class="card"><div class="card-label">EV/EBITDA</div><div class="card-value">24x</div><div class="card-sub">FY2026E</div></div>
+      <div class="card"><div class="card-label">PEG Ratio</div><div class="card-value up">1.1x</div><div class="card-sub">Reasonable for 30% growth</div></div>
+      <div class="card"><div class="card-label">DCF Base Target</div><div class="card-value up">$450</div><div class="card-sub">+11% upside</div></div>
+      <div class="card"><div class="card-label">P/B</div><div class="card-value">8.5x</div><div class="card-sub">High ROIC justifies</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>DCF Scenarios (12-Month Target)</h3>
+        <canvas id="tsm-dcf-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Valuation vs Peers</h3>
+        <canvas id="tsm-val-bar"></canvas>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>DCF Assumptions Summary</h3>
+      <table class="dcf-table">
+        <tr><th>Scenario</th><th>Revenue CAGR</th><th>Terminal Growth</th><th>WACC</th><th>Target Price</th><th>Upside</th></tr>
+        <tr><td>Bear</td><td>15%</td><td>2.5%</td><td>9.5%</td><td style="color:var(--red)">$280</td><td class="dn">-31%</td></tr>
+        <tr><td>Base</td><td>25%</td><td>3.0%</td><td>8.5%</td><td style="color:var(--yellow)">$450</td><td class="up">+11%</td></tr>
+        <tr><td>Bull</td><td>35%</td><td>3.5%</td><td>8.0%</td><td style="color:var(--green)">$620</td><td class="up">+53%</td></tr>
+        <tr><td>Super Bull</td><td>45%</td><td>4.0%</td><td>7.5%</td><td style="color:var(--tsm)">$820</td><td class="up">+103%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Moat & Risk -->
+  <div class="tab-content" id="tsm-tab3">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Porter's 5 Forces</h3>
+        <canvas id="tsm-porter"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Moat Assessment</h3>
+        <div class="summary-card" style="border:none;padding:0">
+          <ul>
+            <li style="color:var(--green)">Switching costs: EXTREME — chip designs take 2+ years to migrate</li>
+            <li style="color:var(--green)">Scale advantage: Only company that can do 3nm/2nm at volume</li>
+            <li style="color:var(--green)">Network effects: Entire EDA/IP ecosystem optimized for TSMC nodes</li>
+            <li style="color:var(--green)">Cost advantage: 40% lower unit cost vs Samsung at same node</li>
+            <li style="color:var(--yellow)">Intangibles: Patents + know-how; no licensing — execution moat</li>
+            <li style="color:var(--red)">Geographic risk: 100% of leading-edge in Taiwan (diversifying)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>Risk Matrix</h3>
+      <div style="margin-top:12px">
+        <div class="risk-bar-row"><span class="risk-bar-label">Geopolitical (Taiwan)</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:85%;background:var(--red)"></div></div><span class="risk-bar-val dn">8.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Competition (Samsung/Intel)</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:40%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">4.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Customer Concentration</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:55%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">5.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">CAPEX Overrun Risk</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:45%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">4.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Valuation Risk</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:35%;background:var(--green)"></div></div><span class="risk-bar-val up">3.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Technology Disruption</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:25%;background:var(--green)"></div></div><span class="risk-bar-val up">2.5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Framework -->
+  <div class="tab-content" id="tsm-tab4">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Framework Score Breakdown</h3>
+        <canvas id="tsm-framework-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Multi-Dimensional Radar</h3>
+        <canvas id="tsm-fw-radar"></canvas>
+      </div>
+    </div>
+    <div class="checklist">
+      <div class="section-header">MUST PASS (6/7)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Positive revenue growth trajectory</span><span class="check-score up">+35%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Gross margin ≥ 40%</span><span class="check-score up">66.2%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">ROIC > WACC (value creation)</span><span class="check-score up">31-52% vs 8%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Durable competitive moat</span><span class="check-score up">WIDE</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Strong management &amp; execution</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Market leadership position</span><span class="check-score up">~60% share</span></div>
+      <div class="check-item"><span class="check-icon">⚠️</span><span class="check-text">Reasonable valuation (PEG &lt; 2x)</span><span class="check-score" style="color:var(--yellow)">PEG 1.1x</span></div>
+      <div class="section-header">QUALITY CHECKS (7/9)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Operating leverage visible</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">FCF conversion &gt; 70%</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Balance sheet — net cash or manageable debt</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Analyst consensus Buy / Strong Buy</span><span class="check-score up">18/18 SB</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Earnings beats consistent</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Industry tailwind (AI cycle)</span><span class="check-score up">STRONG</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Institutional ownership growing</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Low insider selling</span><span class="check-score dn">Some selling</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Single-country risk contained</span><span class="check-score dn">Taiwan 100%</span></div>
+      <div class="section-header">RISK CHECKS (4/6)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No near-term debt maturity cliff</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Diversified customer base (≥5 major)</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Positive FCF even in bear CAPEX scenario</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No accounting / governance red flags</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Geographic diversification ≥ 3 countries</span><span class="check-score dn">FAIL</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Regulatory risk low</span><span class="check-score dn">US export rules</span></div>
+    </div>
+  </div>
+</div><!-- end TSM panel -->
+
+<!-- ════════════════════════ AVGO ════════════════════════ -->
+<div class="stock-panel" id="panel-avgo">
+  <div class="hero">
+    <div class="hero-left">
+      <h2 style="color:var(--avgo)">AVGO &nbsp;<span style="font-size:1rem;font-weight:400;color:var(--muted)">Broadcom Inc.</span></h2>
+      <div class="subname">NASDAQ: AVGO · Sector: Semiconductors + Enterprise Software</div>
+      <div class="price" style="color:var(--avgo)">$239.99</div>
+      <div class="price-change up">▲ +1.2% (19 May 2026) &nbsp;·&nbsp; 52-wk: $118 – $251 &nbsp;·&nbsp; Market Cap ~$1.99T</div>
+    </div>
+    <div class="verdict-box">
+      <div class="verdict-label">INVESTX Verdict</div>
+      <div class="verdict-text" style="color:var(--green)">BUY</div>
+      <div class="verdict-score" style="color:var(--avgo)">7.5<span style="font-size:1rem;color:var(--muted)">/10</span></div>
+      <div class="verdict-target">Target: $260 &nbsp;·&nbsp; Upside: +8%</div>
+    </div>
+  </div>
+
+  <div class="sub-tabs" id="subtabs-avgo">
+    <div class="sub-tab active" style="border-bottom-color:var(--avgo);color:var(--avgo)" onclick="showSubTab('avgo',0,this)">Overview</div>
+    <div class="sub-tab" onclick="showSubTab('avgo',1,this)">Financials</div>
+    <div class="sub-tab" onclick="showSubTab('avgo',2,this)">Valuation</div>
+    <div class="sub-tab" onclick="showSubTab('avgo',3,this)">Moat &amp; Risk</div>
+    <div class="sub-tab" onclick="showSubTab('avgo',4,this)">Framework</div>
+  </div>
+
+  <!-- Tab 0: Overview -->
+  <div class="tab-content active" id="avgo-tab0">
+    <div class="score-row">
+      <div class="score-ring-card">
+        <h3>Composite Score</h3>
+        <canvas class="score-ring-canvas" id="avgo-ring"></canvas>
+        <div class="score-number" style="color:var(--avgo)">7.5</div>
+        <div class="score-label">BUY</div>
+      </div>
+      <div class="summary-card">
+        <h3>Investment Thesis</h3>
+        <ul>
+          <li style="color:var(--green)">AI revenue $8.4B in Q1 2026 — +106% YoY; custom ASIC (XPU) story accelerating</li>
+          <li style="color:var(--green)">VMware integration: $4B+ synergies ahead of schedule; infrastructure software 43% of revenue</li>
+          <li style="color:var(--green)">3 hyperscaler XPU wins (Google, Meta, ByteDance) — TAM $60-90B by 2027</li>
+          <li style="color:var(--green)">Gross margin 79.1% Q1'26 — best-in-class for diversified semiconductor company</li>
+          <li style="color:var(--yellow)">Valuation premium: Fwd P/E ~30x; VMware debt ($38B) still being digested</li>
+          <li style="color:var(--yellow)">Customer concentration: 3 hyperscalers = ~50%+ of AI revenue</li>
+          <li style="color:var(--green)">28 analysts Buy/Strong Buy; consensus target $451-477</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue Q1 2026</div><div class="card-value up">$19.3B</div><div class="card-sub">+29.5% YoY</div></div>
+      <div class="card"><div class="card-label">AI Revenue Q1'26</div><div class="card-value up">$8.4B</div><div class="card-sub">+106% YoY</div></div>
+      <div class="card"><div class="card-label">Gross Margin</div><div class="card-value up">79.1%</div><div class="card-sub">Record high</div></div>
+      <div class="card"><div class="card-label">Software Revenue %</div><div class="card-value">43%</div><div class="card-sub">VMware integrated</div></div>
+      <div class="card"><div class="card-label">FY2026E Revenue</div><div class="card-value up">~$107B</div><div class="card-sub">Guidance confirmed</div></div>
+      <div class="card"><div class="card-label">Dividend Yield</div><div class="card-value">1.4%</div><div class="card-sub">$2.15/qtr/share</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Score Breakdown</h3>
+        <canvas id="avgo-radar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Revenue Mix Shift</h3>
+        <canvas id="avgo-mix-donut"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 1: Financials -->
+  <div class="tab-content" id="avgo-tab1">
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue FY2025</div><div class="card-value">$51.6B</div><div class="card-sub">+44% (VMware full year)</div></div>
+      <div class="card"><div class="card-label">Revenue FY2026E</div><div class="card-value up">$107B</div><div class="card-sub">+107% (AI surge)</div></div>
+      <div class="card"><div class="card-label">EBITDA Margin</div><div class="card-value up">~65%</div><div class="card-sub">FY2026E</div></div>
+      <div class="card"><div class="card-label">EPS FY2026E</div><div class="card-value up">~$7.60</div><div class="card-sub">+30% YoY</div></div>
+      <div class="card"><div class="card-label">Net Debt</div><div class="card-value dn">~$63B</div><div class="card-sub">Post-VMware; deleveraging</div></div>
+      <div class="card"><div class="card-label">FCF FY2026E</div><div class="card-value up">~$45B</div><div class="card-sub">Strong conversion</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Annual Revenue ($B)</h3>
+        <canvas id="avgo-rev-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>AI vs Semiconductor vs Software</h3>
+        <canvas id="avgo-seg-bar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Valuation -->
+  <div class="tab-content" id="avgo-tab2">
+    <div class="cards">
+      <div class="card"><div class="card-label">P/E (Fwd)</div><div class="card-value">30x</div><div class="card-sub">FY2026E EPS ~$8</div></div>
+      <div class="card"><div class="card-label">EV/EBITDA</div><div class="card-value">22x</div><div class="card-sub">FY2026E</div></div>
+      <div class="card"><div class="card-label">EV/Sales</div><div class="card-value">19x</div><div class="card-sub">Premium for margins</div></div>
+      <div class="card"><div class="card-label">PEG</div><div class="card-value up">1.0x</div><div class="card-sub">30% growth justified</div></div>
+      <div class="card"><div class="card-label">DCF Base</div><div class="card-value up">$260</div><div class="card-sub">+8% upside</div></div>
+      <div class="card"><div class="card-label">Consensus Avg</div><div class="card-value up">$460</div><div class="card-sub">28 analysts Buy</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>DCF Scenarios</h3>
+        <canvas id="avgo-dcf-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>P/E vs Revenue Growth</h3>
+        <canvas id="avgo-peg-bar"></canvas>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>DCF Assumptions</h3>
+      <table class="dcf-table">
+        <tr><th>Scenario</th><th>Revenue CAGR</th><th>EBITDA Margin</th><th>WACC</th><th>Target Price</th><th>Upside</th></tr>
+        <tr><td>Bear</td><td>15%</td><td>55%</td><td>9%</td><td style="color:var(--red)">$160</td><td class="dn">-33%</td></tr>
+        <tr><td>Base</td><td>25%</td><td>65%</td><td>8%</td><td style="color:var(--yellow)">$260</td><td class="up">+8%</td></tr>
+        <tr><td>Bull</td><td>35%</td><td>70%</td><td>7.5%</td><td style="color:var(--green)">$380</td><td class="up">+58%</td></tr>
+        <tr><td>Super Bull</td><td>45%</td><td>75%</td><td>7%</td><td style="color:var(--avgo)">$520</td><td class="up">+117%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Moat & Risk -->
+  <div class="tab-content" id="avgo-tab3">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Porter's 5 Forces</h3>
+        <canvas id="avgo-porter"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Moat Sources</h3>
+        <div class="summary-card" style="border:none;padding:0">
+          <ul>
+            <li style="color:var(--green)">Custom ASICs: 3-5yr design cycles = deep customer lock-in</li>
+            <li style="color:var(--green)">VMware enterprise moat: $50B+ installed base, 82% renewal rate</li>
+            <li style="color:var(--green)">Networking silicon: Tomahawk/Jericho dominate datacenter switching</li>
+            <li style="color:var(--green)">M&amp;A discipline: 12 acquisitions, all highly accretive</li>
+            <li style="color:var(--yellow)">XPU dependency: Future wins not guaranteed — competition from Marvell</li>
+            <li style="color:var(--yellow)">Debt burden limits flexibility: $63B net debt</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>Risk Assessment</h3>
+      <div style="margin-top:12px">
+        <div class="risk-bar-row"><span class="risk-bar-label">Debt / Leverage</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:70%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">7.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Customer Concentration</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:65%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">6.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">XPU Competition (Marvell)</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:50%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">5.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Integration Risk (VMware)</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:35%;background:var(--green)"></div></div><span class="risk-bar-val up">3.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Valuation Risk</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:40%;background:var(--green)"></div></div><span class="risk-bar-val up">4.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Geopolitical / Export</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:45%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">4.5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Framework -->
+  <div class="tab-content" id="avgo-tab4">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Framework Score Breakdown</h3>
+        <canvas id="avgo-framework-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Multi-Dimensional Radar</h3>
+        <canvas id="avgo-fw-radar"></canvas>
+      </div>
+    </div>
+    <div class="checklist">
+      <div class="section-header">MUST PASS (6/7)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Positive revenue growth trajectory</span><span class="check-score up">+29.5%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Gross margin ≥ 40%</span><span class="check-score up">79.1%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">ROIC > WACC</span><span class="check-score up">25%+ vs 8%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Durable competitive moat</span><span class="check-score up">WIDE</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Strong management &amp; execution</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Market leadership position</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">⚠️</span><span class="check-text">Reasonable valuation (PEG &lt; 2x)</span><span class="check-score" style="color:var(--yellow)">PEG 1.0x</span></div>
+      <div class="section-header">QUALITY CHECKS (7/9)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Operating leverage visible</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">FCF conversion &gt; 70%</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Balance sheet — net cash</span><span class="check-score dn">Net Debt $63B</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Analyst consensus Strong Buy</span><span class="check-score up">28 analysts</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Earnings beats consistent</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Industry tailwind (AI ASIC cycle)</span><span class="check-score up">STRONG</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Institutional ownership growing</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Dividend &amp; buyback program</span><span class="check-score up">$2.15/qtr</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Low customer concentration risk</span><span class="check-score dn">3 hyperscalers</span></div>
+      <div class="section-header">RISK CHECKS (4/6)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No near-term debt maturity cliff</span><span class="check-score up">Staggered</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Positive FCF in all scenarios</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No accounting red flags</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Proven M&amp;A integration track record</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Leverage ratio &lt; 2x EBITDA</span><span class="check-score dn">~3.5x EBITDA</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Regulatory risk low</span><span class="check-score dn">Export controls</span></div>
+    </div>
+  </div>
+</div><!-- end AVGO panel -->
+
+<!-- ════════════════════════ ALAB ════════════════════════ -->
+<div class="stock-panel" id="panel-alab">
+  <div class="hero">
+    <div class="hero-left">
+      <h2 style="color:var(--alab)">ALAB &nbsp;<span style="font-size:1rem;font-weight:400;color:var(--muted)">Astera Labs Inc.</span></h2>
+      <div class="subname">NASDAQ: ALAB · Sector: Semiconductors (AI Connectivity)</div>
+      <div class="price" style="color:var(--alab)">$213.40</div>
+      <div class="price-change up">▲ +2.1% (19 May 2026) &nbsp;·&nbsp; 52-wk: $27 – $230 &nbsp;·&nbsp; Market Cap ~$38B</div>
+    </div>
+    <div class="verdict-box">
+      <div class="verdict-label">INVESTX Verdict</div>
+      <div class="verdict-text" style="color:var(--yellow)">CONDITIONAL BUY</div>
+      <div class="verdict-score" style="color:var(--alab)">7.2<span style="font-size:1rem;color:var(--muted)">/10</span></div>
+      <div class="verdict-target">Target: $240 &nbsp;·&nbsp; Upside: +12% &nbsp;·&nbsp; ⚠️ Valuation stretched</div>
+    </div>
+  </div>
+
+  <div class="sub-tabs" id="subtabs-alab">
+    <div class="sub-tab active" style="border-bottom-color:var(--alab);color:var(--alab)" onclick="showSubTab('alab',0,this)">Overview</div>
+    <div class="sub-tab" onclick="showSubTab('alab',1,this)">Financials</div>
+    <div class="sub-tab" onclick="showSubTab('alab',2,this)">Valuation</div>
+    <div class="sub-tab" onclick="showSubTab('alab',3,this)">Moat &amp; Risk</div>
+    <div class="sub-tab" onclick="showSubTab('alab',4,this)">Framework</div>
+  </div>
+
+  <!-- Tab 0: Overview -->
+  <div class="tab-content active" id="alab-tab0">
+    <div class="score-row">
+      <div class="score-ring-card">
+        <h3>Composite Score</h3>
+        <canvas class="score-ring-canvas" id="alab-ring"></canvas>
+        <div class="score-number" style="color:var(--alab)">7.2</div>
+        <div class="score-label">CONDITIONAL BUY</div>
+      </div>
+      <div class="summary-card">
+        <h3>Investment Thesis</h3>
+        <ul>
+          <li style="color:var(--green)">Pure-play AI connectivity: PCIe retimers + CXL switches essential for AI clusters</li>
+          <li style="color:var(--green)">Q1 2026 revenue $308.4M (+93% YoY) — hyper-growth phase; Q2 guide $355-365M</li>
+          <li style="color:var(--green)">Aries PCIe 6 retimer: dominant position in GPU-to-CPU link market</li>
+          <li style="color:var(--green)">26 analysts Buy; consensus target $241-245</li>
+          <li style="color:var(--red)">Valuation EXTREME: P/E ~145x, P/S ~35x — growth must sustain or severe correction</li>
+          <li style="color:var(--red)">Single product dependency: 80%+ revenue from PCIe retimers</li>
+          <li style="color:var(--yellow)">Customer concentration: Top-3 hyperscalers = ~90% revenue</li>
+          <li style="color:var(--yellow)">Competition emerging: Marvell, Microchip entering retimer market</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue Q1 2026</div><div class="card-value up">$308.4M</div><div class="card-sub">+93% YoY</div></div>
+      <div class="card"><div class="card-label">Q2 2026 Guide</div><div class="card-value up">$355-365M</div><div class="card-sub">+96% YoY mid</div></div>
+      <div class="card"><div class="card-label">Gross Margin</div><div class="card-value up">78%</div><div class="card-sub">Fabless model</div></div>
+      <div class="card"><div class="card-label">P/E (Trailing)</div><div class="card-value dn">~145x</div><div class="card-sub">Extremely stretched</div></div>
+      <div class="card"><div class="card-label">Market Cap</div><div class="card-value">$38B</div><div class="card-sub">vs $1.1B revenue TTM</div></div>
+      <div class="card"><div class="card-label">Analyst Target</div><div class="card-value up">$241-245</div><div class="card-sub">26 analysts Buy</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Score Breakdown</h3>
+        <canvas id="alab-radar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Key Risk vs Opportunity</h3>
+        <div class="summary-card" style="border:none;padding:0">
+          <ul>
+            <li style="color:var(--green)">🚀 PCIe 6 retimer: 16x bandwidth vs PCIe 5 — every AI rack needs them</li>
+            <li style="color:var(--green)">🚀 CXL memory pooling: Next catalyst — hyperscalers trialing ALAB CXL switches</li>
+            <li style="color:var(--red)">⚠️ Valuation: Priced for perfection — any miss = -30%+ drawdown</li>
+            <li style="color:var(--red)">⚠️ Competition: Marvell PAXB retimers gaining datasheet approval</li>
+            <li style="color:var(--yellow)">📊 Position sizing: High conviction but small position (&lt;3% of portfolio)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 1: Financials -->
+  <div class="tab-content" id="alab-tab1">
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue FY2025</div><div class="card-value">~$700M</div><div class="card-sub">High estimate</div></div>
+      <div class="card"><div class="card-label">Revenue FY2026E</div><div class="card-value up">~$1.5B</div><div class="card-sub">+90-100% growth</div></div>
+      <div class="card"><div class="card-label">Op. Margin</div><div class="card-value up">~35%</div><div class="card-sub">Q1'26 improving</div></div>
+      <div class="card"><div class="card-label">R&amp;D % of Rev</div><div class="card-value">~30%</div><div class="card-sub">Heavy investment phase</div></div>
+      <div class="card"><div class="card-label">Cash / Debt</div><div class="card-value up">Net Cash</div><div class="card-sub">No long-term debt</div></div>
+      <div class="card"><div class="card-label">FCF Margin</div><div class="card-value up">~25%</div><div class="card-sub">Capital-light fabless</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Quarterly Revenue Growth ($M)</h3>
+        <canvas id="alab-rev-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Margin Trajectory</h3>
+        <canvas id="alab-margin-line"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Valuation -->
+  <div class="tab-content" id="alab-tab2">
+    <div class="cards">
+      <div class="card"><div class="card-label">P/E (Trailing)</div><div class="card-value dn">~145x</div><div class="card-sub">Growth priced in</div></div>
+      <div class="card"><div class="card-label">P/S</div><div class="card-value dn">~35x</div><div class="card-sub">Ultra-premium</div></div>
+      <div class="card"><div class="card-label">EV/Sales</div><div class="card-value dn">33x</div><div class="card-sub">FY2026E</div></div>
+      <div class="card"><div class="card-label">PEG (2yr)</div><div class="card-value" style="color:var(--yellow)">1.5x</div><div class="card-sub">If 90% growth holds</div></div>
+      <div class="card"><div class="card-label">DCF Base</div><div class="card-value up">$240</div><div class="card-sub">+12% upside</div></div>
+      <div class="card"><div class="card-label">Graham MOS</div><div class="card-value dn">NEGATIVE</div><div class="card-sub">No margin of safety</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>DCF Scenarios</h3>
+        <canvas id="alab-dcf-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>P/S vs Revenue Growth</h3>
+        <canvas id="alab-ps-bar"></canvas>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>DCF Assumptions (High-Growth Scenario Analysis)</h3>
+      <table class="dcf-table">
+        <tr><th>Scenario</th><th>Rev CAGR (3yr)</th><th>Terminal Growth</th><th>WACC</th><th>Target</th><th>vs Current</th></tr>
+        <tr><td>Bear (growth slows)</td><td>30%</td><td>3%</td><td>12%</td><td style="color:var(--red)">$85</td><td class="dn">-60%</td></tr>
+        <tr><td>Base</td><td>70%</td><td>4%</td><td>10%</td><td style="color:var(--yellow)">$240</td><td class="up">+12%</td></tr>
+        <tr><td>Bull (CXL catalyst)</td><td>100%</td><td>5%</td><td>9%</td><td style="color:var(--green)">$380</td><td class="up">+78%</td></tr>
+        <tr><td>Super Bull</td><td>130%</td><td>6%</td><td>8%</td><td style="color:var(--alab)">$550</td><td class="up">+158%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Moat & Risk -->
+  <div class="tab-content" id="alab-tab3">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Porter's 5 Forces</h3>
+        <canvas id="alab-porter"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Moat Assessment</h3>
+        <div class="summary-card" style="border:none;padding:0">
+          <ul>
+            <li style="color:var(--green)">First-mover: Only PCIe 6 retimer in volume production as of Q1'26</li>
+            <li style="color:var(--green)">Design wins: Qualified in NVIDIA GB200 / GB300 racks</li>
+            <li style="color:var(--yellow)">Narrow moat: Technology lead is temporary; 18-24mo window</li>
+            <li style="color:var(--red)">No switching cost: Retimers are commodity-ish — spec-driven selection</li>
+            <li style="color:var(--yellow)">CXL roadmap: If successful, creates stickier moat</li>
+            <li style="color:var(--red)">Small company vs giants: Marvell / Microchip resources dwarf ALAB</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>Risk Matrix (Highest Risk Stock in Portfolio)</h3>
+      <div style="margin-top:12px">
+        <div class="risk-bar-row"><span class="risk-bar-label">Valuation Risk</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:90%;background:var(--red)"></div></div><span class="risk-bar-val dn">9.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Customer Concentration</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:85%;background:var(--red)"></div></div><span class="risk-bar-val dn">8.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Competition (Marvell)</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:75%;background:var(--red)"></div></div><span class="risk-bar-val dn">7.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Product Concentration</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:80%;background:var(--red)"></div></div><span class="risk-bar-val dn">8.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Market Cycle Risk</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:60%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">6.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Technology Disruption</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:40%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">4.0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Framework -->
+  <div class="tab-content" id="alab-tab4">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Framework Score Breakdown</h3>
+        <canvas id="alab-framework-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Multi-Dimensional Radar</h3>
+        <canvas id="alab-fw-radar"></canvas>
+      </div>
+    </div>
+    <div class="checklist">
+      <div class="section-header">MUST PASS (5/7)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Positive revenue growth</span><span class="check-score up">+93%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Gross margin ≥ 40%</span><span class="check-score up">78%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">ROIC > WACC</span><span class="check-score up">Growing</span></div>
+      <div class="check-item"><span class="check-icon">⚠️</span><span class="check-text">Durable competitive moat</span><span class="check-score" style="color:var(--yellow)">NARROW</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Strong management</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">⚠️</span><span class="check-text">Market leadership</span><span class="check-score" style="color:var(--yellow)">For now</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Reasonable valuation (PEG &lt; 2x)</span><span class="check-score dn">P/E 145x</span></div>
+      <div class="section-header">QUALITY CHECKS (5/9)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Operating leverage improving</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">FCF positive &amp; growing</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Net cash balance sheet</span><span class="check-score up">Net Cash</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Analyst consensus Buy</span><span class="check-score up">26 analysts</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Industry tailwind</span><span class="check-score up">STRONG</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Earnings consistency (track record)</span><span class="check-score dn">IPO 2024</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Diversified product portfolio</span><span class="check-score dn">Single product</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Low customer concentration</span><span class="check-score dn">90% top-3</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Competitive moat durable 5+ years</span><span class="check-score dn">2yr window</span></div>
+      <div class="section-header">RISK CHECKS (3/6)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No debt</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No governance red flags</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Geopolitical risk low (US HQ)</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Valuation provides margin of safety</span><span class="check-score dn">FAIL</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Competition risk manageable</span><span class="check-score dn">HIGH</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Sector cycle risk low</span><span class="check-score dn">HIGH</span></div>
+    </div>
+  </div>
+</div><!-- end ALAB panel -->
+
+<!-- ════════════════════════ ASML ════════════════════════ -->
+<div class="stock-panel" id="panel-asml">
+  <div class="hero">
+    <div class="hero-left">
+      <h2 style="color:var(--asml)">ASML &nbsp;<span style="font-size:1rem;font-weight:400;color:var(--muted)">ASML Holding N.V.</span></h2>
+      <div class="subname">NASDAQ: ASML · ADR · Sector: Semiconductor Equipment (EUV Lithography)</div>
+      <div class="price" style="color:var(--asml)">$864.41</div>
+      <div class="price-change up">▲ +35% YTD 2026 &nbsp;·&nbsp; 52-wk: $567 – $950 &nbsp;·&nbsp; Market Cap ~$340B</div>
+    </div>
+    <div class="verdict-box">
+      <div class="verdict-label">INVESTX Verdict</div>
+      <div class="verdict-text" style="color:var(--yellow)">CONDITIONAL BUY</div>
+      <div class="verdict-score" style="color:var(--asml)">7.0<span style="font-size:1rem;color:var(--muted)">/10</span></div>
+      <div class="verdict-target">Target: $1,000 (ADR) &nbsp;·&nbsp; Upside: +16%</div>
+    </div>
+  </div>
+
+  <div class="sub-tabs" id="subtabs-asml">
+    <div class="sub-tab active" style="border-bottom-color:var(--asml);color:var(--asml)" onclick="showSubTab('asml',0,this)">Overview</div>
+    <div class="sub-tab" onclick="showSubTab('asml',1,this)">Financials</div>
+    <div class="sub-tab" onclick="showSubTab('asml',2,this)">Valuation</div>
+    <div class="sub-tab" onclick="showSubTab('asml',3,this)">Moat &amp; Risk</div>
+    <div class="sub-tab" onclick="showSubTab('asml',4,this)">Framework</div>
+  </div>
+
+  <!-- Tab 0: Overview -->
+  <div class="tab-content active" id="asml-tab0">
+    <div class="score-row">
+      <div class="score-ring-card">
+        <h3>Composite Score</h3>
+        <canvas class="score-ring-canvas" id="asml-ring"></canvas>
+        <div class="score-number" style="color:var(--asml)">7.0</div>
+        <div class="score-label">CONDITIONAL BUY</div>
+      </div>
+      <div class="summary-card">
+        <h3>Investment Thesis</h3>
+        <ul>
+          <li style="color:var(--green)">Absolute monopoly: Only EUV lithography machine maker in the world — 100% market share</li>
+          <li style="color:var(--green)">High-NA EUV (next-gen): Only Intel Fab 18 confirmed; TSMC/Samsung follow 2026-27</li>
+          <li style="color:var(--green)">Q1 2026 revenue €8.8B, bookings recovering; 2026 guide €36-40B</li>
+          <li style="color:var(--green)">ROIC 40%+ historically; net cash position; strong dividend + buyback</li>
+          <li style="color:var(--yellow)">China export controls: ~30% revenue historically from China, now restricted</li>
+          <li style="color:var(--yellow)">Fwd P/E ~41x — premium for monopoly but demands execution</li>
+          <li style="color:var(--yellow)">Cyclical: Revenue lumpy due to system delivery timing (~€200M/system)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue Q1 2026</div><div class="card-value up">€8.8B</div><div class="card-sub">YoY recovering</div></div>
+      <div class="card"><div class="card-label">2026 Guide</div><div class="card-value up">€36-40B</div><div class="card-sub">Record revenue year</div></div>
+      <div class="card"><div class="card-label">Gross Margin Q1'26</div><div class="card-value">53%</div><div class="card-sub">HNA mix drag</div></div>
+      <div class="card"><div class="card-label">Fwd P/E</div><div class="card-value">41x</div><div class="card-sub">Premium for monopoly</div></div>
+      <div class="card"><div class="card-label">Backlog</div><div class="card-value up">€36B+</div><div class="card-sub">2+ years visibility</div></div>
+      <div class="card"><div class="card-label">EUV Market Share</div><div class="card-value up">100%</div><div class="card-sub">Irreplaceable</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Score Breakdown</h3>
+        <canvas id="asml-radar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>EUV System Shipments Trend</h3>
+        <canvas id="asml-shipments"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 1: Financials -->
+  <div class="tab-content" id="asml-tab1">
+    <div class="cards">
+      <div class="card"><div class="card-label">Revenue FY2025</div><div class="card-value">€27.3B</div><div class="card-sub">Below initial guide</div></div>
+      <div class="card"><div class="card-label">Revenue FY2026E</div><div class="card-value up">€36-40B</div><div class="card-sub">+32-46% YoY</div></div>
+      <div class="card"><div class="card-label">Op. Margin FY2025</div><div class="card-value">32%</div><div class="card-sub">HNA dilution</div></div>
+      <div class="card"><div class="card-label">Op. Margin FY2026E</div><div class="card-value up">~36%</div><div class="card-sub">Recovering</div></div>
+      <div class="card"><div class="card-label">EPS FY2026E</div><div class="card-value up">€22-24</div><div class="card-sub">~$25/share ADR</div></div>
+      <div class="card"><div class="card-label">Dividend + Buyback</div><div class="card-value up">€3.5B/yr</div><div class="card-sub">Consistent return</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Annual Revenue (€B)</h3>
+        <canvas id="asml-rev-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Gross Margin vs Op Margin</h3>
+        <canvas id="asml-margin-bar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Valuation -->
+  <div class="tab-content" id="asml-tab2">
+    <div class="cards">
+      <div class="card"><div class="card-label">P/E (Trailing)</div><div class="card-value">48x</div><div class="card-sub">High but monopoly</div></div>
+      <div class="card"><div class="card-label">P/E (Forward)</div><div class="card-value">41x</div><div class="card-sub">FY2026E</div></div>
+      <div class="card"><div class="card-label">EV/EBITDA</div><div class="card-value">30x</div><div class="card-sub">FY2026E</div></div>
+      <div class="card"><div class="card-label">PEG</div><div class="card-value up">1.3x</div><div class="card-sub">30% EPS growth</div></div>
+      <div class="card"><div class="card-label">DCF Base</div><div class="card-value up">$1,000</div><div class="card-sub">+16% upside (ADR)</div></div>
+      <div class="card"><div class="card-label">Analyst Avg Target</div><div class="card-value up">€900-1,050</div><div class="card-sub">~35 analysts Buy</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>DCF Scenarios (ADR Price)</h3>
+        <canvas id="asml-dcf-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Valuation vs Semiconductor Equipment Peers</h3>
+        <canvas id="asml-val-bar"></canvas>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>DCF Assumptions</h3>
+      <table class="dcf-table">
+        <tr><th>Scenario</th><th>Revenue CAGR</th><th>Op Margin</th><th>WACC</th><th>ADR Target</th><th>Upside</th></tr>
+        <tr><td>Bear (China ban full)</td><td>8%</td><td>30%</td><td>9%</td><td style="color:var(--red)">$560</td><td class="dn">-35%</td></tr>
+        <tr><td>Base</td><td>18%</td><td>36%</td><td>8%</td><td style="color:var(--yellow)">$1,000</td><td class="up">+16%</td></tr>
+        <tr><td>Bull (High-NA ramp)</td><td>28%</td><td>42%</td><td>7.5%</td><td style="color:var(--green)">$1,400</td><td class="up">+62%</td></tr>
+        <tr><td>Super Bull</td><td>35%</td><td>46%</td><td>7%</td><td style="color:var(--asml)">$1,900</td><td class="up">+120%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Moat & Risk -->
+  <div class="tab-content" id="asml-tab3">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Porter's 5 Forces</h3>
+        <canvas id="asml-porter"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Moat Assessment — PERFECT MOAT</h3>
+        <div class="summary-card" style="border:none;padding:0">
+          <ul>
+            <li style="color:var(--green)">⭐ 100% EUV market share — no competitor within 10+ years</li>
+            <li style="color:var(--green)">⭐ 5,000+ patents; 30 years of cumulative know-how</li>
+            <li style="color:var(--green)">⭐ Installed base: Service/upgrade revenue = recurring ~45% of total</li>
+            <li style="color:var(--green)">⭐ Supplier network: 5,000 parts; Carl Zeiss optical monopoly sub-component</li>
+            <li style="color:var(--green)">⭐ Switching cost: Replacing EUV line = $10B+ and 5 years of downtime</li>
+            <li style="color:var(--yellow)">⚠️ Export controls: China restricted from newest EUV (DUV still allowed)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <h3>Risk Matrix</h3>
+      <div style="margin-top:12px">
+        <div class="risk-bar-row"><span class="risk-bar-label">Export Control / China</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:75%;background:var(--red)"></div></div><span class="risk-bar-val dn">7.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Cyclicality / Timing</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:60%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">6.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Geopolitical (Netherlands)</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:55%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">5.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Customer Concentration</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:50%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">5.0</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">HNA Margin Dilution</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:45%;background:var(--yellow)"></div></div><span class="risk-bar-val" style="color:var(--yellow)">4.5</span></div>
+        <div class="risk-bar-row"><span class="risk-bar-label">Competition Risk</span><div class="risk-bar-track"><div class="risk-bar-fill" style="width:5%;background:var(--green)"></div></div><span class="risk-bar-val up">0.5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Framework -->
+  <div class="tab-content" id="asml-tab4">
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Framework Score Breakdown</h3>
+        <canvas id="asml-framework-bar"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Multi-Dimensional Radar</h3>
+        <canvas id="asml-fw-radar"></canvas>
+      </div>
+    </div>
+    <div class="checklist">
+      <div class="section-header">MUST PASS (6/7)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Positive revenue growth trajectory</span><span class="check-score up">+32-46% 2026E</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Gross margin ≥ 40%</span><span class="check-score up">53%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">ROIC > WACC</span><span class="check-score up">40%+ vs 8%</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Durable competitive moat</span><span class="check-score up">PERFECT 10/10</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Strong management &amp; capital return</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Market leadership</span><span class="check-score up">100% share</span></div>
+      <div class="check-item"><span class="check-icon">⚠️</span><span class="check-text">Reasonable valuation</span><span class="check-score" style="color:var(--yellow)">PEG 1.3x</span></div>
+      <div class="section-header">QUALITY CHECKS (7/9)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Operating leverage visible</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">FCF conversion &gt; 70%</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Net cash / strong balance sheet</span><span class="check-score up">Net Cash</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Analyst consensus Buy</span><span class="check-score up">~35 analysts</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Dividend + buyback program</span><span class="check-score up">€3.5B/yr</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Backlog visibility (&gt;2 years)</span><span class="check-score up">€36B backlog</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Industry tailwind (AI fab build-out)</span><span class="check-score up">STRONG</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Revenue not lumpy / cyclical</span><span class="check-score dn">Highly lumpy</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">China revenue risk resolved</span><span class="check-score dn">~30% restricted</span></div>
+      <div class="section-header">RISK CHECKS (4/6)</div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No near-term debt cliff</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No accounting / governance red flags</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">Positive FCF in all scenarios</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">✅</span><span class="check-text">No competition risk in 5-year horizon</span><span class="check-score up">PASS</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Geographic / export risk low</span><span class="check-score dn">US/NL controls</span></div>
+      <div class="check-item"><span class="check-icon">❌</span><span class="check-text">Currency risk hedged</span><span class="check-score dn">EUR/USD exposure</span></div>
+    </div>
+  </div>
+</div><!-- end ASML panel -->
+
+<div style="height:40px"></div>
+
+<script>
+// ── Utilities ──
+const C = (id) => document.getElementById(id);
+const accent = { tsm: '#1E90FF', avgo: '#FF6B35', alab: '#A855F7', asml: '#10B981' };
+const charts = {};
+
+function showStock(stock) {
+  ['tsm','avgo','alab','asml'].forEach(s => {
+    C('panel-'+s).classList.remove('active');
+    const btn = C('btn-'+s);
+    btn.className = 'stock-btn';
+    if (s === stock) {
+      btn.classList.add('active-'+s);
+      C('panel-'+s).classList.add('active');
+    }
+  });
+  initChartsFor(stock);
+}
+
+function showSubTab(stock, idx, el) {
+  const tabs = C('subtabs-'+stock).querySelectorAll('.sub-tab');
+  tabs.forEach((t, i) => {
+    t.classList.remove('active');
+    t.style.borderBottomColor = 'transparent';
+    t.style.color = '';
+  });
+  el.classList.add('active');
+  el.style.borderBottomColor = accent[stock];
+  el.style.color = accent[stock];
+
+  const panel = C('panel-'+stock);
+  panel.querySelectorAll('.tab-content').forEach((tc, i) => {
+    tc.classList.toggle('active', i === idx);
+  });
+  // init charts for this tab lazily
+  setTimeout(() => initChartsFor(stock), 50);
+}
+
+// ── Chart defaults ──
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = '#1f2937';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+
+function makeChart(id, config) {
+  if (charts[id]) return;
+  const el = C(id);
+  if (!el) return;
+  charts[id] = new Chart(el, config);
+}
+
+function ringChart(id, score, color) {
+  const remaining = 10 - score;
+  makeChart(id, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [score, remaining],
+        backgroundColor: [color, '#1f2937'],
+        borderWidth: 0,
+        hoverOffset: 0
+      }]
+    },
+    options: {
+      cutout: '72%', responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } }
+    }
+  });
+}
+
+function radarChart(id, labels, data, color) {
+  makeChart(id, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        data, backgroundColor: color+'33', borderColor: color,
+        borderWidth: 2, pointBackgroundColor: color, pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      scales: { r: { min: 0, max: 10, ticks: { stepSize: 2, color: '#4b5563', backdropColor: 'transparent' }, grid: { color: '#1f2937' }, pointLabels: { font: { size: 11 } } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function barChart(id, labels, datasets, opts={}) {
+  makeChart(id, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: datasets.length > 1, position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: '#1f2937' }, ticks: { font: { size: 10 } } },
+        y: { grid: { color: '#1f2937' }, ticks: { font: { size: 10 } }, ...opts.y }
+      },
+      ...opts.extra
+    }
+  });
+}
+
+function lineChart(id, labels, datasets) {
+  makeChart(id, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: '#1f2937' }, ticks: { font: { size: 10 } } },
+        y: { grid: { color: '#1f2937' }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+function donutChart(id, labels, data, colors) {
+  makeChart(id, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
+    options: {
+      responsive: true, maintainAspectRatio: true, cutout: '55%',
+      plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } } }
+    }
+  });
+}
+
+function porterChart(id, color) {
+  makeChart(id, {
+    type: 'radar',
+    data: {
+      labels: ['New Entrants', 'Substitutes', 'Buyer Power', 'Supplier Power', 'Rivalry'],
+      datasets: [{ label: 'Threat Level (0=Low)', data: [1,2,3,4,2], backgroundColor: color+'22', borderColor: color, borderWidth: 2, pointBackgroundColor: color, pointRadius: 3 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      scales: { r: { min: 0, max: 10, ticks: { stepSize: 2, color: '#4b5563', backdropColor: 'transparent' }, grid: { color: '#1f2937' }, pointLabels: { font: { size: 11 } } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function fwBar(id, color) {
+  barChart(id,
+    ['Momentum','Valuation','Quality/ROIC','Moat','Risk Mgmt'],
+    [{ label: 'Score', data: fwScores[id.split('-')[0]], backgroundColor: color+'cc', borderColor: color, borderWidth: 1, borderRadius: 4 }],
+    { y: { max: 10 } }
+  );
+}
+
+function fwRadar(id, color) {
+  radarChart(id,
+    ['Momentum','Valuation','Quality','Moat','Risk','Earnings Q'],
+    fwRadarScores[id.split('-')[0]], color
+  );
+}
+
+const fwScores = {
+  tsm: [8.0, 7.5, 7.5, 9.5, 6.0],
+  avgo: [7.5, 6.5, 8.5, 8.5, 6.5],
+  alab: [8.0, 4.0, 6.5, 7.0, 4.5],
+  asml: [8.0, 6.5, 8.0, 10.0, 5.5]
+};
+const fwRadarScores = {
+  tsm: [8.0, 7.5, 7.5, 9.5, 6.0, 8.5],
+  avgo: [7.5, 6.5, 8.5, 8.5, 6.5, 8.0],
+  alab: [8.0, 4.0, 6.5, 7.0, 4.5, 7.5],
+  asml: [8.0, 6.5, 8.0, 10.0, 5.5, 7.5]
+};
+
+// ── TSM Charts ──
+function initTSM() {
+  ringChart('tsm-ring', 8.3, accent.tsm);
+  radarChart('tsm-radar', ['Momentum','Valuation','Quality/ROIC','Moat','Risk'], [8.0,7.5,7.5,9.5,6.0], accent.tsm);
+  barChart('tsm-node-bar',
+    ['N3 (3nm)','N5 (5nm)','N7/6','N16/12','Others'],
+    [{ label: 'Revenue %', data: [35,30,15,12,8], backgroundColor: ['#1E90FF','#2563eb','#3b82f6','#60a5fa','#93c5fd'], borderRadius: 4 }]
+  );
+  lineChart('tsm-margin-line',
+    ['Q1\'25','Q2\'25','Q3\'25','Q4\'25','Q1\'26'],
+    [
+      { label: 'Gross Margin %', data: [53.6,57.4,60.8,63.5,66.2], borderColor: accent.tsm, backgroundColor: accent.tsm+'22', fill: true, tension: 0.3 },
+      { label: 'Op Margin %', data: [42.0,46.6,50.5,53.3,57.6], borderColor: '#60a5fa', backgroundColor: 'transparent', tension: 0.3 }
+    ]
+  );
+  barChart('tsm-rev-bar',
+    ['FY2022','FY2023','FY2024','FY2025E','FY2026E'],
+    [{ label: 'Revenue ($B)', data: [75.9,69.3,90.0,100,130], backgroundColor: accent.tsm+'99', borderColor: accent.tsm, borderWidth: 1, borderRadius: 4 }]
+  );
+  barChart('tsm-dcf-bar',
+    ['Bear','Base','Bull','Super Bull'],
+    [{ label: 'Price Target ($)', data: [280,450,620,820], backgroundColor: ['#ef4444','#f59e0b','#22c55e',accent.tsm], borderRadius: 4 }],
+    { extra: { plugins: { legend: { display: false } } } }
+  );
+  barChart('tsm-val-bar',
+    ['TSM','ASML','NVDA','AVGO','AMAT'],
+    [{ label: 'Fwd P/E', data: [32,41,38,30,22], backgroundColor: [accent.tsm,'#10B981','#76B900','#FF6B35','#6b7280'], borderRadius: 4 }],
+    { extra: { plugins: { legend: { display: false } } } }
+  );
+  fwBar('tsm-framework-bar', accent.tsm);
+  fwRadar('tsm-fw-radar', accent.tsm);
+  porterChart('tsm-porter', accent.tsm);
+}
+
+// ── AVGO Charts ──
+function initAVGO() {
+  ringChart('avgo-ring', 7.5, accent.avgo);
+  radarChart('avgo-radar', ['Momentum','Valuation','Quality/ROIC','Moat','Risk'], [7.5,6.5,8.5,8.5,6.5], accent.avgo);
+  donutChart('avgo-mix-donut',
+    ['AI Revenue','Semiconductor','Enterprise Software'],
+    [44,13,43],
+    [accent.avgo,'#f97316','#fb923c']
+  );
+  barChart('avgo-rev-bar',
+    ['FY2022','FY2023','FY2024','FY2025','FY2026E'],
+    [{ label: 'Revenue ($B)', data: [33.2,35.8,51.6,75,107], backgroundColor: accent.avgo+'99', borderColor: accent.avgo, borderWidth: 1, borderRadius: 4 }]
+  );
+  barChart('avgo-seg-bar',
+    ['FY2024','FY2025','FY2026E'],
+    [
+      { label: 'AI Revenue ($B)', data: [12.2,30,55], backgroundColor: accent.avgo+'cc', borderRadius: 4 },
+      { label: 'Other Semi ($B)', data: [12,15,17], backgroundColor: '#f9731688', borderRadius: 4 },
+      { label: 'Software ($B)', data: [20,30,35], backgroundColor: '#fb923c66', borderRadius: 4 }
+    ],
+    { extra: { scales: { x: { stacked: true }, y: { stacked: true } } } }
+  );
+  barChart('avgo-dcf-bar',
+    ['Bear','Base','Bull','Super Bull'],
+    [{ label: 'Price Target ($)', data: [160,260,380,520], backgroundColor: ['#ef4444','#f59e0b','#22c55e',accent.avgo], borderRadius: 4 }],
+    { extra: { plugins: { legend: { display: false } } } }
+  );
+  barChart('avgo-peg-bar',
+    ['FY2024','FY2025','FY2026E','FY2027E'],
+    [{ label: 'EPS ($)', data: [4.6,6.3,8.0,10.5], backgroundColor: accent.avgo+'99', borderColor: accent.avgo, borderWidth: 1, borderRadius: 4 }]
+  );
+  fwBar('avgo-framework-bar', accent.avgo);
+  fwRadar('avgo-fw-radar', accent.avgo);
+  // Porter
+  makeChart('avgo-porter', {
+    type: 'radar',
+    data: {
+      labels: ['New Entrants', 'Substitutes', 'Buyer Power', 'Supplier Power', 'Rivalry'],
+      datasets: [{ data: [2,3,5,4,4], backgroundColor: accent.avgo+'22', borderColor: accent.avgo, borderWidth: 2, pointBackgroundColor: accent.avgo, pointRadius: 3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: true, scales: { r: { min:0, max:10, ticks: { stepSize:2, color:'#4b5563', backdropColor:'transparent' }, grid: { color:'#1f2937' }, pointLabels: { font: { size:11 } } } }, plugins: { legend: { display: false } } }
+  });
+}
+
+// ── ALAB Charts ──
+function initALAB() {
+  ringChart('alab-ring', 7.2, accent.alab);
+  radarChart('alab-radar', ['Momentum','Valuation','Quality/ROIC','Moat','Risk'], [8.0,4.0,6.5,7.0,4.5], accent.alab);
+  barChart('alab-rev-bar',
+    ['Q1\'25','Q2\'25','Q3\'25','Q4\'25','Q1\'26','Q2\'26E'],
+    [{ label: 'Revenue ($M)', data: [159.5,198.7,245.6,291.7,308.4,360], backgroundColor: accent.alab+'99', borderColor: accent.alab, borderWidth: 1, borderRadius: 4 }]
+  );
+  lineChart('alab-margin-line',
+    ['Q1\'25','Q2\'25','Q3\'25','Q4\'25','Q1\'26'],
+    [
+      { label: 'Gross Margin %', data: [76,77,77.5,78,78], borderColor: accent.alab, backgroundColor: accent.alab+'22', fill: true, tension: 0.3 },
+      { label: 'Op Margin %', data: [25,28,31,34,35], borderColor: '#c084fc', backgroundColor: 'transparent', tension: 0.3 }
+    ]
+  );
+  barChart('alab-dcf-bar',
+    ['Bear','Base','Bull','Super Bull'],
+    [{ label: 'Price Target ($)', data: [85,240,380,550], backgroundColor: ['#ef4444','#f59e0b','#22c55e',accent.alab], borderRadius: 4 }],
+    { extra: { plugins: { legend: { display: false } } } }
+  );
+  barChart('alab-ps-bar',
+    ['ALAB 2026E','ALAB 2027E','NVDA','ASML','TSM'],
+    [{ label: 'P/S Ratio', data: [35,18,25,9,21], backgroundColor: [accent.alab,'#c084fc','#76B900','#10B981','#1E90FF'], borderRadius: 4 }],
+    { extra: { plugins: { legend: { display: false } } } }
+  );
+  fwBar('alab-framework-bar', accent.alab);
+  fwRadar('alab-fw-radar', accent.alab);
+  makeChart('alab-porter', {
+    type: 'radar',
+    data: {
+      labels: ['New Entrants', 'Substitutes', 'Buyer Power', 'Supplier Power', 'Rivalry'],
+      datasets: [{ data: [6,4,8,6,6], backgroundColor: accent.alab+'22', borderColor: accent.alab, borderWidth: 2, pointBackgroundColor: accent.alab, pointRadius: 3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: true, scales: { r: { min:0, max:10, ticks: { stepSize:2, color:'#4b5563', backdropColor:'transparent' }, grid: { color:'#1f2937' }, pointLabels: { font: { size:11 } } } }, plugins: { legend: { display: false } } }
+  });
+}
+
+// ── ASML Charts ──
+function initASML() {
+  ringChart('asml-ring', 7.0, accent.asml);
+  radarChart('asml-radar', ['Momentum','Valuation','Quality/ROIC','Moat','Risk'], [8.0,6.5,8.0,10.0,5.5], accent.asml);
+  barChart('asml-shipments',
+    ['FY2021','FY2022','FY2023','FY2024','FY2025E','FY2026E'],
+    [
+      { label: 'EUV Systems', data: [42,55,53,52,70,90], backgroundColor: accent.asml+'cc', borderRadius: 4 },
+      { label: 'DUV Systems', data: [200,240,180,200,160,180], backgroundColor: '#34d39966', borderRadius: 4 }
+    ]
+  );
+  barChart('asml-rev-bar',
+    ['FY2022','FY2023','FY2024','FY2025','FY2026E'],
+    [{ label: 'Revenue (€B)', data: [21.2,27.6,28.3,27.3,38], backgroundColor: accent.asml+'99', borderColor: accent.asml, borderWidth: 1, borderRadius: 4 }]
+  );
+  barChart('asml-margin-bar',
+    ['FY2022','FY2023','FY2024','FY2025','FY2026E'],
+    [
+      { label: 'Gross Margin %', data: [50.5,51.3,51.3,52,54], backgroundColor: accent.asml+'88', borderRadius: 4 },
+      { label: 'Op Margin %', data: [30.7,31.6,32.7,32,36], backgroundColor: '#34d39966', borderRadius: 4 }
+    ]
+  );
+  barChart('asml-dcf-bar',
+    ['Bear','Base','Bull','Super Bull'],
+    [{ label: 'ADR Target ($)', data: [560,1000,1400,1900], backgroundColor: ['#ef4444','#f59e0b','#22c55e',accent.asml], borderRadius: 4 }],
+    { extra: { plugins: { legend: { display: false } } } }
+  );
+  barChart('asml-val-bar',
+    ['ASML','AMAT','LRCX','KLAC','TSE'],
+    [{ label: 'Fwd P/E', data: [41,22,20,21,18], backgroundColor: [accent.asml,'#6b7280','#6b7280','#6b7280','#6b7280'], borderRadius: 4 }],
+    { extra: { plugins: { legend: { display: false } } } }
+  );
+  fwBar('asml-framework-bar', accent.asml);
+  fwRadar('asml-fw-radar', accent.asml);
+  makeChart('asml-porter', {
+    type: 'radar',
+    data: {
+      labels: ['New Entrants', 'Substitutes', 'Buyer Power', 'Supplier Power', 'Rivalry'],
+      datasets: [{ data: [1,1,4,5,1], backgroundColor: accent.asml+'22', borderColor: accent.asml, borderWidth: 2, pointBackgroundColor: accent.asml, pointRadius: 3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: true, scales: { r: { min:0, max:10, ticks: { stepSize:2, color:'#4b5563', backdropColor:'transparent' }, grid: { color:'#1f2937' }, pointLabels: { font: { size:11 } } } }, plugins: { legend: { display: false } } }
+  });
+}
+
+const stockInit = { tsm: initTSM, avgo: initAVGO, alab: initALAB, asml: initASML };
+const stockInited = { tsm: false, avgo: false, alab: false, asml: false };
+
+function initChartsFor(stock) {
+  if (!stockInited[stock]) {
+    stockInit[stock]();
+    stockInited[stock] = true;
+  }
+}
+
+// Init TSM on load (default visible stock)
+window.addEventListener('load', () => initChartsFor('tsm'));
+</script>
+</body>
+</html>
