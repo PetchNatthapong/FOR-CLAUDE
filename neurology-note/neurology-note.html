@@ -6,7 +6,7 @@
 <style>
 /* Layout: sticky header → status strip → round subspecialty rail → round subtopic rail → masonry pinboard. Accent is cresyl violet (the Nissl stain). */
 :root{
-  --bg:#F5F4F8; --surface:#FFFFFF; --surface-2:#EFEDF4; --ink:#1D1B26; --muted:#625E70; --line:#E1DEE9;
+  --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F1EFF6; --ink:#1D1B26; --muted:#625E70; --line:#E3E0EA;
   --accent:#5B3F94; --accent-ink:#FFFFFF; --accent-soft:#ECE6F7;
   --st-new:oklch(0.55 0.15 252); --st-learn:oklch(0.64 0.15 62); --st-done:oklch(0.56 0.12 152);
   --danger:oklch(0.55 0.18 25);
@@ -38,9 +38,30 @@
   --shadow-lift:0 2px 4px rgb(0 0 0 / .35), 0 14px 34px rgb(0 0 0 / .45);
   color-scheme:dark;
 }
+/* Settings - Background: White or Dark overrides the viewer's theme; System follows it. */
+html:root[data-nn-theme="white"]{
+  --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F1EFF6; --ink:#1D1B26; --muted:#625E70; --line:#E3E0EA;
+  --accent:#5B3F94; --accent-ink:#FFFFFF; --accent-soft:#ECE6F7;
+  --st-new:oklch(0.55 0.15 252); --st-learn:oklch(0.64 0.15 62); --st-done:oklch(0.56 0.12 152);
+  --danger:oklch(0.55 0.18 25);
+  --sl:0.58; --scc:0.12; --tint-l:0.955; --tint-c:0.028; --tint-ink:0.32;
+  --shadow:0 1px 2px rgb(24 18 48 / .05), 0 6px 20px rgb(24 18 48 / .06);
+  --shadow-lift:0 2px 4px rgb(24 18 48 / .06), 0 14px 34px rgb(24 18 48 / .12);
+  color-scheme:light;
+}
+html:root[data-nn-theme="dark"]{
+  --bg:#121118; --surface:#1B1A22; --surface-2:#25232E; --ink:#ECEAF3; --muted:#A29EB0; --line:#302E3A;
+  --accent:#B7A1EC; --accent-ink:#17131F; --accent-soft:#2B2541;
+  --st-new:oklch(0.72 0.13 252); --st-learn:oklch(0.78 0.13 70); --st-done:oklch(0.74 0.12 152);
+  --danger:oklch(0.7 0.16 25);
+  --sl:0.74; --scc:0.11; --tint-l:0.27; --tint-c:0.04; --tint-ink:0.9;
+  --shadow:0 1px 2px rgb(0 0 0 / .3), 0 6px 20px rgb(0 0 0 / .25);
+  --shadow-lift:0 2px 4px rgb(0 0 0 / .35), 0 14px 34px rgb(0 0 0 / .45);
+  color-scheme:dark;
+}
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
-body{color:var(--ink); font:15px/1.5 var(--f-ui); -webkit-font-smoothing:antialiased}
+body{color:var(--ink); font:15px/1.5 var(--f-ui); -webkit-font-smoothing:antialiased; touch-action:pan-y pinch-zoom}
 body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:30; background:var(--surface)}
 button,input,select,textarea{font:inherit; color:inherit}
 button{cursor:pointer}
@@ -225,10 +246,32 @@ textarea.inp{resize:vertical; min-height:96px; line-height:1.5}
 .toast{position:fixed; left:50%; bottom:max(24px, calc(env(safe-area-inset-bottom,0px) + 16px)); transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:99px; font-size:14px; z-index:50; box-shadow:var(--shadow-lift)}
 .spin{width:14px; height:14px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:sp .8s linear infinite; display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
+/* Pages: All pins | Settings. Swipe left for Settings, right to come back (as in Round Mize). */
+@keyframes page-from-right { from { transform: translateX(30%); opacity: .35 } }
+@keyframes page-from-left { from { transform: translateX(-30%); opacity: .35 } }
+.page-from-right{animation:page-from-right .22s cubic-bezier(.2,.8,.2,1)}
+.page-from-left{animation:page-from-left .22s cubic-bezier(.2,.8,.2,1)}
+.iconbtn{width:44px; height:44px; padding:0; border-radius:50%; flex:none}
+.set-title{font:600 20px/1.2 var(--f-display)}
+.set-wrap{max-width:720px; margin:0 auto; padding-block:18px 110px; display:grid; gap:14px}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; display:grid; gap:12px}
+.panel h2{margin:0; font:600 11px/1 var(--f-ui); letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+.panel p{margin:0; font-size:14.5px; color:var(--muted); max-width:65ch}
+.panel p b{color:var(--ink)}
+.bg-choice{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+.bg-opt{border:1.5px solid var(--line); border-radius:14px; background:var(--surface); padding:10px; display:grid; gap:8px; justify-items:center; font-weight:500; font-size:14.5px; color:var(--ink); min-height:44px}
+.bg-opt[aria-pressed="true"]{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.swatch{width:100%; max-width:100%; aspect-ratio:4/3; border-radius:9px; border:1px solid var(--line)}
+.sw-white{background:#FFFFFF} .sw-dark{background:#121118} .sw-system{background:linear-gradient(135deg,#FFFFFF 50%,#121118 50%)}
+.dots{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(env(safe-area-inset-bottom,0px) + 8px); display:none; gap:4px; z-index:24}
+.dots button{width:24px; height:24px; border:0; background:none; padding:0; display:grid; place-items:center}
+.dots i{width:8px; height:8px; border-radius:50%; background:var(--line); display:block}
+.dots button[aria-current="page"] i{background:var(--accent)}
+@media (max-width:720px){ .dots{display:flex} }
 @media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
 </style>
 
-<header class="top">
+<header class="top" id="main-top">
   <div class="wrap">
     <div class="brand">
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
@@ -250,10 +293,21 @@ textarea.inp{resize:vertical; min-height:96px; line-height:1.5}
       <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       New pin
     </button>
+    <button class="btn ghost iconbtn" data-act="settings" type="button" aria-label="Settings" title="Settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </div>
+</header>
+<header class="top" id="set-top" hidden>
+  <div class="wrap">
+    <button class="btn ghost iconbtn" data-act="home" type="button" aria-label="All pins" title="All pins">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+    </button>
+    <span class="set-title">Settings</span>
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="view-main">
   <section class="strip" id="strip" aria-label="Status"></section>
   <div class="rail-h"><span class="eyebrow">Subspecialties</span><span class="hint" id="railhint"></span></div>
   <nav class="rail" id="subrail" aria-label="Subspecialties"></nav>
@@ -273,6 +327,27 @@ textarea.inp{resize:vertical; min-height:96px; line-height:1.5}
   </section>
   <footer class="foot" id="foot"></footer>
 </main>
+
+<main class="wrap" id="view-settings" hidden>
+  <div class="set-wrap">
+    <section class="panel">
+      <h2>Background</h2>
+      <div class="bg-choice" role="group" aria-label="Background">
+        <button type="button" class="bg-opt" data-act="theme" data-k="white" aria-pressed="false"><span class="swatch sw-white"></span>White</button>
+        <button type="button" class="bg-opt" data-act="theme" data-k="dark" aria-pressed="false"><span class="swatch sw-dark"></span>Dark</button>
+        <button type="button" class="bg-opt" data-act="theme" data-k="system" aria-pressed="false"><span class="swatch sw-system"></span>System</button>
+      </div>
+      <p>System follows your iPhone or Mac: white by day, dark when the device is in dark mode.</p>
+    </section>
+    <section class="panel"><h2>Your notes</h2><div id="set-notes" style="display:grid;gap:8px"></div></section>
+    <section class="panel"><h2>Auto-fill</h2><div id="set-ai" style="display:grid;gap:8px"></div></section>
+  </div>
+</main>
+
+<nav class="dots" id="dots" aria-label="Pages">
+  <button type="button" data-act="view" data-k="main" aria-label="All pins"><i></i></button>
+  <button type="button" data-act="view" data-k="settings" aria-label="Settings"><i></i></button>
+</nav>
 
 <button class="fab" data-act="new-pin" type="button" aria-label="New pin">
   <svg width="22" height="22" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -524,7 +599,7 @@ function visible(){
 }
 
 /* ---------- Rendering: board ---------- */
-function render(){ renderStrip(); renderSubs(); renderCats(); renderBoard(); renderFoot(); }
+function render(){ renderStrip(); renderSubs(); renderCats(); renderBoard(); renderFoot(); renderDots(); if (view === "settings") renderSettings(); }
 
 function renderStrip(){
   const scope = S.notes.filter(n => inSub(n, S.f.sub) && (!S.f.cat || n.cat === S.f.cat) && matchesQ(n, S.f.q));
@@ -1177,6 +1252,83 @@ async function addDoi(){
   } finally { if (draft) renderComposer(); }
 }
 
+/* ---------- Background and pages ---------- */
+const THEME_NAMES = {white:"White", dark:"Dark", system:"System"};
+function applyTheme(t){
+  const r = document.documentElement;
+  if (t === "white" || t === "dark") r.setAttribute("data-nn-theme", t); else r.removeAttribute("data-nn-theme");
+  lsSet("nn-theme", t);
+}
+applyTheme(lsGet("nn-theme") || "system");
+
+let view = "main";
+function showView(v, from){
+  if (v === view) return;
+  view = v;
+  const main = v === "main";
+  $("#main-top").hidden = !main; $("#view-main").hidden = !main; $(".fab").hidden = !main;
+  $("#set-top").hidden = main; $("#view-settings").hidden = main;
+  const el = main ? $("#view-main") : $("#view-settings");
+  el.classList.remove("page-from-right", "page-from-left"); void el.offsetWidth;
+  if (from) el.classList.add(from === "right" ? "page-from-right" : "page-from-left");
+  if (!main) renderSettings();
+  renderDots();
+  window.scrollTo(0, 0);
+}
+function renderDots(){
+  document.querySelectorAll("#dots button").forEach(b => { if (b.dataset.k === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+}
+function renderSettings(){
+  const t = lsGet("nn-theme") || "system";
+  document.querySelectorAll('[data-act="theme"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === t)));
+  const c = {new:0, learning:0, done:0};
+  S.notes.forEach(n => c[n.status] = (c[n.status] || 0) + 1);
+  const where = store?.kind === "db" ? "Saved to your Claude account, so this link shows the same board on your iPhone and your Mac." : "Saved in this browser only.";
+  $("#set-notes").innerHTML = `<p><b>${S.notes.length}</b> pins: ${c.new} new, ${c.learning} learning, ${c.done} done.</p><p>${esc(where)}</p><p>Crop out names, HN and faces before pinning.</p>`;
+  $("#set-ai").innerHTML = `<p>${S.cap.sample ? "Claude writes the summary and reads your photos. It asks your permission the first time." : "Summaries are written on this device."}</p>`
+    + `<p>${S.cap.mcp ? "Sources come from PubMed. Allow the PubMed connector when asked." : window.claude ? "Connect the PubMed connector in claude.ai Settings to find sources automatically." : "Sources come from PubMed (NCBI)."}</p>`;
+}
+
+// Swipe left on All pins for Settings, right to come back - Round Mize's rules: the stroke is
+// judged in its first 5 px; text fields, sideways scrollers, open sheets and the left 24 px are ignored.
+(() => {
+  let s = null;
+  const ignored = t => {
+    if (dlg.open) return true;
+    for (let el = t instanceof Element ? t : null; el && el !== document.documentElement; el = el.parentElement) {
+      if (el.matches('input, textarea, select, [contenteditable="true"], [data-no-swipe]')) return true;
+      const ox = getComputedStyle(el).overflowX;
+      if ((ox === "auto" || ox === "scroll") && el.scrollWidth > el.clientWidth + 1) return true;
+    }
+    return false;
+  };
+  const settle = (x, y) => {
+    const st = s; s = null;
+    if (!st || st.axis !== "x") return;
+    const dx = x - st.x, dy = y - st.y;
+    if (Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - st.t > 800) return;
+    if (dx < 0 && view === "main") showView("settings", "right");
+    else if (dx > 0 && view === "settings") showView("main", "left");
+  };
+  document.addEventListener("touchstart", e => {
+    const p = e.touches[0]; s = null;
+    if (!p || e.touches.length > 1 || p.clientX < 24 || ignored(e.target)) return;
+    s = {x:p.clientX, y:p.clientY, t:Date.now(), axis:null, lx:p.clientX, ly:p.clientY};
+  }, {passive:true});
+  document.addEventListener("touchmove", e => {
+    const p = e.touches[0];
+    if (!s || !p) return;
+    if (e.touches.length > 1) { s = null; return; }
+    s.lx = p.clientX; s.ly = p.clientY;
+    const dx = p.clientX - s.x, dy = p.clientY - s.y;
+    if (s.axis === null) { if (Math.hypot(dx, dy) < 5) return; s.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y"; }
+    if (s.axis === "y") { s = null; return; }
+    if (e.cancelable) e.preventDefault();
+  }, {passive:false});
+  document.addEventListener("touchend", e => { if (!s) return; const p = e.changedTouches[0]; settle(p ? p.clientX : s.lx, p ? p.clientY : s.ly); });
+  document.addEventListener("touchcancel", () => { if (s) settle(s.lx, s.ly); });
+})();
+
 /* ---------- Events ---------- */
 let armTimer;
 document.addEventListener("click", async e => {
@@ -1205,6 +1357,10 @@ document.addEventListener("click", async e => {
     case "ai-run": runAI(); break;
     case "ai-stop": aiCtl?.abort(); break;
     case "save": saveDraft(a); break;
+    case "settings": showView("settings", "right"); break;
+    case "home": showView("main", "left"); break;
+    case "view": showView(k, k === "settings" ? "right" : "left"); break;
+    case "theme": applyTheme(k); renderSettings(); toast(`Background: ${THEME_NAMES[k]}`); break;
   }
 });
 document.addEventListener("keydown", e => {
