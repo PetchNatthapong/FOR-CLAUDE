@@ -17,7 +17,7 @@ Written 2026-11-09 following the Round Mize app-writing guide (section 2). A fir
 | Screen | What it shows | What you can do there |
 |---|---|---|
 | Board | Pin cards in a masonry grid (photo, or the headline figure such as "6-24 h"), with the status pill and date added | Filter by status, search, sort, open a pin, add a pin (bottom-right button) |
-| Subspecialties | 14 subspecialties as round bubbles; each ring fills with the % of pins that are Done | Pick one to filter the board; its subtopics appear as smaller bubbles |
+| Subspecialties | Round Mize's 15 categories as round bubbles; each ring fills with the % of pins that are Done. Pins with none show under "Not sorted" | Pick one to filter the board; its subtopics appear as smaller bubbles |
 | Pin detail | Media, title, dates, status, summary, key points, my notes, sources (with a PubMed check mark), tags | Change status, edit, delete (to Trash, with Undo) |
 | New / edit pin | Photo, Video, Camera and File buttons, drop or paste area, text, link or DOI | Auto-fill (summary + sources), choose subspecialty and subtopic, status, start date, add a DOI or PMID |
 | Settings | Subspecialty and subtopic lists, page order, display, account and sync, backup, app version | Rename, add or reorder subtopics; export or restore a backup; update the app |
@@ -30,7 +30,7 @@ Written 2026-11-09 following the Round Mize app-writing guide (section 2). A fir
 | `uid` | string | Random, the same on every device; sync uses it |
 | `id` | number (`++id`) | Local only, used in routes (`#/p/12`) |
 | `title` | string | Required; Auto-fill writes one if empty (under 80 characters) |
-| `sub` | string | One subspecialty key (stroke, epilepsy, movement, …) |
+| `sub` | string | One Round Mize category id (stroke, epilepsy, movement, …), or empty for "Not sorted" |
 | `cat` | string | Subtopic; from the subspecialty's list or typed new |
 | `status` | `new` / `learning` / `done` | Learning sets `startDate` if empty; Done sets `doneDate` |
 | `createdAt`, `updatedAt` | ISO time | `updatedAt` decides sync conflicts (later wins) |
@@ -74,7 +74,9 @@ Written 2026-11-09 following the Round Mize app-writing guide (section 2). A fir
 ## 7. Decisions
 
 Decided:
-- Subspecialty list (14) and starting subtopics, taken from the prototype; editable later in Settings.
+- Subspecialty list: the same 15 categories as Round Mize, with the same ids, names, order and keywords (sent from Round Mize on 2026-11-09). If you've edited the list in Round Mize on a device, tell me and I'll match it.
+- Keyword suggestions use Round Mize's matching rules, on the device: title x3, summary / key points / tags x2, notes x1. The top 2 show as dashed chips until you pick one.
+- One subspecialty per pin (Round Mize allows several per case), because each subspecialty is its own swipe page. Subtopics stay as the second level, editable in Settings.
 - Status words: New, Learning, Done. Dates shown as "Nov 5"; learning day shown as "D3".
 - Brand colour: cresyl violet (the Nissl stain) instead of Round Mize teal, so the two apps are easy to tell apart. The greys lean toward violet.
 - Names fixed before any real data: Pages project `neurology-note`, D1 `neurology-note` / `neurology-note-preview`, IndexedDB `neurology-note`, crypto salt prefix `neurology-note/sync/v2/`.

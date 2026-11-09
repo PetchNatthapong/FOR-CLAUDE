@@ -313,7 +313,7 @@ textarea.inp{resize:vertical; min-height:96px; line-height:1.5}
   "keyFigure":{"value":"≥2","label":"supportive criteria for established PD"},
   "tags":["parkinsonism","diagnostic criteria","red flags"],"body":"Make a one-page bedside checklist from this.","link":"",
   "sources":[{"pmid":"26474316","doi":"10.1002/mds.26424","title":"MDS clinical diagnostic criteria for Parkinson's disease.","journal":"Mov Disord","year":"2015","author":"Postuma RB","via":"PubMed","verified":true}],"media":[]},
- {"id":"ex-mcdonald","example":true,"title":"McDonald 2017: dissemination in space and time","sub":"neuroimmunology","cat":"Multiple sclerosis","status":"new","createdAt":"2026-10-20T11:20:00Z","startDate":"",
+ {"id":"ex-mcdonald","example":true,"title":"McDonald 2017: dissemination in space and time","sub":"immunology","cat":"Multiple sclerosis","status":"new","createdAt":"2026-10-20T11:20:00Z","startDate":"",
   "summary":"After a typical clinically isolated syndrome, MS can be diagnosed when MRI shows dissemination in space and time. CSF-specific oligoclonal bands can substitute for dissemination in time, and symptomatic and cortical lesions now count.",
   "keyPoints":["DIS: ≥1 T2 lesion in ≥2 of periventricular, cortical/juxtacortical, infratentorial, spinal cord","DIT: simultaneous enhancing and non-enhancing lesions, or a new lesion on follow-up","CSF-specific oligoclonal bands can substitute for DIT","Exclude mimics first: NMOSD, MOGAD, small vessel disease"],
   "keyFigure":{"value":"2 of 4","label":"CNS regions for dissemination in space"},
@@ -327,37 +327,61 @@ textarea.inp{resize:vertical; min-height:96px; line-height:1.5}
 "use strict";
 
 /* ---------- Taxonomy ---------- */
+// Same 15 categories, ids, order and keywords as Round Mize.
 const SUBS = [
-  {k:"stroke", n:"Stroke & Vascular", m:"St", h:22, kw:["stroke","thrombectomy","thrombolysis","alteplase","tenecteplase","lvo","ischemic","ich","hemorrhage","aneurysm","sah","carotid","aspirin","anticoagul","atrial","nihss","penumbra","perfusion","cvt","venous"],
-   cats:["Hyperacute: IVT & EVT","Stroke imaging","Intracerebral hemorrhage","SAH & aneurysm","Cerebral venous thrombosis","Secondary prevention","Small vessel disease","Rehab & recovery"]},
-  {k:"epilepsy", n:"Epilepsy & EEG", m:"Ep", h:300, kw:["seizure","epilep","eeg","status epilepticus","levetiracetam","valpro","lamotrig","semiology","ictal","spike","convuls"],
-   cats:["Classification & semiology","EEG patterns","Anti-seizure medications","Status epilepticus","Epilepsy syndromes","Surgery & neuromodulation","Women & pregnancy"]},
-  {k:"movement", n:"Movement Disorders", m:"Mv", h:150, kw:["parkinson","tremor","dystonia","chorea","huntington","ataxia","levodopa","dbs","tic","myoclonus","bradykinesia","msa","psp"],
-   cats:["Parkinson disease","Atypical parkinsonism","Tremor","Dystonia","Chorea & Huntington","Ataxia","Tics & functional","DBS & device therapy","Botulinum toxin"]},
-  {k:"neuromuscular", n:"Neuromuscular & EMG", m:"Nm", h:200, kw:["neuropathy","guillain","gbs","cidp","myasthenia","myopathy","als","motor neuron","emg","nerve conduction","ncs","sma"],
-   cats:["Peripheral neuropathy","GBS & CIDP","Myasthenia & NMJ","Myopathy","ALS & MND","NCS / EMG"]},
-  {k:"neuroimmunology", n:"MS & Neuroimmunology", m:"Ni", h:262, kw:["multiple sclerosis","ms ","demyelinat","nmosd","aquaporin","mog","encephalitis","nmda","oligoclonal","ocrelizumab","natalizumab","optic neuritis"],
-   cats:["Multiple sclerosis","NMOSD","MOGAD","Autoimmune encephalitis","Disease-modifying therapy","CNS vasculitis"]},
-  {k:"headache", n:"Headache", m:"Hd", h:48, kw:["headache","migraine","cluster","cgrp","triptan","iih","intracranial hypertension","trigeminal"],
-   cats:["Migraine","Cluster & TACs","IIH & CSF pressure","Secondary headache","Preventives & CGRP"]},
-  {k:"cognitive", n:"Cognitive & Dementia", m:"Cg", h:330, kw:["dementia","alzheimer","amyloid","tau","frontotemporal","lewy","cognitive","memory","lecanemab","donanemab"],
-   cats:["Alzheimer disease","Frontotemporal dementia","Lewy body disease","Vascular cognitive impairment","Rapidly progressive dementia","Biomarkers"]},
-  {k:"critical", n:"Neurocritical Care", m:"Cc", h:8, kw:["coma","brain death","icp","herniation","tbi","traumatic brain","prognost","cardiac arrest","sedation","vasospasm"],
-   cats:["Coma & brain death","ICP & herniation","Traumatic brain injury","Neuroprognostication","Sedation & ventilation"]},
-  {k:"neuroonc", n:"Neuro-oncology", m:"On", h:285, kw:["glioma","glioblastoma","tumor","tumour","metasta","paraneoplastic","meningioma","lymphoma"],
-   cats:["Glioma","Brain metastases","Paraneoplastic syndromes","Treatment neurotoxicity"]},
-  {k:"infection", n:"Neuro-infection", m:"If", h:95, kw:["meningitis","encephalitis","hsv","hiv","tuberculous","cryptococ","prion","cjd","abscess"],
-   cats:["Meningitis","Viral encephalitis","HIV & opportunistic","TB & fungal","Prion disease"]},
-  {k:"ophtho", n:"Neuro-ophthalmology", m:"Op", h:225, kw:["optic","papilledema","diplopia","nystagmus","pupil","visual field","saccade","eye movement"],
-   cats:["Optic neuropathy","Eye movements","Pupil","Visual fields"]},
-  {k:"sleep", n:"Sleep", m:"Sl", h:245, kw:["sleep","narcolepsy","rbd","restless legs","rls","apnea","insomnia","hypersomnia"],
-   cats:["Narcolepsy & hypersomnia","REM sleep behavior disorder","Restless legs","Sleep apnea"]},
-  {k:"peds", n:"Pediatric & Genetics", m:"Pg", h:120, kw:["pediatric","child","neonat","leukodystrophy","genetic","mitochondrial","developmental","infant"],
-   cats:["Neurodevelopment","Leukodystrophy","Neurogenetics","Neonatal neurology"]},
-  {k:"general", n:"Localization & Skills", m:"Lx", h:65, kw:["localization","neuroanatomy","exam","lesion","reflex","mri basics","lumbar puncture","case"],
-   cats:["Localization","Neuroanatomy","Bedside exam","Neuroimaging basics","Case of the week"]},
-];
+  { k: 'stroke', n: 'Stroke & Neurovascular', m: 'St', h: 22,
+    cats: ['Hyperacute: IVT & EVT', 'Stroke imaging', 'Intracerebral hemorrhage', 'SAH & aneurysm', 'Cerebral venous thrombosis', 'Dissection & vasculopathy', 'Secondary prevention', 'Small vessel disease', 'Rehab & recovery'],
+    words: ['stroke', 'AIS', 'ICH', 'SAH', 'SDH', 'TIA', 'infarct', 'infarction', 'CVT', 'CVST', 'venous sinus thrombosis', 'dissection', 'aneurysm', 'AVM', 'moyamoya', 'cavernoma', 'hemorrhage', 'haemorrhage', 'hemorrhagic', 'ischemic', 'ischaemic', 'lacunar', 'thrombectomy', 'rtPA', 'carotid', 'vasospasm', 'หลอดเลือดสมอง'] },
+  { k: 'epilepsy', n: 'Epilepsy', m: 'Ep', h: 300,
+    cats: ['Classification & semiology', 'EEG patterns', 'Anti-seizure medications', 'Status epilepticus', 'Epilepsy syndromes', 'Surgery & neuromodulation', 'Women & pregnancy'],
+    words: ['seizure', 'seizures', 'epilepsy', 'epileptic', 'status epilepticus', 'SE', 'RSE', 'SRSE', 'NCSE', 'convulsion', 'convulsive', 'EEG', 'ชัก'] },
+  { k: 'movement', n: 'Movement disorders', m: 'Mv', h: 150,
+    cats: ['Parkinson disease', 'Atypical parkinsonism', 'Tremor', 'Dystonia', 'Chorea & Huntington', 'Ataxia', 'Myoclonus & tics', 'DBS & device therapy', 'Botulinum toxin'],
+    words: ['parkinson', 'parkinsonism', 'PD', 'myoclonus', 'tremor', 'chorea', 'dystonia', 'dyskinesia', 'ballism', 'hemiballismus', 'tic', 'tics', 'ataxia', 'PSP', 'MSA'] },
+  { k: 'neuromuscular', n: 'Neuromuscular', m: 'Nm', h: 200,
+    cats: ['Polyneuropathy', 'GBS & CIDP', 'Myasthenia & NMJ', 'Myopathy & myositis', 'ALS & MND', 'Radiculopathy & plexopathy', 'NCS / EMG'],
+    words: ['myasthenia', 'MG', 'GBS', 'guillain', 'AIDP', 'AMAN', 'CIDP', 'neuropathy', 'polyneuropathy', 'mononeuritis', 'radiculopathy', 'plexopathy', 'myopathy', 'myositis', 'ALS', 'MND', 'motor neuron', 'EMG', 'NCS', 'botulism', 'periodic paralysis', 'CIM', 'CIP'] },
+  { k: 'immunology', n: 'Neuroimmunology', m: 'Ni', h: 262,
+    cats: ['Multiple sclerosis', 'NMOSD', 'MOGAD', 'Autoimmune encephalitis', 'Myelitis', 'CNS vasculitis & sarcoidosis', 'Disease-modifying therapy'],
+    words: ['MS', 'multiple sclerosis', 'NMOSD', 'NMO', 'MOGAD', 'MOG', 'ADEM', 'autoimmune encephalitis', 'anti-NMDA', 'NMDAR', 'LGI1', 'transverse myelitis', 'myelitis', 'optic neuritis', 'pachymeningitis', 'vasculitis', 'sarcoidosis', 'neurosarcoidosis', 'IgG4', 'demyelinating', 'Behcet', 'lupus', 'SLE'] },
+  { k: 'infection', n: 'Neuro-infectious', m: 'If', h: 95,
+    cats: ['Bacterial meningitis', 'Viral encephalitis', 'TB & fungal', 'HIV & opportunistic', 'Abscess & empyema', 'Parasitic'],
+    words: ['meningitis', 'encephalitis', 'meningoencephalitis', 'HSV', 'VZV', 'CMV', 'JEV', 'abscess', 'TB', 'TBM', 'tuberculous', 'tuberculoma', 'cryptococcal', 'cryptococcus', 'crypto', 'toxoplasma', 'toxoplasmosis', 'PML', 'neurosyphilis', 'ventriculitis', 'empyema', 'cysticercosis', 'melioidosis', 'ติดเชื้อ'] },
+  { k: 'critical', n: 'Neurocritical care', m: 'Cc', h: 8,
+    cats: ['Coma & brain death', 'Post-arrest & HIE', 'ICP & herniation', 'Traumatic brain injury', 'Neuroprognostication'],
+    words: ['coma', 'comatose', 'brain death', 'HIE', 'hypoxic', 'anoxic', 'post-arrest', 'cardiac arrest', 'ROSC', 'ICP', 'herniation', 'brain edema', 'cerebral edema', 'TBI'] },
+  { k: 'behavioral', n: 'Neurobehavioral', m: 'Nb', h: 330,
+    cats: ['Delirium & encephalopathy', 'Alzheimer disease', 'Frontotemporal dementia', 'Lewy body disease', 'Vascular cognitive impairment', 'Rapidly progressive dementia'],
+    words: ['dementia', 'delirium', 'encephalopathy', 'cognitive', 'MCI', 'alzheimer', 'FTD', 'frontotemporal', 'DLB', 'lewy', 'confusion', 'สับสน', 'หลงลืม'] },
+  { k: 'headache', n: 'Neuro-cephalalgia', m: 'Hd', h: 48,
+    cats: ['Migraine', 'Cluster & TACs', 'Tension-type', 'IIH & CSF pressure', 'Neuralgias', 'Secondary headache'],
+    words: ['headache', 'migraine', 'cephalalgia', 'IIH', 'pseudotumor', 'cluster headache', 'TTH', 'tension-type', 'trigeminal neuralgia', 'neuralgia', 'ปวดหัว', 'ปวดศีรษะ'] },
+  { k: 'ophthalmology', n: 'Neuro-ophthalmology', m: 'Op', h: 225,
+    cats: ['Optic neuropathy', 'Diplopia & ocular motor', 'Papilledema', 'Pupil', 'Nystagmus'],
+    words: ['diplopia', 'optic neuritis', 'optic neuropathy', 'visual loss', 'blurred vision', 'ptosis', 'papilledema', 'nystagmus', 'ophthalmoplegia', 'NAION', 'AION', 'CN3', 'CN6', 'third nerve', 'sixth nerve', 'ตามัว', 'ภาพซ้อน'] },
+  { k: 'otology', n: 'Neuro-otology', m: 'Ot', h: 180,
+    cats: ['Vertigo & BPPV', 'Vestibular neuritis', 'Central vertigo', 'Meniere & hearing loss'],
+    words: ['vertigo', 'dizziness', 'dizzy', 'BPPV', 'vestibular', 'labyrinthitis', 'meniere', 'hearing loss', 'tinnitus', 'เวียนหัว', 'เวียนศีรษะ', 'บ้านหมุน'] },
+  { k: 'genetics', n: 'Neurogenetics', m: 'Ng', h: 120,
+    cats: ['Hereditary ataxias', 'Huntington disease', 'Mitochondrial disease', 'Hereditary neuropathy', 'Muscular dystrophies', 'Leukodystrophy & CADASIL', 'Wilson disease'],
+    words: ['genetic', 'hereditary', 'SCA', 'spinocerebellar', 'huntington', 'mitochondrial', 'MELAS', 'CMT', 'charcot-marie-tooth', 'DMD', 'duchenne', 'myotonic dystrophy', 'CADASIL', 'leukodystrophy', 'wilson'] },
+  { k: 'sleep', n: 'Sleep', m: 'Sl', h: 245,
+    cats: ['Sleep apnea', 'Insomnia', 'Narcolepsy & hypersomnia', 'RBD & parasomnia', 'Restless legs'],
+    words: ['sleep', 'OSA', 'apnea', 'insomnia', 'narcolepsy', 'RBD', 'RLS', 'restless legs', 'hypersomnia', 'parasomnia', 'นอนไม่หลับ'] },
+  { k: 'oncology', n: 'Neuro-oncology', m: 'On', h: 285,
+    cats: ['Glioma', 'Meningioma', 'Brain metastases', 'CNS lymphoma', 'Leptomeningeal disease', 'Paraneoplastic syndromes'],
+    words: ['tumor', 'tumour', 'glioma', 'glioblastoma', 'GBM', 'meningioma', 'metastasis', 'metastases', 'brain mets', 'lymphoma', 'leptomeningeal', 'carcinomatosis', 'paraneoplastic', 'SOL', 'space-occupying', 'เนื้องอก', 'มะเร็ง'] },
+  { k: 'others', n: 'Others', m: 'Etc', h: 65,
+    cats: ['Localization', 'Neuroanatomy', 'Bedside exam', 'Neuroimaging basics', 'Case of the week'],
+    words: [] },
+]
+// Older ids from the first version, read as their new ids.
+const ALIAS = {neuroimmunology:"immunology", cognitive:"behavioral", neuroonc:"oncology", ophtho:"ophthalmology", peds:"genetics", general:"others"};
+const UNSORTED = {k:"", n:"Not sorted", m:"?", h:290, cats:[], words:[]};
 const SUBMAP = Object.fromEntries(SUBS.map(s => [s.k, s]));
+const subOf = k => SUBMAP[ALIAS[k] || k] || UNSORTED;
+const inSub = (n, k) => k === "all" || (k === "__unsorted" ? !SUBMAP[n.sub] : n.sub === k);
+const normSub = n => (ALIAS[n.sub] ? {...n, sub: ALIAS[n.sub]} : n);
 const STATUSES = [
   {k:"new", n:"New"}, {k:"learning", n:"Learning"}, {k:"done", n:"Done"}
 ];
@@ -488,7 +512,7 @@ function matchesQ(n, q){
 }
 function visible(){
   const f = S.f;
-  let list = S.notes.filter(n => (f.sub === "all" || n.sub === f.sub) && (!f.cat || n.cat === f.cat) && (f.status === "all" || n.status === f.status) && matchesQ(n, f.q));
+  let list = S.notes.filter(n => inSub(n, f.sub) && (!f.cat || n.cat === f.cat) && (f.status === "all" || n.status === f.status) && matchesQ(n, f.q));
   const by = {
     "added-desc": (a,b) => (b.createdAt||"").localeCompare(a.createdAt||""),
     "added-asc": (a,b) => (a.createdAt||"").localeCompare(b.createdAt||""),
@@ -503,7 +527,7 @@ function visible(){
 function render(){ renderStrip(); renderSubs(); renderCats(); renderBoard(); renderFoot(); }
 
 function renderStrip(){
-  const scope = S.notes.filter(n => (S.f.sub === "all" || n.sub === S.f.sub) && (!S.f.cat || n.cat === S.f.cat) && matchesQ(n, S.f.q));
+  const scope = S.notes.filter(n => inSub(n, S.f.sub) && (!S.f.cat || n.cat === S.f.cat) && matchesQ(n, S.f.q));
   const c = {all: scope.length, new:0, learning:0, done:0};
   scope.forEach(n => c[n.status] = (c[n.status]||0) + 1);
   const pct = k => scope.length ? (c[k] / scope.length * 100) : 0;
@@ -533,13 +557,17 @@ function renderSubs(){
       <span class="ring" style="--p:${ringFor(list)}%"><span class="core"><span class="mono">${s.m}</span>${list.length ? `<span class="cnt">${list.length}</span>` : ""}</span></span>
       <span class="nm">${esc(s.n)}</span></button>`);
   }
+  const uns = all.filter(n => !SUBMAP[n.sub]);
+  if (uns.length) html.push(`<button class="bub" type="button" data-act="sub" data-k="__unsorted" aria-pressed="${S.f.sub==="__unsorted"}" title="Not sorted: ${uns.length} pins">
+      <span class="ring" style="--p:${ringFor(uns)}%"><span class="core"><span class="mono">?</span><span class="cnt">${uns.length}</span></span></span>
+      <span class="nm">Not sorted</span></button>`);
   $("#subrail").innerHTML = html.join("");
   $("#railhint").textContent = "Ring shows % done";
 }
 
 function renderCats(){
   const w = $("#catwrap");
-  if (S.f.sub === "all") { w.innerHTML = ""; return; }
+  if (!SUBMAP[S.f.sub]) { w.innerHTML = ""; return; }
   const s = SUBMAP[S.f.sub];
   const inSub = S.notes.filter(n => n.sub === s.k);
   const cats = [...s.cats, ...new Set(inSub.map(n => n.cat).filter(c => c && !s.cats.includes(c)))];
@@ -571,8 +599,8 @@ function pillHTML(st, n){
 
 function renderBoard(){
   const b = $("#board");
-  const s = S.f.sub === "all" ? null : SUBMAP[S.f.sub];
-  $("#boardtitle").innerHTML = `${esc(S.f.cat || (s ? s.n : "All pins"))}<span>${visible().length} shown</span>`;
+  const s = SUBMAP[S.f.sub] || null;
+  $("#boardtitle").innerHTML = `${esc(S.f.cat || (s ? s.n : S.f.sub === "__unsorted" ? "Not sorted" : "All pins"))}<span>${visible().length} shown</span>`;
   $("#sort").value = S.f.sort;
   if (!S.loaded) return;
   const list = visible();
@@ -586,7 +614,7 @@ function renderBoard(){
     return;
   }
   b.innerHTML = list.map(n => {
-    const sub = SUBMAP[n.sub] || SUBMAP.general;
+    const sub = subOf(n.sub);
     const nDoi = (n.sources||[]).filter(x => x.doi).length;
     return `<article class="card sc" style="--h:${sub.h}" tabindex="0" role="button" data-act="open" data-id="${esc(n.id)}" aria-label="${esc(n.title)}">
       ${coverHTML(n, sub)}
@@ -652,7 +680,7 @@ function mediaGallery(media){
 function openDetail(id){
   const n = S.notes.find(x => x.id === id); if (!n) return;
   current = id;
-  const sub = SUBMAP[n.sub] || SUBMAP.general;
+  const sub = subOf(n.sub);
   openDialog(`<div class="dlg sc" style="--h:${sub.h}">
     <div class="dh"><div class="meta"><i class="dot"></i><span class="t">${esc(sub.n)}${n.cat ? " · " + esc(n.cat) : ""}</span>${n.example ? `<span class="chip ex" style="margin-left:6px">Example</span>` : ""}</div>
       <button class="x" type="button" data-act="close" aria-label="Close">✕</button></div>
@@ -703,7 +731,7 @@ function saveErrText(e){
 /* ---------- Composer ---------- */
 function newDraft(n){
   const base = n ? JSON.parse(JSON.stringify(n)) : {
-    id:null, title:"", body:"", link:"", sub: S.f.sub !== "all" ? S.f.sub : "", cat: S.f.cat || "", status:"new",
+    id:null, title:"", body:"", link:"", sub: SUBMAP[S.f.sub] ? S.f.sub : "", cat: S.f.cat || "", status:"new",
     startDate: todayISO(), summary:"", keyPoints:[], tags:[], sources:[], keyFigure:null, media:[]
   };
   base.keyPoints = base.keyPoints || []; base.tags = base.tags || []; base.sources = base.sources || []; base.media = base.media || [];
@@ -857,7 +885,7 @@ async function saveDraft(btn){
     const now = new Date().toISOString();
     const n = {
       id: d.id || uid(), title: d.title.trim() || (d.summary ? d.summary.split(/[.!?]/)[0].slice(0, 80) : "Untitled pin"),
-      sub: d.sub || "general", cat: d.cat.trim(), status: d.status, createdAt: d.createdAt || now, updatedAt: now,
+      sub: d.sub || "", cat: d.cat.trim(), status: d.status, createdAt: d.createdAt || now, updatedAt: now,
       startDate: d.startDate || "", summary: d.summary.trim(), keyPoints: d.keyPoints, tags: d.tags, body: d.body, link: d.link.trim(),
       sources: d.sources, keyFigure: d.keyFigure || null, media,
     };
@@ -949,14 +977,34 @@ function localSummarize(text){
   const figM = clean.match(/(\d+(?:\.\d+)?\s?(?:–|-|to)\s?\d+(?:\.\d+)?\s?(?:h|hours|mg\/kg|mL|%|days|years)|\d+(?:\.\d+)?\s?(?:mg\/kg|mL|h\b|hours|%))/i);
   return {summary: top.join(" ") || clean.slice(0, 280), keyPoints: kp, tags: kws.slice(0, 5), query: kws.slice(0, 4).join(" "), keyFigure: figM ? {value: figM[1], label: ""} : null};
 }
-function classify(text){
-  const t = " " + text.toLowerCase() + " ";
-  let best = null, bs = 0;
-  for (const s of SUBS) { const sc = s.kw.reduce((a, k) => a + (t.includes(k) ? 1 : 0), 0); if (sc > bs) { bs = sc; best = s; } }
+// Round Mize matching: whole words; short all-capitals abbreviations match exact case; Thai
+// matches anywhere; a longer phrase beats a shorter word inside it; ties go to the earlier category.
+const reEsc = w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const RULES = SUBS.flatMap(s => s.words.map(w => {
+  const re = /[\u0E00-\u0E7F]/.test(w) ? new RegExp(reEsc(w), "g")
+    : (w.length <= 5 && /^[A-Z0-9]+$/.test(w) && /[A-Z]/.test(w)) ? new RegExp(`(?<![A-Za-z0-9])${reEsc(w)}(?![A-Za-z0-9])`, "g")
+    : new RegExp(`(?<![\\p{L}\\p{N}])${reEsc(w)}(?![\\p{L}\\p{N}])`, "giu");
+  return {w, k: s.k, re};
+})).sort((a, b) => b.w.length - a.w.length);
+function catHits(text){
+  const claimed = [], out = {};
+  for (const r of RULES) for (const m of String(text || "").matchAll(r.re)) {
+    const a = m.index, b = a + m[0].length, c = claimed.find(x => a < x.b && b > x.a);
+    if (c && c.w.toLowerCase() !== r.w.toLowerCase()) continue;
+    if (!c) claimed.push({a, b, w: r.w});
+    out[r.k] = (out[r.k] || 0) + 1;
+  }
+  return out;
+}
+function classify(title, rest){
+  const score = {};
+  for (const [t, w] of [[title, 3], [rest, 1]]) for (const [k, c] of Object.entries(catHits(t))) score[k] = (score[k] || 0) + c * w;
+  const best = Object.entries(score).sort((a, b) => b[1] - a[1] || SUBS.findIndex(s => s.k === a[0]) - SUBS.findIndex(s => s.k === b[0]))[0];
   if (!best) return {sub:"", cat:""};
+  const sub = SUBMAP[best[0]], t = (title + " " + rest).toLowerCase();
   let cat = "", cs = 0;
-  for (const c of best.cats) { const sc = c.toLowerCase().split(/[^a-z]+/).filter(w => w.length > 3 && t.includes(w)).length; if (sc > cs) { cs = sc; cat = c; } }
-  return {sub: best.k, cat};
+  for (const c of sub.cats) { const sc = c.toLowerCase().split(/[^a-z]+/).filter(w => w.length > 3 && t.includes(w)).length; if (sc > cs) { cs = sc; cat = c; } }
+  return {sub: sub.k, cat};
 }
 
 function materialText(d){
@@ -1019,7 +1067,7 @@ function aiLocal(d, text){
   logLine("Summarizing on this device");
   const src = [d.body, ...d.media.map(m => m.text || "")].join(" ").trim() || d.title;
   const r = localSummarize(src);
-  const c = classify(`${d.title} ${src}`);
+  const c = classify(d.title, src);
   return {...r, sub: c.sub, cat: c.cat, searchQuery: d.title ? d.title : r.query};
 }
 
@@ -1056,7 +1104,7 @@ Rules
 - summary: 2–4 sentences of plain clinical English, take-home message first.
 - keyPoints: 3–5 short strings. Keep concrete numbers (time windows, doses, thresholds, criteria) only when the material states them or they are well established.
 - keyFigure: the single most memorable number or rule as {"value": "≤ 12 characters", "label": "≤ 6 words"}, or null.
-- subspecialty: one key from the list below; subcategory: one subtopic from that line, or a short new one if none fits.
+- subspecialty: one key from the list below ("others" only when nothing else fits); subcategory: one subtopic from that line, or a short new one if none fits.
 - tags: 3–6 lowercase tags.
 - title: keep the user's title if given, otherwise write one under 80 characters.
 ${useTools ? `- sources: call search_pubmed (1–3 searches, PubMed syntax) to find the primary trial, guideline or review behind this material. If the material names a trial, search its name with a topic word. Put only PMIDs that appeared in search results into sourcePmids, best first, at most 3.` : `- searchQuery: a precise PubMed query (PubMed syntax allowed) that would find the primary trial, guideline or review behind this material.`}
@@ -1180,7 +1228,7 @@ async function boot(){
   S.cap = {db, assets, sample, mcp, limits: null};
   if (sample) { try { S.cap.limits = await sample.limits(); } catch { S.cap.limits = {}; } }
   store = db ? DbStore(db, assets) : LocalStore();
-  const ok = await store.init(list => { S.notes = list; S.loaded = true; render(); });
+  const ok = await store.init(list => { S.notes = list.map(normSub); S.loaded = true; render(); });
   if (store.kind === "local" && !ok) S.storeNote = "This browser blocks storage, so pins last only until you close the page.";
   S.loaded = true; render();
 }
