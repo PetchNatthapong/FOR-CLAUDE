@@ -1,0 +1,1189 @@
+<title>Neurology Note</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
+<style>
+/* Layout: sticky header → status strip → round subspecialty rail → round subtopic rail → masonry pinboard. Accent is cresyl violet (the Nissl stain). */
+:root{
+  --bg:#F5F4F8; --surface:#FFFFFF; --surface-2:#EFEDF4; --ink:#1D1B26; --muted:#625E70; --line:#E1DEE9;
+  --accent:#5B3F94; --accent-ink:#FFFFFF; --accent-soft:#ECE6F7;
+  --st-new:oklch(0.55 0.15 252); --st-learn:oklch(0.64 0.15 62); --st-done:oklch(0.56 0.12 152);
+  --danger:oklch(0.55 0.18 25);
+  --sl:0.58; --scc:0.12; --tint-l:0.955; --tint-c:0.028; --tint-ink:0.32;
+  --shadow:0 1px 2px rgb(24 18 48 / .05), 0 6px 20px rgb(24 18 48 / .06);
+  --shadow-lift:0 2px 4px rgb(24 18 48 / .06), 0 14px 34px rgb(24 18 48 / .12);
+  --f-display:"Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --f-ui:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r-card:14px; --r-ctl:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#121118; --surface:#1B1A22; --surface-2:#25232E; --ink:#ECEAF3; --muted:#A29EB0; --line:#302E3A;
+  --accent:#B7A1EC; --accent-ink:#17131F; --accent-soft:#2B2541;
+  --st-new:oklch(0.72 0.13 252); --st-learn:oklch(0.78 0.13 70); --st-done:oklch(0.74 0.12 152);
+  --danger:oklch(0.7 0.16 25);
+  --sl:0.74; --scc:0.11; --tint-l:0.27; --tint-c:0.04; --tint-ink:0.9;
+  --shadow:0 1px 2px rgb(0 0 0 / .3), 0 6px 20px rgb(0 0 0 / .25);
+  --shadow-lift:0 2px 4px rgb(0 0 0 / .35), 0 14px 34px rgb(0 0 0 / .45);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121118; --surface:#1B1A22; --surface-2:#25232E; --ink:#ECEAF3; --muted:#A29EB0; --line:#302E3A;
+  --accent:#B7A1EC; --accent-ink:#17131F; --accent-soft:#2B2541;
+  --st-new:oklch(0.72 0.13 252); --st-learn:oklch(0.78 0.13 70); --st-done:oklch(0.74 0.12 152);
+  --danger:oklch(0.7 0.16 25);
+  --sl:0.74; --scc:0.11; --tint-l:0.27; --tint-c:0.04; --tint-ink:0.9;
+  --shadow:0 1px 2px rgb(0 0 0 / .3), 0 6px 20px rgb(0 0 0 / .25);
+  --shadow-lift:0 2px 4px rgb(0 0 0 / .35), 0 14px 34px rgb(0 0 0 / .45);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink); font:15px/1.5 var(--f-ui); -webkit-font-smoothing:antialiased}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:30; background:var(--surface)}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.wrap{max-width:1320px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
+.sc{--c:oklch(var(--sl) var(--scc) var(--h,290)); --t:oklch(var(--tint-l) var(--tint-c) var(--h,290)); --ti:oklch(var(--tint-ink) 0.08 var(--h,290))}
+
+/* Header */
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:color-mix(in oklab, var(--surface) 92%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+.top .wrap{display:flex; align-items:center; gap:16px; padding-block:12px; flex-wrap:wrap}
+.brand{display:flex; align-items:center; gap:10px; min-width:0}
+.brand svg{flex:none}
+.brand b{font:600 21px/1.1 var(--f-display); letter-spacing:-.01em}
+.brand small{display:block; font:500 10.5px/1.2 var(--f-ui); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-top:2px}
+.search{flex:1 1 260px; min-width:0; position:relative}
+.search input{width:100%; height:40px; border-radius:999px; border:1px solid var(--line); background:var(--surface-2); padding:0 14px 0 38px}
+.search input:focus{background:var(--surface); border-color:var(--accent)}
+.search svg{position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted)}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; padding:0 16px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font-weight:500; white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent); color:var(--accent-ink); border-color:transparent}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.sm{height:32px; padding:0 12px; font-size:13.5px}
+.btn[disabled]{opacity:.5; cursor:not-allowed}
+.btn.danger{color:var(--danger)}
+.btn.danger.armed{background:var(--danger); color:#fff; border-color:transparent}
+
+/* Status strip */
+.strip{display:flex; align-items:end; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-block:20px 6px}
+.tabs{display:flex; gap:6px; flex-wrap:wrap}
+.tab{display:inline-flex; align-items:center; gap:8px; height:36px; padding:0 14px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font-size:14px; font-weight:500}
+.tab .n{font:500 12.5px var(--f-mono); color:var(--muted); font-variant-numeric:tabular-nums}
+.tab[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.tab[aria-pressed="true"] .n{color:inherit; opacity:.75}
+.glyph{width:12px; height:12px; flex:none; border-radius:50%; display:inline-block}
+.g-new{border:2px solid var(--st-new)}
+.g-learning{border:2px solid var(--st-learn); background:linear-gradient(90deg, var(--st-learn) 50%, transparent 50%)}
+.g-done{background:var(--st-done); position:relative}
+.g-done::after{content:""; position:absolute; left:3.5px; top:1.5px; width:3px; height:6px; border:solid var(--surface); border-width:0 1.6px 1.6px 0; transform:rotate(45deg)}
+.progress{flex:1 1 280px; max-width:420px; display:grid; gap:6px}
+.progress .lbl{display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted)}
+.progress .lbl b{font:500 12.5px var(--f-mono); color:var(--ink)}
+.bar{display:flex; height:8px; border-radius:99px; overflow:hidden; background:var(--surface-2)}
+.bar i{display:block; height:100%}
+
+/* Rails */
+.rail-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-top:18px}
+.eyebrow{font:600 11px/1 var(--f-ui); letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+.rail{display:flex; gap:14px; overflow-x:auto; padding:12px 2px 10px; scrollbar-width:thin; scroll-snap-type:x proximity}
+.bub{flex:none; width:84px; display:grid; justify-items:center; gap:7px; background:none; border:0; padding:0; scroll-snap-align:start; text-align:center}
+.ring{--p:0%; width:68px; height:68px; border-radius:50%; padding:3px; background:conic-gradient(var(--c, var(--accent)) var(--p), var(--line) 0); transition:transform .15s}
+.core{width:100%; height:100%; border-radius:50%; background:var(--t, var(--surface)); border:3px solid var(--bg); display:grid; place-items:center; position:relative}
+.mono{font:600 21px/1 var(--f-display); color:var(--ti, var(--ink)); letter-spacing:-.02em}
+.cnt{position:absolute; right:-6px; top:-4px; min-width:22px; height:22px; padding:0 6px; border-radius:99px; background:var(--surface); border:1px solid var(--line); font:500 11px/20px var(--f-mono); color:var(--muted)}
+.bub .nm{font-size:12px; line-height:1.25; color:var(--muted); max-width:84px}
+.bub:hover .ring{transform:translateY(-2px)}
+.bub[aria-pressed="true"] .ring{box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--c, var(--ink))}
+.bub[aria-pressed="true"] .nm{color:var(--ink); font-weight:600}
+.bub.all .core{background:var(--surface-2)}
+.subrail .bub{width:76px}
+.subrail .ring{width:56px; height:56px; padding:2.5px}
+.subrail .mono{font-size:15px}
+.subrail .nm{max-width:76px; font-size:11.5px}
+.hint{font-size:13px; color:var(--muted)}
+
+/* Toolbar */
+.toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding-block:10px 14px; border-top:1px solid var(--line); margin-top:6px}
+.toolbar h2{margin:0; font:600 22px/1.2 var(--f-display); text-wrap:balance}
+.toolbar h2 span{font:400 14px var(--f-ui); color:var(--muted); margin-left:8px}
+.sel{height:34px; border-radius:var(--r-ctl); border:1px solid var(--line); background:var(--surface); padding:0 10px; font-size:13.5px}
+
+/* Board */
+.board{columns:250px; column-gap:16px; padding-bottom:96px}
+.card{break-inside:avoid; margin:0 0 16px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card); overflow:hidden; box-shadow:var(--shadow); cursor:pointer; transition:transform .16s, box-shadow .16s; display:block; width:100%; text-align:left; padding:0}
+.card:hover{transform:translateY(-3px); box-shadow:var(--shadow-lift)}
+.cover{position:relative; background:var(--surface-2)}
+.cover img,.cover video{display:block; width:100%; height:auto; max-height:420px; object-fit:cover}
+.cover .play{position:absolute; inset:auto auto 10px 10px; height:26px; padding:0 9px; border-radius:99px; background:rgb(0 0 0 / .62); color:#fff; font:500 11.5px/26px var(--f-mono)}
+.fig{background:var(--t); padding:20px 16px 16px; display:grid; gap:4px}
+.fig .v{font:600 34px/1.05 var(--f-display); color:var(--ti); letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.fig .l{font-size:12.5px; color:var(--ti); opacity:.82}
+.filetile{background:var(--t); padding:16px; display:flex; align-items:center; gap:10px}
+.ext{width:40px; height:48px; border-radius:6px; background:var(--surface); border:1px solid var(--line); display:grid; place-items:end center; padding-bottom:6px; font:600 10px var(--f-mono); color:var(--ti)}
+.filetile span{font-size:13px; color:var(--ti); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+.cbody{padding:12px 14px 14px; display:grid; gap:8px}
+.meta{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); min-width:0}
+.meta .dot{width:8px; height:8px; border-radius:50%; background:var(--c); flex:none}
+.meta .t{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.card h3{margin:0; font:600 17.5px/1.28 var(--f-display); text-wrap:balance}
+.card p{margin:0; font-size:13.5px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden}
+.cfoot{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding-top:2px}
+.pill{display:inline-flex; align-items:center; gap:6px; height:24px; padding:0 9px 0 7px; border-radius:99px; font-size:12px; font-weight:500; background:var(--surface-2)}
+.pill.new{color:var(--st-new)} .pill.learning{color:var(--st-learn)} .pill.done{color:var(--st-done)}
+.pill .glyph{width:10px; height:10px}
+.date{font:400 11.5px var(--f-mono); color:var(--muted); font-variant-numeric:tabular-nums}
+.chips{display:flex; gap:6px; flex-wrap:wrap}
+.chip{font:500 11px var(--f-mono); padding:2px 7px; border-radius:6px; background:var(--surface-2); color:var(--muted)}
+.chip.doi{color:var(--accent); background:var(--accent-soft)}
+.chip.ex{color:var(--ti); background:var(--t)}
+
+.empty{border:1.5px dashed var(--line); border-radius:var(--r-card); padding:36px 20px; text-align:center; display:grid; gap:10px; justify-items:center; color:var(--muted); column-span:all; margin-bottom:96px}
+.empty h3{margin:0; color:var(--ink); font:600 20px var(--f-display)}
+.foot{font-size:12.5px; color:var(--muted); padding-block:0 28px; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.foot i{width:8px; height:8px; border-radius:50%; background:var(--st-done); display:inline-block}
+.foot i.local{background:var(--st-learn)}
+
+.fab{position:fixed; right:max(18px, calc(env(safe-area-inset-right,0px) + 12px)); bottom:max(18px, calc(env(safe-area-inset-bottom,0px) + 12px)); width:56px; height:56px; border-radius:50%; border:0; background:var(--accent); color:var(--accent-ink); box-shadow:var(--shadow-lift); display:none; place-items:center; z-index:25}
+@media (max-width:720px){ .fab{display:grid} .top .btn.primary{display:none} .board{columns:2 150px; column-gap:10px} .card{margin-bottom:10px} .card h3{font-size:15.5px} .fig .v{font-size:26px} .cbody{padding:10px 11px 12px} }
+
+/* Dialogs */
+dialog{border:0; padding:0; background:var(--surface); color:var(--ink); border-radius:18px; width:min(780px, calc(100% - 20px)); max-height:calc(100% - 24px); box-shadow:var(--shadow-lift)}
+dialog::backdrop{background:rgb(14 10 26 / .55); backdrop-filter:blur(2px)}
+.dlg{display:flex; flex-direction:column; max-height:calc(100vh - 24px); max-height:calc(100dvh - 24px)}
+.dh{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line)}
+.dh h2{margin:0; font:600 19px var(--f-display)}
+.db{padding:18px; overflow-y:auto; display:grid; gap:18px}
+.df{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 18px; border-top:1px solid var(--line); flex-wrap:wrap}
+.x{width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--surface); display:grid; place-items:center; flex:none}
+
+/* Detail */
+.gallery{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:8px}
+.gallery img,.gallery video{width:100%; max-width:100%; border-radius:10px; display:block; background:var(--surface-2)}
+.gallery .one{grid-column:1/-1}
+.gallery a.file{display:flex; align-items:center; gap:10px; padding:10px; border:1px solid var(--line); border-radius:10px; text-decoration:none; color:inherit; min-width:0}
+.dt{margin:0; font:600 26px/1.2 var(--f-display); text-wrap:balance}
+.facts{display:flex; flex-wrap:wrap; gap:8px 18px; font-size:12.5px; color:var(--muted)}
+.facts b{font:500 12.5px var(--f-mono); color:var(--ink); font-weight:500}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; gap:2px; background:var(--surface-2)}
+.seg button{border:0; background:transparent; height:32px; padding:0 13px; border-radius:999px; display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:500; color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:0 1px 3px rgb(0 0 0 / .12)}
+.sec h4{margin:0 0 8px; font:600 11px/1 var(--f-ui); letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+.sec p{margin:0; max-width:68ch}
+.sum{font:400 17px/1.55 var(--f-display)}
+.kp{margin:0; padding-left:18px; display:grid; gap:4px; max-width:68ch}
+.notes{white-space:pre-wrap; background:var(--surface-2); border-radius:10px; padding:12px 14px; font-size:14px; max-width:100%; overflow-wrap:anywhere}
+.refs{margin:0; padding:0; list-style:none; display:grid; gap:10px}
+.ref{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:start; padding:10px 12px; border:1px solid var(--line); border-radius:10px}
+.ref .num{font:500 12px var(--f-mono); color:var(--muted); padding-top:2px}
+.ref .rt{font-size:14px; font-weight:500; line-height:1.35; min-width:0; overflow-wrap:anywhere}
+.ref .rc{font-size:12.5px; color:var(--muted); margin-top:2px}
+.ref a{color:var(--accent); font:500 12.5px var(--f-mono); text-decoration:none; overflow-wrap:anywhere}
+.ref a:hover{text-decoration:underline}
+.vbadge{font:500 10.5px var(--f-mono); padding:2px 6px; border-radius:5px; white-space:nowrap}
+.vbadge.ok{background:color-mix(in oklab, var(--st-done) 16%, transparent); color:var(--st-done)}
+.vbadge.un{background:color-mix(in oklab, var(--st-learn) 18%, transparent); color:var(--st-learn)}
+.ref .rm{border:0; background:none; color:var(--muted); width:28px; height:28px; border-radius:50%}
+.ref .rm:hover{background:var(--surface-2); color:var(--danger)}
+
+/* Composer */
+.cgrid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:18px}
+@media (max-width:760px){ .cgrid{grid-template-columns:minmax(0,1fr)} }
+.col{display:grid; gap:14px; align-content:start; min-width:0}
+.cap{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+.capb{display:grid; justify-items:center; gap:6px; padding:12px 6px; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); font-size:12.5px; font-weight:500; color:var(--ink); cursor:pointer; position:relative}
+.capb:hover{border-color:var(--accent); color:var(--accent)}
+.capb input{position:absolute; inset:0; opacity:0; cursor:pointer; width:100%}
+.capb:focus-within{outline:2px solid var(--accent); outline-offset:2px}
+.drop{border:1.5px dashed var(--line); border-radius:12px; padding:12px; font-size:12.5px; color:var(--muted); text-align:center}
+.drop.over{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
+.thumbs{display:flex; gap:8px; flex-wrap:wrap}
+.th{position:relative; width:78px; height:78px; border-radius:10px; overflow:hidden; background:var(--surface-2); border:1px solid var(--line); display:grid; place-items:center; font:600 10px var(--f-mono); color:var(--muted)}
+.th img{width:100%; height:100%; object-fit:cover}
+.th .k{position:absolute; left:4px; bottom:4px; background:rgb(0 0 0 / .6); color:#fff; border-radius:4px; padding:0 4px; font:500 9.5px/15px var(--f-mono)}
+.th button{position:absolute; right:3px; top:3px; width:22px; height:22px; border-radius:50%; border:0; background:rgb(0 0 0 / .62); color:#fff; font-size:13px; line-height:22px; padding:0}
+label.f{display:grid; gap:6px; font-size:12.5px; font-weight:500; color:var(--muted)}
+.inp{width:100%; min-width:0; border:1px solid var(--line); background:var(--surface); border-radius:var(--r-ctl); padding:9px 11px; font-size:14.5px; color:var(--ink)}
+.inp:focus{border-color:var(--accent); outline:none; box-shadow:0 0 0 3px var(--accent-soft)}
+textarea.inp{resize:vertical; min-height:96px; line-height:1.5}
+.row2{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px}
+@media (max-width:440px){ .row2{grid-template-columns:minmax(0,1fr)} }
+.ai{border-radius:14px; background:var(--accent-soft); padding:14px; display:grid; gap:10px}
+.ai .h{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.ai .h b{font:600 15px var(--f-display); color:var(--ink)}
+.ai .h small{display:block; font-size:12px; color:var(--muted); font-weight:400; font-family:var(--f-ui)}
+.log{margin:0; padding:0; list-style:none; display:grid; gap:4px; font:400 12px/1.45 var(--f-mono); color:var(--muted)}
+.log li::before{content:"› "; color:var(--accent)}
+.log li.err{color:var(--danger)}
+.log li.ok::before{content:"✓ "; color:var(--st-done)}
+.addref{display:flex; gap:8px; min-width:0}
+.addref .inp{font:400 13px var(--f-mono)}
+.toast{position:fixed; left:50%; bottom:max(24px, calc(env(safe-area-inset-bottom,0px) + 16px)); transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:99px; font-size:14px; z-index:50; box-shadow:var(--shadow-lift)}
+.spin{width:14px; height:14px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:sp .8s linear infinite; display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <circle cx="17" cy="17" r="16" fill="var(--accent-soft)"/>
+        <g stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" fill="none">
+          <path d="M17 17 L9 9 M17 17 L8 19 M17 17 L13 27 M17 17 L24 8"/>
+          <path d="M17 17 C 21 20, 23 23, 27 27"/>
+          <path d="M9 9 l-2 1 M9 9 l0 -2.5 M24 8 l2.5 0.5"/>
+        </g>
+        <circle cx="17" cy="17" r="4.2" fill="var(--accent)"/>
+      </svg>
+      <div><b>Neurology Note</b><small>Fellowship pinboard</small></div>
+    </div>
+    <label class="search" for="q">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Search pins, tags, trials, DOIs" autocomplete="off" aria-label="Search pins">
+    </label>
+    <button class="btn primary" data-act="new-pin" type="button">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      New pin
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="strip" id="strip" aria-label="Status"></section>
+  <div class="rail-h"><span class="eyebrow">Subspecialties</span><span class="hint" id="railhint"></span></div>
+  <nav class="rail" id="subrail" aria-label="Subspecialties"></nav>
+  <div id="catwrap"></div>
+  <div class="toolbar">
+    <h2 id="boardtitle">All pins</h2>
+    <select class="sel" id="sort" aria-label="Sort pins">
+      <option value="added-desc">Newest added</option>
+      <option value="added-asc">Oldest added</option>
+      <option value="start-asc">Start date</option>
+      <option value="status">Status: New → Done</option>
+      <option value="title">Title A–Z</option>
+    </select>
+  </div>
+  <section class="board" id="board" aria-live="polite">
+    <div class="empty"><h3>Loading your pins…</h3><div>Opening your saved notes.</div></div>
+  </section>
+  <footer class="foot" id="foot"></footer>
+</main>
+
+<button class="fab" data-act="new-pin" type="button" aria-label="New pin">
+  <svg width="22" height="22" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+</button>
+
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script type="application/json" id="examples">
+[
+ {"id":"ex-dawn","example":true,"title":"DAWN: thrombectomy 6–24 h with clinical–core mismatch","sub":"stroke","cat":"Hyperacute: IVT & EVT","status":"learning","createdAt":"2026-11-07T09:10:00Z","startDate":"2026-11-07",
+  "summary":"In anterior-circulation large-vessel occlusion seen 6–24 hours after last known well, thrombectomy plus medical therapy greatly improved 90-day functional independence when the deficit was disproportionate to the infarct core. Selection is by tissue (core volume) and clinical severity, not by the clock alone.",
+  "keyPoints":["Intracranial ICA or M1 occlusion, last known well 6–24 h","Mismatch: age ≥80 y, NIHSS ≥10, core <21 mL; age <80 y, NIHSS ≥10, core <31 mL; or age <80 y, NIHSS ≥20, core 31–51 mL","Functional independence (mRS 0–2) at 90 days: 49% vs 13%","No excess symptomatic ICH or mortality; trial stopped early for efficacy"],
+  "keyFigure":{"value":"6–24 h","label":"from last known well"},
+  "tags":["late window","LVO","perfusion imaging","mRS"],"body":"Compare with DEFUSE 3 (6–16 h, perfusion mismatch). Check our CTP core thresholds on RAPID.","link":"",
+  "sources":[{"pmid":"29129157","doi":"10.1056/NEJMoa1706442","title":"Thrombectomy 6 to 24 Hours after Stroke with a Mismatch between Deficit and Infarct.","journal":"N Engl J Med","year":"2018","author":"Nogueira RG","via":"PubMed","verified":true}],"media":[]},
+ {"id":"ex-ninds","example":true,"title":"NINDS rt-PA: alteplase within 3 hours","sub":"stroke","cat":"Hyperacute: IVT & EVT","status":"done","createdAt":"2026-10-05T08:00:00Z","startDate":"2026-10-05","doneDate":"2026-10-14",
+  "summary":"The trial that established IV alteplase for acute ischemic stroke: given within 3 hours of onset, patients were about 30% more likely to have minimal or no disability at 3 months, at the cost of more symptomatic intracerebral hemorrhage.",
+  "keyPoints":["Dose 0.9 mg/kg (max 90 mg): 10% bolus, rest over 60 min","Treat within 3 h of onset","Symptomatic ICH 6.4% vs 0.6%; no difference in mortality","Benefit held across stroke subtypes"],
+  "keyFigure":{"value":"0.9 mg/kg","label":"max 90 mg, ≤3 h from onset"},
+  "tags":["thrombolysis","alteplase","sICH"],"body":"","link":"",
+  "sources":[{"pmid":"7477192","doi":"10.1056/NEJM199512143332401","title":"Tissue plasminogen activator for acute ischemic stroke.","journal":"N Engl J Med","year":"1995","author":"NINDS rt-PA Stroke Study Group","via":"PubMed","verified":true}],"media":[]},
+ {"id":"ex-esett","example":true,"title":"ESETT: second-line drug for benzodiazepine-refractory status","sub":"epilepsy","cat":"Status epilepticus","status":"learning","createdAt":"2026-11-03T13:30:00Z","startDate":"2026-11-04",
+  "summary":"For convulsive status epilepticus that continues after adequate benzodiazepines, levetiracetam, fosphenytoin and valproate stopped seizures in about half of patients each, with similar safety. Pick by comorbidity and availability rather than expecting one drug to win.",
+  "keyPoints":["Levetiracetam 60 mg/kg (max 4,500 mg)","Fosphenytoin 20 mg PE/kg (max 1,500 mg PE)","Valproate 40 mg/kg (max 3,000 mg)","Seizure cessation with improved responsiveness at 60 min: 47% / 45% / 46%"],
+  "keyFigure":{"value":"60 mg/kg","label":"levetiracetam loading dose"},
+  "tags":["status epilepticus","levetiracetam","valproate","fosphenytoin"],"body":"Our protocol still lists phenytoin first; bring ESETT to the next protocol review.","link":"",
+  "sources":[{"pmid":"31774955","doi":"10.1056/NEJMoa1905795","title":"Randomized Trial of Three Anticonvulsant Medications for Status Epilepticus.","journal":"N Engl J Med","year":"2019","author":"Kapur J","via":"PubMed","verified":true}],"media":[]},
+ {"id":"ex-ilae","example":true,"title":"ILAE 2017 operational classification of seizure types","sub":"epilepsy","cat":"Classification & semiology","status":"done","createdAt":"2026-10-12T10:00:00Z","startDate":"2026-10-12","doneDate":"2026-10-20",
+  "summary":"Seizures are classified first by onset (focal, generalized, unknown), then focal seizures by awareness, then by motor or non-motor onset. Terms such as complex partial and secondarily generalized are replaced.",
+  "keyPoints":["Onset: focal, generalized or unknown","Focal: aware vs impaired awareness","Motor vs non-motor onset (e.g. automatisms, behavior arrest)","“Focal to bilateral tonic-clonic” replaces “secondarily generalized”"],
+  "keyFigure":{"value":"3 axes","label":"onset · awareness · motor features"},
+  "tags":["ILAE","semiology","terminology"],"body":"","link":"",
+  "sources":[{"pmid":"28276060","doi":"10.1111/epi.13670","title":"Operational classification of seizure types by the International League Against Epilepsy: Position Paper of the ILAE Commission for Classification and Terminology.","journal":"Epilepsia","year":"2017","author":"Fisher RS","via":"PubMed","verified":true}],"media":[]},
+ {"id":"ex-mdspd","example":true,"title":"MDS clinical diagnostic criteria for Parkinson disease","sub":"movement","cat":"Parkinson disease","status":"new","createdAt":"2026-10-28T15:00:00Z","startDate":"",
+  "summary":"Diagnosis starts with parkinsonism (bradykinesia plus rest tremor or rigidity), then weighs supportive criteria against absolute exclusions and red flags to reach clinically established or clinically probable PD.",
+  "keyPoints":["Parkinsonism = bradykinesia + rest tremor and/or rigidity","Supportive: clear dopaminergic response, levodopa-induced dyskinesia, rest tremor, olfactory loss or cardiac MIBG denervation","Established: ≥2 supportive, no exclusions, no red flags","Probable: no exclusions; red flags offset by supportive criteria (max 2)"],
+  "keyFigure":{"value":"≥2","label":"supportive criteria for established PD"},
+  "tags":["parkinsonism","diagnostic criteria","red flags"],"body":"Make a one-page bedside checklist from this.","link":"",
+  "sources":[{"pmid":"26474316","doi":"10.1002/mds.26424","title":"MDS clinical diagnostic criteria for Parkinson's disease.","journal":"Mov Disord","year":"2015","author":"Postuma RB","via":"PubMed","verified":true}],"media":[]},
+ {"id":"ex-mcdonald","example":true,"title":"McDonald 2017: dissemination in space and time","sub":"neuroimmunology","cat":"Multiple sclerosis","status":"new","createdAt":"2026-10-20T11:20:00Z","startDate":"",
+  "summary":"After a typical clinically isolated syndrome, MS can be diagnosed when MRI shows dissemination in space and time. CSF-specific oligoclonal bands can substitute for dissemination in time, and symptomatic and cortical lesions now count.",
+  "keyPoints":["DIS: ≥1 T2 lesion in ≥2 of periventricular, cortical/juxtacortical, infratentorial, spinal cord","DIT: simultaneous enhancing and non-enhancing lesions, or a new lesion on follow-up","CSF-specific oligoclonal bands can substitute for DIT","Exclude mimics first: NMOSD, MOGAD, small vessel disease"],
+  "keyFigure":{"value":"2 of 4","label":"CNS regions for dissemination in space"},
+  "tags":["MS","MRI","oligoclonal bands","CIS"],"body":"To do: compare with the 2024 revision (optic nerve as a fifth region, central vein sign, kappa free light chains).","link":"",
+  "sources":[{"pmid":"29275977","doi":"10.1016/S1474-4422(17)30470-2","title":"Diagnosis of multiple sclerosis: 2017 revisions of the McDonald criteria.","journal":"Lancet Neurol","year":"2018","author":"Thompson AJ","via":"PubMed","verified":true}],"media":[]}
+]
+</script>
+
+<script>
+(() => {
+"use strict";
+
+/* ---------- Taxonomy ---------- */
+const SUBS = [
+  {k:"stroke", n:"Stroke & Vascular", m:"St", h:22, kw:["stroke","thrombectomy","thrombolysis","alteplase","tenecteplase","lvo","ischemic","ich","hemorrhage","aneurysm","sah","carotid","aspirin","anticoagul","atrial","nihss","penumbra","perfusion","cvt","venous"],
+   cats:["Hyperacute: IVT & EVT","Stroke imaging","Intracerebral hemorrhage","SAH & aneurysm","Cerebral venous thrombosis","Secondary prevention","Small vessel disease","Rehab & recovery"]},
+  {k:"epilepsy", n:"Epilepsy & EEG", m:"Ep", h:300, kw:["seizure","epilep","eeg","status epilepticus","levetiracetam","valpro","lamotrig","semiology","ictal","spike","convuls"],
+   cats:["Classification & semiology","EEG patterns","Anti-seizure medications","Status epilepticus","Epilepsy syndromes","Surgery & neuromodulation","Women & pregnancy"]},
+  {k:"movement", n:"Movement Disorders", m:"Mv", h:150, kw:["parkinson","tremor","dystonia","chorea","huntington","ataxia","levodopa","dbs","tic","myoclonus","bradykinesia","msa","psp"],
+   cats:["Parkinson disease","Atypical parkinsonism","Tremor","Dystonia","Chorea & Huntington","Ataxia","Tics & functional","DBS & device therapy","Botulinum toxin"]},
+  {k:"neuromuscular", n:"Neuromuscular & EMG", m:"Nm", h:200, kw:["neuropathy","guillain","gbs","cidp","myasthenia","myopathy","als","motor neuron","emg","nerve conduction","ncs","sma"],
+   cats:["Peripheral neuropathy","GBS & CIDP","Myasthenia & NMJ","Myopathy","ALS & MND","NCS / EMG"]},
+  {k:"neuroimmunology", n:"MS & Neuroimmunology", m:"Ni", h:262, kw:["multiple sclerosis","ms ","demyelinat","nmosd","aquaporin","mog","encephalitis","nmda","oligoclonal","ocrelizumab","natalizumab","optic neuritis"],
+   cats:["Multiple sclerosis","NMOSD","MOGAD","Autoimmune encephalitis","Disease-modifying therapy","CNS vasculitis"]},
+  {k:"headache", n:"Headache", m:"Hd", h:48, kw:["headache","migraine","cluster","cgrp","triptan","iih","intracranial hypertension","trigeminal"],
+   cats:["Migraine","Cluster & TACs","IIH & CSF pressure","Secondary headache","Preventives & CGRP"]},
+  {k:"cognitive", n:"Cognitive & Dementia", m:"Cg", h:330, kw:["dementia","alzheimer","amyloid","tau","frontotemporal","lewy","cognitive","memory","lecanemab","donanemab"],
+   cats:["Alzheimer disease","Frontotemporal dementia","Lewy body disease","Vascular cognitive impairment","Rapidly progressive dementia","Biomarkers"]},
+  {k:"critical", n:"Neurocritical Care", m:"Cc", h:8, kw:["coma","brain death","icp","herniation","tbi","traumatic brain","prognost","cardiac arrest","sedation","vasospasm"],
+   cats:["Coma & brain death","ICP & herniation","Traumatic brain injury","Neuroprognostication","Sedation & ventilation"]},
+  {k:"neuroonc", n:"Neuro-oncology", m:"On", h:285, kw:["glioma","glioblastoma","tumor","tumour","metasta","paraneoplastic","meningioma","lymphoma"],
+   cats:["Glioma","Brain metastases","Paraneoplastic syndromes","Treatment neurotoxicity"]},
+  {k:"infection", n:"Neuro-infection", m:"If", h:95, kw:["meningitis","encephalitis","hsv","hiv","tuberculous","cryptococ","prion","cjd","abscess"],
+   cats:["Meningitis","Viral encephalitis","HIV & opportunistic","TB & fungal","Prion disease"]},
+  {k:"ophtho", n:"Neuro-ophthalmology", m:"Op", h:225, kw:["optic","papilledema","diplopia","nystagmus","pupil","visual field","saccade","eye movement"],
+   cats:["Optic neuropathy","Eye movements","Pupil","Visual fields"]},
+  {k:"sleep", n:"Sleep", m:"Sl", h:245, kw:["sleep","narcolepsy","rbd","restless legs","rls","apnea","insomnia","hypersomnia"],
+   cats:["Narcolepsy & hypersomnia","REM sleep behavior disorder","Restless legs","Sleep apnea"]},
+  {k:"peds", n:"Pediatric & Genetics", m:"Pg", h:120, kw:["pediatric","child","neonat","leukodystrophy","genetic","mitochondrial","developmental","infant"],
+   cats:["Neurodevelopment","Leukodystrophy","Neurogenetics","Neonatal neurology"]},
+  {k:"general", n:"Localization & Skills", m:"Lx", h:65, kw:["localization","neuroanatomy","exam","lesion","reflex","mri basics","lumbar puncture","case"],
+   cats:["Localization","Neuroanatomy","Bedside exam","Neuroimaging basics","Case of the week"]},
+];
+const SUBMAP = Object.fromEntries(SUBS.map(s => [s.k, s]));
+const STATUSES = [
+  {k:"new", n:"New"}, {k:"learning", n:"Learning"}, {k:"done", n:"Done"}
+];
+const STATUS_ORDER = {new:0, learning:1, done:2};
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const todayISO = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10); };
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmtDate = iso => { if (!iso) return ""; const d = new Date(iso.length <= 10 ? iso + "T00:00:00" : iso); if (isNaN(d)) return ""; return `${String(d.getDate()).padStart(2,"0")} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
+const daysSince = iso => { if (!iso) return null; const d = new Date(iso + "T00:00:00"); const n = Math.floor((Date.now() - d) / 864e5); return n >= 0 ? n + 1 : null; };
+const DOI_RE = /\b(10\.\d{4,9}\/[^\s"'<>]+[^\s"'<>.,;:)\]])/gi;
+const extractDOIs = t => [...new Set((String(t || "").match(DOI_RE) || []).map(d => d.replace(/^doi:\s*/i, "")))];
+const extOf = name => ((name || "").split(".").pop() || "file").slice(0, 4).toUpperCase();
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+
+let toastTimer;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, 2600); }
+
+/* ---------- Local storage (IndexedDB) ---------- */
+const IDB = (() => {
+  let p;
+  const open = () => p || (p = new Promise((res, rej) => {
+    const r = indexedDB.open("neurology-note", 1);
+    r.onupgradeneeded = () => { const d = r.result; d.createObjectStore("notes", {keyPath:"id"}); d.createObjectStore("blobs"); };
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  const tx = async (store, mode, fn) => { const d = await open(); return new Promise((res, rej) => {
+    const t = d.transaction(store, mode); const req = fn(t.objectStore(store));
+    t.oncomplete = () => res(req && req.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  }); };
+  return {
+    all: () => tx("notes", "readonly", s => s.getAll()),
+    put: n => tx("notes", "readwrite", s => s.put(n)),
+    del: id => tx("notes", "readwrite", s => s.delete(id)),
+    putBlob: (k, b) => tx("blobs", "readwrite", s => s.put(b, k)),
+    getBlob: k => tx("blobs", "readonly", s => s.get(k)),
+    delBlob: k => tx("blobs", "readwrite", s => s.delete(k)),
+  };
+})();
+
+/* ---------- App state ---------- */
+const S = {
+  notes: [], loaded: false,
+  f: {sub:"all", cat:null, status:"all", q:"", sort: lsGet("nn-sort") || "added-desc"},
+  cap: {db:null, assets:null, sample:null, mcp:null, limits:null},
+  mode: "local", storeNote: "",
+};
+let store = null;
+
+/* ---------- Stores ---------- */
+function LocalStore(){
+  let cb = () => {};
+  let mem = [];
+  let ok = true;
+  return {
+    kind: "local",
+    async init(onChange){
+      cb = onChange;
+      try { mem = await IDB.all(); } catch { ok = false; mem = []; }
+      if (!mem.length && !lsGet("nn-seeded")) {
+        const ex = JSON.parse($("#examples").textContent);
+        for (const n of ex) { mem.push(n); if (ok) { try { await IDB.put(n); } catch {} } }
+        lsSet("nn-seeded", "1");
+      }
+      cb(mem.slice());
+      return ok;
+    },
+    async save(n){ const i = mem.findIndex(x => x.id === n.id); if (i >= 0) mem[i] = n; else mem.push(n); if (ok) await IDB.put(n); cb(mem.slice()); },
+    async remove(n){ mem = mem.filter(x => x.id !== n.id); if (ok) { await IDB.del(n.id); for (const m of n.media || []) { if (m.store === "local") IDB.delBlob(m.key).catch(()=>{}); if (m.poster?.store === "local") IDB.delBlob(m.poster.key).catch(()=>{}); } } cb(mem.slice()); },
+    async putMedia(blob){ const key = uid(); if (ok) await IDB.putBlob(key, blob); else LOCAL_URLS.set(key, URL.createObjectURL(blob)); return {store:"local", key}; },
+  };
+}
+function DbStore(db, assets){
+  const col = db.collection("notes");
+  return {
+    kind: "db",
+    init(onChange){
+      return new Promise(resolve => {
+        let first = true;
+        const timer = setTimeout(() => { if (first) { S.storeNote = "Still connecting to your saved pins…"; renderFoot(); } }, 10000);
+        col.onSnapshot(snap => {
+          clearTimeout(timer);
+          onChange(snap.docs.map(d => ({...d.data(), id: d.id})));
+          if (first) { first = false; resolve(true); }
+        }, err => {
+          clearTimeout(timer);
+          S.storeNote = err && err.code === "revoked" ? "Access to saved pins changed. Reload to continue." : "Couldn't load saved pins right now. Reload to try again.";
+          renderFoot(); if (first) { first = false; resolve(false); }
+        });
+      });
+    },
+    async save(n){ const {id, ...data} = n; await col.doc(id).set(JSON.parse(JSON.stringify(data))); },
+    async remove(n){ await col.doc(n.id).delete(); for (const m of n.media || []) { if (m.store === "asset" && assets) assets.delete(m.id).catch(()=>{}); if (m.poster?.store === "asset" && assets) assets.delete(m.poster.id).catch(()=>{}); } },
+    async putMedia(blob, type){
+      if (assets) { const r = await assets.upload(blob, type ? {type} : undefined); return {store:"asset", id:r.id}; }
+      const key = uid(); try { await IDB.putBlob(key, blob); } catch { LOCAL_URLS.set(key, URL.createObjectURL(blob)); } return {store:"local", key};
+    },
+  };
+}
+
+/* ---------- Media URLs ---------- */
+const LOCAL_URLS = new Map();
+function srcAttr(ref){
+  if (!ref) return "";
+  if (ref.store === "asset") return `src="/_blob/${esc(ref.id)}"`;
+  if (ref.store === "local") { const u = LOCAL_URLS.get(ref.key); return u ? `src="${u}"` : `data-lkey="${esc(ref.key)}"`; }
+  return "";
+}
+function hrefOf(ref){ if (!ref) return "#"; if (ref.store === "asset") return "/_blob/" + ref.id; if (ref.store === "local") return LOCAL_URLS.get(ref.key) || "#"; return "#"; }
+async function hydrate(root){
+  const els = root.querySelectorAll("[data-lkey]");
+  for (const el of els) {
+    const k = el.dataset.lkey; let u = LOCAL_URLS.get(k);
+    if (!u) { try { const b = await IDB.getBlob(k); if (b) { u = URL.createObjectURL(b); LOCAL_URLS.set(k, u); } } catch {} }
+    if (u) { if (el.tagName === "A") el.href = u; else el.src = u; el.removeAttribute("data-lkey"); }
+  }
+}
+
+/* ---------- Filtering ---------- */
+function matchesQ(n, q){
+  if (!q) return true;
+  const hay = [n.title, n.summary, n.body, n.cat, (n.tags||[]).join(" "), (n.keyPoints||[]).join(" "), SUBMAP[n.sub]?.n, ...(n.sources||[]).map(s => `${s.title} ${s.doi} ${s.journal} ${s.author}`)].join(" ").toLowerCase();
+  return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
+}
+function visible(){
+  const f = S.f;
+  let list = S.notes.filter(n => (f.sub === "all" || n.sub === f.sub) && (!f.cat || n.cat === f.cat) && (f.status === "all" || n.status === f.status) && matchesQ(n, f.q));
+  const by = {
+    "added-desc": (a,b) => (b.createdAt||"").localeCompare(a.createdAt||""),
+    "added-asc": (a,b) => (a.createdAt||"").localeCompare(b.createdAt||""),
+    "start-asc": (a,b) => (a.startDate||"9999").localeCompare(b.startDate||"9999"),
+    "status": (a,b) => (STATUS_ORDER[a.status]??0) - (STATUS_ORDER[b.status]??0) || (b.createdAt||"").localeCompare(a.createdAt||""),
+    "title": (a,b) => (a.title||"").localeCompare(b.title||""),
+  }[f.sort] || (() => 0);
+  return list.sort(by);
+}
+
+/* ---------- Rendering: board ---------- */
+function render(){ renderStrip(); renderSubs(); renderCats(); renderBoard(); renderFoot(); }
+
+function renderStrip(){
+  const scope = S.notes.filter(n => (S.f.sub === "all" || n.sub === S.f.sub) && (!S.f.cat || n.cat === S.f.cat) && matchesQ(n, S.f.q));
+  const c = {all: scope.length, new:0, learning:0, done:0};
+  scope.forEach(n => c[n.status] = (c[n.status]||0) + 1);
+  const pct = k => scope.length ? (c[k] / scope.length * 100) : 0;
+  $("#strip").innerHTML = `
+    <div class="tabs" role="group" aria-label="Filter by status">
+      <button class="tab" type="button" data-act="status" data-k="all" aria-pressed="${S.f.status==="all"}">All <span class="n">${c.all}</span></button>
+      ${STATUSES.map(s => `<button class="tab" type="button" data-act="status" data-k="${s.k}" aria-pressed="${S.f.status===s.k}"><i class="glyph g-${s.k}"></i>${s.n} <span class="n">${c[s.k]}</span></button>`).join("")}
+    </div>
+    <div class="progress">
+      <div class="lbl"><span>Progress in this view</span><span><b>${Math.round(pct("done"))}%</b> done</span></div>
+      <div class="bar" role="img" aria-label="${c.done} done, ${c.learning} learning, ${c.new} new">
+        <i style="width:${pct("done")}%;background:var(--st-done)"></i><i style="width:${pct("learning")}%;background:var(--st-learn)"></i><i style="width:${pct("new")}%;background:var(--st-new)"></i>
+      </div>
+    </div>`;
+}
+
+function ringFor(list){ const done = list.filter(n => n.status === "done").length; return list.length ? Math.round(done / list.length * 100) : 0; }
+
+function renderSubs(){
+  const all = S.notes;
+  const html = [`<button class="bub all" type="button" data-act="sub" data-k="all" aria-pressed="${S.f.sub==="all"}">
+      <span class="ring" style="--p:${ringFor(all)}%"><span class="core"><span class="mono">All</span><span class="cnt">${all.length}</span></span></span>
+      <span class="nm">All pins</span></button>`];
+  for (const s of SUBS) {
+    const list = all.filter(n => n.sub === s.k);
+    html.push(`<button class="bub sc" style="--h:${s.h}" type="button" data-act="sub" data-k="${s.k}" aria-pressed="${S.f.sub===s.k}" title="${esc(s.n)}: ${list.length} pins, ${ringFor(list)}% done">
+      <span class="ring" style="--p:${ringFor(list)}%"><span class="core"><span class="mono">${s.m}</span>${list.length ? `<span class="cnt">${list.length}</span>` : ""}</span></span>
+      <span class="nm">${esc(s.n)}</span></button>`);
+  }
+  $("#subrail").innerHTML = html.join("");
+  $("#railhint").textContent = "Ring shows % done";
+}
+
+function renderCats(){
+  const w = $("#catwrap");
+  if (S.f.sub === "all") { w.innerHTML = ""; return; }
+  const s = SUBMAP[S.f.sub];
+  const inSub = S.notes.filter(n => n.sub === s.k);
+  const cats = [...s.cats, ...new Set(inSub.map(n => n.cat).filter(c => c && !s.cats.includes(c)))];
+  const initials = c => c.replace(/&|:|\//g, " ").split(/\s+/).filter(Boolean).filter(x => !/^(and|of|the|vs)$/i.test(x)).slice(0,2).map(x => x[0].toUpperCase()).join("");
+  w.innerHTML = `<div class="rail-h"><span class="eyebrow">${esc(s.n)} · subtopics</span></div>
+    <nav class="rail subrail" aria-label="Subtopics">
+      <button class="bub sc" style="--h:${s.h}" type="button" data-act="cat" data-k="" aria-pressed="${!S.f.cat}"><span class="ring" style="--p:${ringFor(inSub)}%"><span class="core"><span class="mono">All</span></span></span><span class="nm">All topics</span></button>
+      ${cats.map(c => { const l = inSub.filter(n => n.cat === c); return `<button class="bub sc" style="--h:${s.h}" type="button" data-act="cat" data-k="${esc(c)}" aria-pressed="${S.f.cat===c}" title="${esc(c)}: ${l.length} pins">
+        <span class="ring" style="--p:${ringFor(l)}%"><span class="core"><span class="mono">${esc(initials(c))}</span>${l.length ? `<span class="cnt">${l.length}</span>` : ""}</span></span><span class="nm">${esc(c)}</span></button>`; }).join("")}
+    </nav>`;
+}
+
+function coverHTML(n, s){
+  const img = (n.media||[]).find(m => m.kind === "image");
+  const vid = (n.media||[]).find(m => m.kind === "video");
+  if (img) return `<div class="cover"><img ${srcAttr(img)} alt="" loading="lazy"></div>`;
+  if (vid) return vid.poster ? `<div class="cover"><img ${srcAttr(vid.poster)} alt="" loading="lazy"><span class="play">▶ video</span></div>` : `<div class="fig"><span class="v">▶</span><span class="l">${esc(vid.name || "Video")}</span></div>`;
+  if (n.keyFigure?.value) return `<div class="fig"><span class="v">${esc(n.keyFigure.value)}</span><span class="l">${esc(n.keyFigure.label||"")}</span></div>`;
+  const file = (n.media||[]).find(m => m.kind === "file");
+  if (file) return `<div class="filetile"><span class="ext">${esc(extOf(file.name))}</span><span>${esc(file.name)}</span></div>`;
+  return "";
+}
+function pillHTML(st, n){
+  const s = STATUSES.find(x => x.k === st) || STATUSES[0];
+  let label = s.n;
+  if (st === "learning" && n?.startDate) { const d = daysSince(n.startDate); if (d) label += ` · day ${d}`; }
+  return `<span class="pill ${s.k}"><i class="glyph g-${s.k}"></i>${label}</span>`;
+}
+
+function renderBoard(){
+  const b = $("#board");
+  const s = S.f.sub === "all" ? null : SUBMAP[S.f.sub];
+  $("#boardtitle").innerHTML = `${esc(S.f.cat || (s ? s.n : "All pins"))}<span>${visible().length} shown</span>`;
+  $("#sort").value = S.f.sort;
+  if (!S.loaded) return;
+  const list = visible();
+  if (!list.length) {
+    const none = !S.notes.length;
+    b.innerHTML = `<div class="empty">
+      <h3>${none ? "Your board is empty" : "No pins match"}</h3>
+      <div>${none ? "Pin a slide photo, a lecture clip, a PDF or a pasted abstract. Neurology Note writes the summary and finds the DOI." : "Try another subspecialty, status, or search term."}</div>
+      ${none ? `<button class="btn primary" type="button" data-act="new-pin">Add your first pin</button>` : `<button class="btn" type="button" data-act="clear">Clear filters</button>`}
+    </div>`;
+    return;
+  }
+  b.innerHTML = list.map(n => {
+    const sub = SUBMAP[n.sub] || SUBMAP.general;
+    const nDoi = (n.sources||[]).filter(x => x.doi).length;
+    return `<article class="card sc" style="--h:${sub.h}" tabindex="0" role="button" data-act="open" data-id="${esc(n.id)}" aria-label="${esc(n.title)}">
+      ${coverHTML(n, sub)}
+      <div class="cbody">
+        <div class="meta"><i class="dot"></i><span class="t">${esc(sub.n)}${n.cat ? " · " + esc(n.cat) : ""}</span></div>
+        <h3>${esc(n.title || "Untitled pin")}</h3>
+        ${n.summary ? `<p>${esc(n.summary)}</p>` : ""}
+        <div class="chips">${nDoi ? `<span class="chip doi">${nDoi} DOI</span>` : ""}${(n.media||[]).length ? `<span class="chip">${n.media.length} file${n.media.length>1?"s":""}</span>` : ""}${n.example ? `<span class="chip ex">Example</span>` : ""}</div>
+        <div class="cfoot">${pillHTML(n.status, n)}<span class="date" title="Date added">${esc(fmtDate(n.createdAt))}</span></div>
+      </div>
+    </article>`;
+  }).join("");
+  hydrate(b);
+}
+
+function renderFoot(){
+  const db = store?.kind === "db";
+  const assetsOk = !!S.cap.assets;
+  const ai = S.cap.sample ? "Claude writes summaries" : "Summaries are written on this device";
+  const src = S.cap.mcp ? "sources come from PubMed" : (window.claude ? "connect PubMed to auto-find sources" : "sources come from PubMed (NCBI)");
+  $("#foot").innerHTML = S.storeNote ? `<i class="local"></i>${esc(S.storeNote)}` :
+    `<i class="${db ? "" : "local"}"></i>${db ? `Pins are saved to this artifact${assetsOk ? "" : " (media stays in this browser)"}` : "Pins are saved in this browser only"} · ${ai} · ${src}. Avoid identifiable patient images.`;
+}
+
+/* ---------- Detail view ---------- */
+const dlg = $("#dlg");
+let current = null; // note id in detail
+let draft = null;   // composer state
+let aiCtl = null;
+
+function openDialog(html){ dlg.innerHTML = html; if (!dlg.open) dlg.showModal(); hydrate(dlg); }
+function closeDialog(){ if (aiCtl) { aiCtl.abort(); aiCtl = null; } dlg.close(); }
+dlg.addEventListener("close", () => { current = null; if (draft) { draft.media.forEach(m => m.preview && URL.revokeObjectURL(m.preview)); draft = null; } });
+dlg.addEventListener("click", e => { if (e.target === dlg && !draft) closeDialog(); });
+
+function refsHTML(sources, editable){
+  if (!sources?.length) return `<p class="hint">No sources yet.</p>`;
+  return `<ol class="refs">${sources.map((s, i) => `<li class="ref">
+    <span class="num">${i+1}</span>
+    <div style="min-width:0">
+      <div class="rt">${esc(s.title || s.doi || "Untitled source")}</div>
+      <div class="rc">${esc([s.author, s.journal, s.year].filter(Boolean).join(" · "))}${s.pmid ? ` · PMID ${esc(s.pmid)}` : ""}</div>
+      ${s.doi ? `<a href="https://doi.org/${esc(s.doi)}" target="_blank" rel="noopener">doi.org/${esc(s.doi)}</a>` : (s.pmid ? `<a href="https://pubmed.ncbi.nlm.nih.gov/${esc(s.pmid)}/" target="_blank" rel="noopener">pubmed/${esc(s.pmid)}</a>` : "")}
+    </div>
+    <div style="display:grid;gap:4px;justify-items:end">
+      <span class="vbadge ${s.verified ? "ok" : "un"}">${s.verified ? `✓ ${esc(s.via || "verified")}` : "unverified"}</span>
+      ${editable ? `<button class="rm" type="button" data-act="rm-src" data-i="${i}" aria-label="Remove source">✕</button>` : ""}
+    </div>
+  </li>`).join("")}</ol>`;
+}
+
+function mediaGallery(media){
+  if (!media?.length) return "";
+  const visual = media.filter(m => m.kind !== "file");
+  return `<div class="gallery">${media.map(m => {
+    const one = visual.length === 1 && m.kind !== "file" ? " one" : "";
+    if (m.kind === "image") return `<a class="${one.trim()}" href="${esc(hrefOf(m))}" ${m.store==="local" && !LOCAL_URLS.get(m.key) ? `data-lkey="${esc(m.key)}"` : ""} target="_blank" rel="noopener"><img ${srcAttr(m)} alt="${esc(m.name||"")}"></a>`;
+    if (m.kind === "video") return `<video class="${one.trim()}" controls playsinline preload="metadata" ${srcAttr(m)} ${m.poster && m.poster.store==="asset" ? `poster="/_blob/${esc(m.poster.id)}"` : ""}></video>`;
+    return `<a class="file" href="${esc(hrefOf(m))}" ${m.store==="local" && !LOCAL_URLS.get(m.key) ? `data-lkey="${esc(m.key)}"` : ""} target="_blank" rel="noopener"><span class="ext">${esc(extOf(m.name))}</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.name)}</span></a>`;
+  }).join("")}</div>`;
+}
+
+function openDetail(id){
+  const n = S.notes.find(x => x.id === id); if (!n) return;
+  current = id;
+  const sub = SUBMAP[n.sub] || SUBMAP.general;
+  openDialog(`<div class="dlg sc" style="--h:${sub.h}">
+    <div class="dh"><div class="meta"><i class="dot"></i><span class="t">${esc(sub.n)}${n.cat ? " · " + esc(n.cat) : ""}</span>${n.example ? `<span class="chip ex" style="margin-left:6px">Example</span>` : ""}</div>
+      <button class="x" type="button" data-act="close" aria-label="Close">✕</button></div>
+    <div class="db">
+      ${mediaGallery(n.media)}
+      <div style="display:grid;gap:10px">
+        <h2 class="dt">${esc(n.title || "Untitled pin")}</h2>
+        <div class="facts">
+          <span>Added <b>${esc(fmtDate(n.createdAt))}</b></span>
+          ${n.startDate ? `<span>Started <b>${esc(fmtDate(n.startDate))}</b></span>` : ""}
+          ${n.doneDate ? `<span>Completed <b>${esc(fmtDate(n.doneDate))}</b></span>` : ""}
+        </div>
+        <div class="seg" role="group" aria-label="Status">${STATUSES.map(s => `<button type="button" data-act="set-status" data-k="${s.k}" aria-pressed="${n.status===s.k}"><i class="glyph g-${s.k}"></i>${s.n}</button>`).join("")}</div>
+      </div>
+      ${n.keyFigure?.value ? `<div class="fig" style="border-radius:12px"><span class="v">${esc(n.keyFigure.value)}</span><span class="l">${esc(n.keyFigure.label||"")}</span></div>` : ""}
+      ${n.summary ? `<div class="sec"><h4>Summary</h4><p class="sum">${esc(n.summary)}</p></div>` : ""}
+      ${(n.keyPoints||[]).length ? `<div class="sec"><h4>Key points</h4><ul class="kp">${n.keyPoints.map(k => `<li>${esc(k)}</li>`).join("")}</ul></div>` : ""}
+      ${n.body ? `<div class="sec"><h4>My notes</h4><div class="notes">${esc(n.body)}</div></div>` : ""}
+      ${n.link ? `<div class="sec"><h4>Link</h4><a class="ref" style="display:block;color:var(--accent);overflow-wrap:anywhere" href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.link)}</a></div>` : ""}
+      <div class="sec"><h4>Sources</h4>${refsHTML(n.sources, false)}</div>
+      ${(n.tags||[]).length ? `<div class="chips">${n.tags.map(t => `<span class="chip">#${esc(t)}</span>`).join("")}</div>` : ""}
+    </div>
+    <div class="df">
+      <button class="btn sm danger" type="button" data-act="delete">Delete</button>
+      <button class="btn sm primary" type="button" data-act="edit">Edit pin</button>
+    </div>
+  </div>`);
+}
+
+async function setStatus(k){
+  const n = S.notes.find(x => x.id === current); if (!n || n.status === k) return;
+  const u = {...n, status:k, updatedAt:new Date().toISOString()};
+  if (k === "learning" && !u.startDate) u.startDate = todayISO();
+  if (k === "done") { u.doneDate = todayISO(); if (!u.startDate) u.startDate = todayISO(); } else delete u.doneDate;
+  try { await store.save(u); applyLocal(u); openDetail(u.id); toast(`Marked ${STATUSES.find(s => s.k === k).n}`); }
+  catch (e) { toast(saveErrText(e)); }
+}
+function applyLocal(u){ const i = S.notes.findIndex(x => x.id === u.id); if (i >= 0) S.notes[i] = u; else S.notes.push(u); render(); }
+function saveErrText(e){
+  const c = e && e.code;
+  if (c === "quota_exceeded") return "Storage is full. Delete some pins or media, then save again.";
+  if (c === "not_granted" || c === "revoked") return "You can view this board but not change it.";
+  if (c === "too_large") return "That file is too large to store (max 20 MB).";
+  if (c === "unsupported_type") return "That file type can't be stored. Try PDF, image or MP4.";
+  return "Couldn't save. Check your connection and try again.";
+}
+
+/* ---------- Composer ---------- */
+function newDraft(n){
+  const base = n ? JSON.parse(JSON.stringify(n)) : {
+    id:null, title:"", body:"", link:"", sub: S.f.sub !== "all" ? S.f.sub : "", cat: S.f.cat || "", status:"new",
+    startDate: todayISO(), summary:"", keyPoints:[], tags:[], sources:[], keyFigure:null, media:[]
+  };
+  base.keyPoints = base.keyPoints || []; base.tags = base.tags || []; base.sources = base.sources || []; base.media = base.media || [];
+  base.subTouched = !!base.sub; base.log = [];
+  return base;
+}
+function openComposer(n){ draft = newDraft(n); renderComposer(); }
+
+function thumbsHTML(){
+  if (!draft.media.length) return "";
+  return `<div class="thumbs">${draft.media.map((m, i) => {
+    let inner;
+    if (m.kind === "image") inner = m.preview ? `<img src="${m.preview}" alt="">` : `<img ${srcAttr(m)} alt="">`;
+    else if (m.kind === "video") inner = m.posterPreview ? `<img src="${m.posterPreview}" alt="">` : (m.poster ? `<img ${srcAttr(m.poster)} alt="">` : "VIDEO");
+    else inner = esc(extOf(m.name));
+    return `<div class="th" title="${esc(m.name||"")}">${inner}<span class="k">${m.kind === "file" ? esc(extOf(m.name)) : m.kind}</span><button type="button" data-act="rm-media" data-i="${i}" aria-label="Remove ${esc(m.name||"file")}">✕</button></div>`;
+  }).join("")}</div>`;
+}
+
+function renderComposer(){
+  const d = draft;
+  const sub = SUBMAP[d.sub];
+  const cats = sub ? [...sub.cats] : [];
+  if (d.cat && sub && !cats.includes(d.cat)) cats.push(d.cat);
+  const aiName = S.cap.sample ? "Claude" : "on-device summarizer";
+  const busy = !!aiCtl;
+  openDialog(`<div class="dlg">
+    <div class="dh"><h2>${d.id ? "Edit pin" : "New pin"}</h2><button class="x" type="button" data-act="close" aria-label="Close">✕</button></div>
+    <div class="db">
+      <div class="cgrid">
+        <div class="col">
+          <div class="cap">
+            <label class="capb" for="in-photo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>Photo<input id="in-photo" type="file" accept="image/*" multiple data-kind="pick"></label>
+            <label class="capb" for="in-video"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>Video<input id="in-video" type="file" accept="video/*" data-kind="pick"></label>
+            <label class="capb" for="in-cam"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Camera<input id="in-cam" type="file" accept="image/*" capture="environment" data-kind="pick"></label>
+            <label class="capb" for="in-file"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>File<input id="in-file" type="file" accept=".pdf,.txt,.md,.csv,.json,image/*,video/*,application/pdf" multiple data-kind="pick"></label>
+          </div>
+          <div class="drop" id="drop">Drop files here, or paste a screenshot or text</div>
+          ${thumbsHTML()}
+          <label class="f" for="f-title">Title<input class="inp" id="f-title" data-f="title" value="${esc(d.title)}" placeholder="e.g. Tenecteplase vs alteplase: what changed"></label>
+          <label class="f" for="f-body">Notes, abstract or pasted text<textarea class="inp" id="f-body" data-f="body" rows="6" placeholder="Paste an abstract, a lecture take-home, a case pearl… DOIs in the text are detected automatically.">${esc(d.body)}</textarea></label>
+          <label class="f" for="f-link">Link, DOI or PMID<input class="inp" id="f-link" data-f="link" value="${esc(d.link)}" placeholder="https://… or 10.1056/…"></label>
+        </div>
+        <div class="col">
+          <div class="ai">
+            <div class="h"><div><b>Summarize &amp; find sources</b><small>${esc(aiName)} reads your text${S.cap.sample ? " and photos" : ""}; DOIs are checked against PubMed</small></div>
+              ${busy ? `<button class="btn sm" type="button" data-act="ai-stop"><span class="spin"></span>Stop</button>` : `<button class="btn sm primary" type="button" data-act="ai-run">✦ Auto-fill</button>`}
+            </div>
+            ${d.log.length ? `<ul class="log">${d.log.map(l => `<li class="${l.t||""}">${esc(l.m)}</li>`).join("")}</ul>` : ""}
+          </div>
+          <label class="f" for="f-summary">Brief summary<textarea class="inp" id="f-summary" data-f="summary" rows="4" placeholder="Written automatically. Edit freely.">${esc(d.summary)}</textarea></label>
+          <label class="f" for="f-kp">Key points (one per line)<textarea class="inp" id="f-kp" data-f="keyPoints" rows="4">${esc(d.keyPoints.join("\n"))}</textarea></label>
+          <div class="row2">
+            <label class="f" for="f-sub">Subspecialty<select class="inp" id="f-sub" data-f="sub"><option value="">Choose…</option>${SUBS.map(s => `<option value="${s.k}" ${d.sub===s.k?"selected":""}>${esc(s.n)}</option>`).join("")}</select></label>
+            <label class="f" for="f-cat">Subtopic<input class="inp" id="f-cat" data-f="cat" list="catlist" value="${esc(d.cat)}" placeholder="${sub ? "Choose or type" : "Pick subspecialty first"}"><datalist id="catlist">${cats.map(c => `<option value="${esc(c)}"></option>`).join("")}</datalist></label>
+          </div>
+          <div class="row2">
+            <div class="f" style="display:grid;gap:6px;font-size:12.5px;font-weight:500;color:var(--muted)">Status
+              <div class="seg" role="group" aria-label="Status">${STATUSES.map(s => `<button type="button" data-act="draft-status" data-k="${s.k}" aria-pressed="${d.status===s.k}" title="${s.n}"><i class="glyph g-${s.k}"></i>${s.n}</button>`).join("")}</div>
+            </div>
+            <label class="f" for="f-start">Start date<input class="inp" id="f-start" type="date" data-f="startDate" value="${esc(d.startDate||"")}"></label>
+          </div>
+          <label class="f" for="f-tags">Tags (comma separated)<input class="inp" id="f-tags" data-f="tags" value="${esc(d.tags.join(", "))}"></label>
+          <div class="sec"><h4>Sources</h4>${refsHTML(d.sources, true)}
+            <div class="addref" style="margin-top:8px"><input class="inp" id="f-adddoi" placeholder="Add DOI or PMID" aria-label="Add DOI or PMID"><button class="btn sm" type="button" data-act="add-doi">Add</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="df">
+      <span class="hint">${d.id ? `Added ${esc(fmtDate(d.createdAt))}` : `Will be added ${esc(fmtDate(todayISO()))}`}</span>
+      <div style="display:flex;gap:8px"><button class="btn sm ghost" type="button" data-act="close">Cancel</button><button class="btn sm primary" type="button" data-act="save" ${busy ? "disabled" : ""}>${d.id ? "Save changes" : "Pin it"}</button></div>
+    </div>
+  </div>`);
+  wireDrop();
+}
+
+function syncField(el){
+  if (!draft) return;
+  const f = el.dataset.f; let v = el.value;
+  if (f === "keyPoints") draft.keyPoints = v.split("\n").map(s => s.trim()).filter(Boolean);
+  else if (f === "tags") draft.tags = v.split(",").map(s => s.trim().replace(/^#/, "")).filter(Boolean);
+  else draft[f] = v;
+  if (f === "sub") { draft.subTouched = true; renderComposer(); }
+}
+
+function wireDrop(){
+  const dz = $("#drop"); if (!dz) return;
+  ["dragenter","dragover"].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add("over"); }));
+  ["dragleave","drop"].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove("over"); }));
+  dz.addEventListener("drop", e => addFiles(e.dataTransfer?.files));
+}
+document.addEventListener("paste", e => {
+  if (!draft || !dlg.open) return;
+  const files = [...(e.clipboardData?.files || [])];
+  if (files.length) { e.preventDefault(); addFiles(files); }
+});
+
+function kindOf(f){ if (/^image\//.test(f.type)) return "image"; if (/^video\//.test(f.type)) return "video"; return "file"; }
+async function addFiles(list){
+  if (!draft || !list) return;
+  for (const f of [...list]) {
+    if (f.size > 20 * 1024 * 1024 && kindOf(f) !== "image") { toast(`${f.name} is over 20 MB. Trim it or link to it instead.`); continue; }
+    const m = {kind: kindOf(f), name: f.name || (kindOf(f) + "-" + todayISO()), type: f.type || "", size: f.size, blob: f, fresh: true};
+    if (m.kind === "image") m.preview = URL.createObjectURL(f);
+    if (m.kind === "video") { const p = await videoPoster(f); if (p) { m.posterBlob = p; m.posterPreview = URL.createObjectURL(p); } }
+    if (m.kind === "file" && /\.(txt|md|csv|json)$/i.test(m.name)) { try { m.text = (await f.text()).slice(0, 8000); } catch {} }
+    draft.media.push(m);
+    if (!draft.title && m.kind === "file") draft.title = m.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ");
+  }
+  renderComposer();
+}
+
+async function shrinkImage(blob, max = 1800, q = 0.85){
+  if (!/^image\/(jpeg|png|webp|heic|heif)$/i.test(blob.type)) return blob;
+  let bmp; try { bmp = await createImageBitmap(blob); } catch { return blob; }
+  const s = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  if (s === 1 && blob.size < 1.5e6 && !/heic|heif/i.test(blob.type)) return blob;
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  return await new Promise(r => c.toBlob(b => r(b || blob), "image/jpeg", q));
+}
+function videoPoster(blob){
+  return new Promise(res => {
+    const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.preload = "auto";
+    const u = URL.createObjectURL(blob); let done = false;
+    const fin = b => { if (done) return; done = true; URL.revokeObjectURL(u); res(b); };
+    v.onloadeddata = () => { try { v.currentTime = Math.min(1, (v.duration || 2) / 3); } catch { fin(null); } };
+    v.onseeked = () => { try { const s = Math.min(1, 1280 / Math.max(v.videoWidth, v.videoHeight)); const c = document.createElement("canvas"); c.width = Math.round(v.videoWidth * s); c.height = Math.round(v.videoHeight * s); c.getContext("2d").drawImage(v, 0, 0, c.width, c.height); c.toBlob(b => fin(b), "image/jpeg", 0.82); } catch { fin(null); } };
+    v.onerror = () => fin(null); setTimeout(() => fin(null), 8000);
+    v.src = u;
+  });
+}
+
+async function saveDraft(btn){
+  const d = draft; if (!d) return;
+  if (!d.title.trim() && !d.summary.trim() && !d.body.trim() && !d.media.length) { toast("Add a title, some text or a file first."); return; }
+  btn.disabled = true; btn.innerHTML = `<span class="spin"></span>Saving`;
+  try {
+    const media = [];
+    for (const m of d.media) {
+      if (!m.fresh) { media.push(m); continue; }
+      let blob = m.blob, type = m.type;
+      if (m.kind === "image") { blob = await shrinkImage(m.blob); type = blob.type || type; }
+      const ref = await store.putMedia(blob, type || undefined);
+      const out = {kind: m.kind, name: m.name, type, size: blob.size, ...ref};
+      if (m.posterBlob) out.poster = await store.putMedia(m.posterBlob, "image/jpeg");
+      if (ref.store === "local" && m.preview) LOCAL_URLS.set(ref.key, m.preview), m.preview = null;
+      media.push(out);
+    }
+    const now = new Date().toISOString();
+    const n = {
+      id: d.id || uid(), title: d.title.trim() || (d.summary ? d.summary.split(/[.!?]/)[0].slice(0, 80) : "Untitled pin"),
+      sub: d.sub || "general", cat: d.cat.trim(), status: d.status, createdAt: d.createdAt || now, updatedAt: now,
+      startDate: d.startDate || "", summary: d.summary.trim(), keyPoints: d.keyPoints, tags: d.tags, body: d.body, link: d.link.trim(),
+      sources: d.sources, keyFigure: d.keyFigure || null, media,
+    };
+    if (d.status === "done") n.doneDate = d.doneDate || todayISO();
+    if (d.example) n.example = true;
+    await store.save(n);
+    applyLocal(n);
+    closeDialog();
+    toast(d.id ? "Saved" : "Pinned");
+  } catch (e) {
+    toast(saveErrText(e));
+    btn.disabled = false; btn.textContent = d.id ? "Save changes" : "Pin it";
+  }
+}
+
+/* ---------- Sources: PubMed ---------- */
+const META = new Map();
+function trimArticle(a){
+  const last = a.authors?.[0]?.last_name, ini = a.authors?.[0]?.initials, coll = a.authors?.[0]?.collective_name;
+  return {
+    pmid: String(a.identifiers?.pmid || a.pmid || ""), doi: a.identifiers?.doi || a.doi || "",
+    title: a.title || "", journal: a.journal?.iso_abbreviation || a.journal?.title || "",
+    year: String(a.publication_date?.year || ""), author: last ? `${last} ${ini || ""}`.trim() : (coll || ""),
+    types: (a.article_types || []).slice(0, 3), via: "PubMed", verified: true,
+  };
+}
+function mcpErrText(e){
+  switch (e?.code) {
+    case "server_not_connected": case "server_not_found": return "Add the PubMed connector in claude.ai Settings → Connectors to auto-find sources.";
+    case "needs_reauth": return "Reconnect PubMed in claude.ai Settings → Connectors.";
+    case "not_in_manifest": case "approval_required": case "consent_required": return "PubMed isn't allowed for this page yet. Allow it when asked, then try again.";
+    case "blocked_by_policy": return "Your organization blocks PubMed for this page.";
+    case "selection_required": return "Choose which PubMed connector to use when Claude asks.";
+    case "server_unavailable": return "PubMed didn't answer. Try again in a moment.";
+    default: return "PubMed lookup failed. Try again later.";
+  }
+}
+async function pubmedSearch(query, n = 5, signal){
+  if (S.cap.mcp) {
+    const r = await S.cap.mcp.callTool("PubMed", "search_articles", {query, max_results:n, sort:"relevance"}, {signal});
+    const pmids = (r.payload?.pmids || []).map(String).slice(0, n);
+    if (!pmids.length) return [];
+    const m = await S.cap.mcp.callTool("PubMed", "get_article_metadata", {pmids}, {signal});
+    const arts = (m.payload?.articles || []).map(trimArticle);
+    arts.forEach(a => a.pmid && META.set(a.pmid, a));
+    return pmids.map(p => META.get(p)).filter(Boolean);
+  }
+  const base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
+  const s = await (await fetch(`${base}esearch.fcgi?db=pubmed&retmode=json&sort=relevance&retmax=${n}&term=${encodeURIComponent(query)}`, {signal})).json();
+  const ids = s.esearchresult?.idlist || []; if (!ids.length) return [];
+  const j = await (await fetch(`${base}esummary.fcgi?db=pubmed&retmode=json&id=${ids.join(",")}`, {signal})).json();
+  return ids.map(id => { const a = j.result?.[id]; if (!a) return null;
+    const out = {pmid:id, doi:(a.articleids || []).find(x => x.idtype === "doi")?.value || "", title:a.title || "", journal:a.source || "", year:(a.pubdate || "").slice(0, 4), author:a.authors?.[0]?.name || "", types:(a.pubtype || []).slice(0, 3), via:"PubMed", verified:true};
+    META.set(id, out); return out; }).filter(Boolean);
+}
+async function resolveId(raw, signal){
+  const v = raw.trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i, "").replace(/^doi:\s*/i, "");
+  if (/^\d{5,9}$/.test(v)) { const r = await pubmedSearch(`${v}[pmid]`, 1, signal); return r[0] || {pmid:v, verified:false}; }
+  if (/^10\.\d{4,9}\//.test(v)) {
+    try { const r = await pubmedSearch(`${v}[doi]`, 1, signal); if (r[0]) return r[0]; } catch (e) { if (e?.name === "AbortError" || e?.code === "cancelled") throw e; }
+    try { const c = await (await fetch(`https://api.crossref.org/works/${encodeURIComponent(v)}`, {signal})).json(); const w = c.message;
+      return {doi:v, title:(w.title || [])[0] || "", journal:(w["container-title"] || [])[0] || "", year:String(w.issued?.["date-parts"]?.[0]?.[0] || ""), author:w.author?.[0]?.family || "", via:"Crossref", verified:true};
+    } catch {}
+    return {doi:v, verified:false};
+  }
+  return null;
+}
+function mergeSources(list, add){
+  const key = s => (s.doi || "").toLowerCase() || "pmid:" + s.pmid;
+  const seen = new Map(list.map(s => [key(s), s]));
+  for (const s of add) { if (!s) continue; const k = key(s); if (!seen.has(k) || (!seen.get(k).verified && s.verified)) seen.set(k, s); }
+  return [...seen.values()];
+}
+
+/* ---------- Auto-fill ---------- */
+function logLine(m, t){ draft.log.push({m, t}); renderComposer(); }
+
+function localSummarize(text){
+  const STOP = new Set("a an the of and or to in on for with by from at as is are was were be been being this that these those it its into than then there their they we you your our not no but if so such can may might will would should could has have had do does did also more most less very per vs versus after before during within without between among over under about which who whom when where while what all any each both other some only same own just patients patient study studies".split(" "));
+  const clean = text.replace(/\s+/g, " ").trim();
+  const sents = (clean.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/g) || []).map(s => s.trim()).filter(s => s.length > 25);
+  const words = clean.toLowerCase().match(/[a-z][a-z0-9-]{2,}/g) || [];
+  const freq = {}; words.forEach(w => { if (!STOP.has(w)) freq[w] = (freq[w] || 0) + 1; });
+  const score = s => { const ws = s.toLowerCase().match(/[a-z][a-z0-9-]{2,}/g) || []; return ws.reduce((t, w) => t + (freq[w] || 0), 0) / Math.sqrt(ws.length || 1) + (/\d/.test(s) ? 1.5 : 0); };
+  const ranked = sents.map((s, i) => ({s, i, v: score(s)})).sort((a, b) => b.v - a.v);
+  const top = ranked.slice(0, 2).sort((a, b) => a.i - b.i).map(x => x.s);
+  const kp = ranked.slice(2, 6).sort((a, b) => a.i - b.i).map(x => x.s.length > 150 ? x.s.slice(0, 147) + "…" : x.s);
+  const kws = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 6).map(x => x[0]);
+  const figM = clean.match(/(\d+(?:\.\d+)?\s?(?:–|-|to)\s?\d+(?:\.\d+)?\s?(?:h|hours|mg\/kg|mL|%|days|years)|\d+(?:\.\d+)?\s?(?:mg\/kg|mL|h\b|hours|%))/i);
+  return {summary: top.join(" ") || clean.slice(0, 280), keyPoints: kp, tags: kws.slice(0, 5), query: kws.slice(0, 4).join(" "), keyFigure: figM ? {value: figM[1], label: ""} : null};
+}
+function classify(text){
+  const t = " " + text.toLowerCase() + " ";
+  let best = null, bs = 0;
+  for (const s of SUBS) { const sc = s.kw.reduce((a, k) => a + (t.includes(k) ? 1 : 0), 0); if (sc > bs) { bs = sc; best = s; } }
+  if (!best) return {sub:"", cat:""};
+  let cat = "", cs = 0;
+  for (const c of best.cats) { const sc = c.toLowerCase().split(/[^a-z]+/).filter(w => w.length > 3 && t.includes(w)).length; if (sc > cs) { cs = sc; cat = c; } }
+  return {sub: best.k, cat};
+}
+
+function materialText(d){
+  const files = d.media.map(m => `${m.name} (${m.kind})`).join(", ");
+  const fileText = d.media.filter(m => m.text).map(m => `--- ${m.name} ---\n${m.text}`).join("\n\n");
+  return [`Title: ${d.title || "(none)"}`, `Link/DOI: ${d.link || "(none)"}`, `Notes:\n${d.body || "(none)"}`, files ? `Attached: ${files}` : "", fileText ? `Text from files:\n${fileText}` : ""].filter(Boolean).join("\n\n").slice(0, 24000);
+}
+
+async function runAI(){
+  const d = draft; if (!d || aiCtl) return;
+  const hasInput = d.title || d.body || d.link || d.media.length;
+  if (!hasInput) { toast("Add a photo, text or link first."); return; }
+  aiCtl = new AbortController(); const signal = aiCtl.signal;
+  d.log = [];
+  const found = [];
+  const text = materialText(d);
+  try {
+    // 1. DOIs / PMIDs written in the material
+    const ids = extractDOIs(`${d.body} ${d.link} ${d.media.map(m => m.text || "").join(" ")}`);
+    const pm = (d.link.match(/pubmed\.ncbi\.nlm\.nih\.gov\/(\d{5,9})/) || d.link.match(/^\s*(\d{5,9})\s*$/) || [])[1];
+    if (pm) ids.push(pm);
+    if (ids.length) {
+      logLine(`Found ${ids.length} identifier${ids.length > 1 ? "s" : ""} in your material; checking`);
+      for (const id of ids.slice(0, 4)) { try { const r = await resolveId(id, signal); if (r) found.push(r); } catch (e) { if (signal.aborted) throw e; } }
+    }
+    let result = null;
+    if (S.cap.sample) result = await aiClaude(d, text, signal, found);
+    else result = aiLocal(d, text);
+    if (signal.aborted) return;
+
+    // 2. Search PubMed from the page when Claude didn't pick sources itself
+    if (!result.pickedSources) {
+      const q = result.searchQuery || result.query;
+      if (q) {
+        logLine(`Searching PubMed: ${q}`);
+        try { const r = await pubmedSearch(q, 3, signal); found.push(...r); logLine(r.length ? `${r.length} articles found` : "No PubMed matches; try a more specific title", r.length ? "ok" : ""); }
+        catch (e) { if (signal.aborted) throw e; logLine(S.cap.mcp ? mcpErrText(e) : (window.claude ? "Connect PubMed to auto-find sources." : "PubMed is unreachable from here."), "err"); }
+      }
+    }
+    // 3. Apply
+    if (!d.title && result.title) d.title = result.title;
+    if (result.summary) d.summary = result.summary;
+    if (result.keyPoints?.length) d.keyPoints = result.keyPoints;
+    if (result.keyFigure?.value) d.keyFigure = result.keyFigure;
+    if (result.tags?.length) d.tags = [...new Set([...d.tags, ...result.tags.map(t => String(t).toLowerCase())])].slice(0, 8);
+    if (!d.subTouched && SUBMAP[result.subspecialty || result.sub]) { d.sub = result.subspecialty || result.sub; if (result.subcategory || result.cat) d.cat = result.subcategory || result.cat; }
+    else if (d.sub && !d.cat && (result.subcategory || result.cat) && (result.subspecialty || result.sub) === d.sub) d.cat = result.subcategory || result.cat;
+    d.sources = mergeSources(d.sources, found.concat(result.sources || []));
+    const nv = d.sources.filter(s => s.verified && s.doi).length;
+    logLine(`Summary written${nv ? ` · ${nv} verified DOI${nv > 1 ? "s" : ""}` : ""}. Review, then pin it.`, "ok");
+  } catch (e) {
+    if (!signal.aborted) logLine(sampleErrText(e), "err");
+    else logLine("Stopped.");
+  } finally {
+    aiCtl = null; if (draft === d) renderComposer();
+  }
+}
+
+function aiLocal(d, text){
+  logLine("Summarizing on this device");
+  const src = [d.body, ...d.media.map(m => m.text || "")].join(" ").trim() || d.title;
+  const r = localSummarize(src);
+  const c = classify(`${d.title} ${src}`);
+  return {...r, sub: c.sub, cat: c.cat, searchQuery: d.title ? d.title : r.query};
+}
+
+function sampleErrText(e){
+  switch (e?.code) {
+    case "not_granted": case "sampling_disabled": case "not_declared": case "capability_disabled": case "capability_removed": S.cap.sample = null; return "Claude isn't available on this page. Summaries will be written on this device; tap Auto-fill again.";
+    case "rate_limited": return "Claude is busy or your usage limit is reached. Try again in a little while.";
+    case "session_expired": return "Sign in to Claude again, then retry.";
+    case "image_rejected": return "One photo couldn't be read. Remove it or try a JPEG/PNG.";
+    case "images_unavailable": return "Photos can't be sent from this view. Text was used instead.";
+    case "refused": return "Claude declined this material. Edit it and try again.";
+    case "invalid_json": case "empty_completion": return "The answer came back incomplete. Tap Auto-fill to try again.";
+    case "prompt_too_large": return "That's a lot of text. Shorten the notes and try again.";
+    default: return "Something interrupted the summary. Tap Auto-fill to try again.";
+  }
+}
+
+async function aiClaude(d, text, signal, found){
+  const lim = S.cap.limits || {};
+  const images = [];
+  if (lim.images) {
+    for (const m of d.media) {
+      if (images.length >= lim.images.maxCount) break;
+      if (m.kind === "image" && m.blob && lim.images.mediaTypes.includes(m.blob.type)) images.push(m.blob);
+      else if (m.kind === "video" && m.posterBlob) images.push(m.posterBlob);
+    }
+  }
+  const useTools = !!(S.cap.mcp && lim.tools);
+  const taxonomy = SUBS.map(s => `${s.k}: ${s.cats.join(" | ")}`).join("\n");
+  const known = found.filter(f => f.verified).map(f => `PMID ${f.pmid || "-"} · DOI ${f.doi} · ${f.title}`).join("\n");
+  const prompt = `You help a neurology fellow keep a visual study pinboard. Read the pinned material${images.length ? ` and the ${images.length} attached image(s) (slides, scans, EEG/MRI screenshots, whiteboard or book photos)` : ""} and write the pin.
+
+Rules
+- summary: 2–4 sentences of plain clinical English, take-home message first.
+- keyPoints: 3–5 short strings. Keep concrete numbers (time windows, doses, thresholds, criteria) only when the material states them or they are well established.
+- keyFigure: the single most memorable number or rule as {"value": "≤ 12 characters", "label": "≤ 6 words"}, or null.
+- subspecialty: one key from the list below; subcategory: one subtopic from that line, or a short new one if none fits.
+- tags: 3–6 lowercase tags.
+- title: keep the user's title if given, otherwise write one under 80 characters.
+${useTools ? `- sources: call search_pubmed (1–3 searches, PubMed syntax) to find the primary trial, guideline or review behind this material. If the material names a trial, search its name with a topic word. Put only PMIDs that appeared in search results into sourcePmids, best first, at most 3.` : `- searchQuery: a precise PubMed query (PubMed syntax allowed) that would find the primary trial, guideline or review behind this material.`}
+${known ? `\nAlready verified sources (keep them in mind; you may add others):\n${known}\n` : ""}
+Subspecialties (key: subtopics)
+${taxonomy}
+
+Reply with only JSON:
+{"title":"","summary":"","keyPoints":[],"keyFigure":null,"subspecialty":"","subcategory":"","tags":[],${useTools ? `"sourcePmids":[]` : `"searchQuery":""`}}
+
+Material
+${text}`;
+
+  const opts = {signal};
+  if (images.length) opts.images = images;
+  logLine(images.length ? `Claude is reading your text and ${images.length} image${images.length > 1 ? "s" : ""}` : "Claude is reading your material");
+  if (useTools) {
+    opts.tools = [{
+      name: "search_pubmed",
+      description: "Search PubMed. Returns up to 5 articles as {pmid, doi, title, journal, year, author, types}. Use PubMed syntax, e.g. 'DAWN[Title] AND thrombectomy' or '10.1056/NEJMoa1706442[doi]'.",
+      inputSchema: {type:"object", properties:{query:{type:"string", description:"PubMed query"}}, required:["query"]},
+      execute: async (input, ctx) => {
+        const q = String(input.query || "").slice(0, 300); if (!q) throw new Error("query is required");
+        logLine(`Searching PubMed: ${q}`);
+        try { const r = await pubmedSearch(q, 5, ctx.signal); return r.map(({pmid, doi, title, journal, year, author, types}) => ({pmid, doi, title, journal, year, author, types})); }
+        catch (e) { const msg = mcpErrText(e); logLine(msg, "err"); throw new Error(msg); }
+      },
+    }];
+  } else opts.cache = {gcTime: 600000};
+
+  let r;
+  try { r = await S.cap.sample.json(prompt, opts); }
+  catch (e) {
+    if (e?.code === "images_unavailable" && opts.images) { delete opts.images; logLine("Photos can't be sent here; using text only"); r = await S.cap.sample.json(prompt, opts); }
+    else if (e?.code === "tools_unavailable" && opts.tools) { if (S.cap.limits) S.cap.limits.tools = null; return aiClaude(d, text, signal, found); }
+    else throw e;
+  }
+  if (!r || typeof r !== "object") throw {code: "invalid_json"};
+  const out = {
+    title: typeof r.title === "string" ? r.title.slice(0, 120) : "",
+    summary: typeof r.summary === "string" ? r.summary : "",
+    keyPoints: Array.isArray(r.keyPoints) ? r.keyPoints.map(String).slice(0, 6) : [],
+    keyFigure: r.keyFigure && r.keyFigure.value ? {value: String(r.keyFigure.value).slice(0, 16), label: String(r.keyFigure.label || "").slice(0, 60)} : null,
+    subspecialty: String(r.subspecialty || ""), subcategory: String(r.subcategory || ""),
+    tags: Array.isArray(r.tags) ? r.tags.map(String).slice(0, 6) : [],
+    searchQuery: typeof r.searchQuery === "string" ? r.searchQuery : "",
+  };
+  if (useTools) {
+    const pm = (Array.isArray(r.sourcePmids) ? r.sourcePmids : []).map(String);
+    out.sources = pm.map(p => META.get(p)).filter(Boolean).slice(0, 3);
+    out.pickedSources = true;
+    if (out.sources.length) logLine(`${out.sources.length} source${out.sources.length > 1 ? "s" : ""} picked from PubMed`, "ok");
+    else if (!out.searchQuery) out.searchQuery = d.title || out.title;
+    if (!out.sources.length) out.pickedSources = false;
+  }
+  return out;
+}
+
+async function addDoi(){
+  const inp = $("#f-adddoi"); const v = inp?.value.trim(); if (!v || !draft) return;
+  const btn = inp.nextElementSibling; btn.disabled = true; btn.innerHTML = `<span class="spin"></span>`;
+  try {
+    const r = await resolveId(v);
+    if (!r) { toast("That doesn't look like a DOI (10.xxxx/…) or a PMID."); return; }
+    draft.sources = mergeSources(draft.sources, [r]);
+    toast(r.verified ? "Source verified and added" : "Added; couldn't verify it");
+  } catch (e) {
+    draft.sources = mergeSources(draft.sources, [{doi: /^10\./.test(v) ? v : "", pmid: /^\d+$/.test(v) ? v : "", verified:false}]);
+    toast(S.cap.mcp ? mcpErrText(e) : "Added; couldn't verify it");
+  } finally { if (draft) renderComposer(); }
+}
+
+/* ---------- Events ---------- */
+let armTimer;
+document.addEventListener("click", async e => {
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const k = a.dataset.k;
+  switch (a.dataset.act) {
+    case "status": S.f.status = k; render(); break;
+    case "sub": S.f.sub = k; S.f.cat = null; render(); break;
+    case "cat": S.f.cat = k || null; render(); break;
+    case "clear": S.f = {...S.f, sub:"all", cat:null, status:"all", q:""}; $("#q").value = ""; render(); break;
+    case "open": openDetail(a.dataset.id); break;
+    case "close": closeDialog(); break;
+    case "new-pin": openComposer(null); break;
+    case "edit": { const n = S.notes.find(x => x.id === current); if (n) openComposer(n); break; }
+    case "set-status": setStatus(k); break;
+    case "delete": {
+      if (!a.classList.contains("armed")) { a.classList.add("armed"); a.textContent = "Tap again to delete"; clearTimeout(armTimer); armTimer = setTimeout(() => { a.classList.remove("armed"); a.textContent = "Delete"; }, 4000); break; }
+      const n = S.notes.find(x => x.id === current); if (!n) break;
+      try { await store.remove(n); S.notes = S.notes.filter(x => x.id !== n.id); render(); closeDialog(); toast("Pin deleted"); } catch (err) { toast(saveErrText(err)); }
+      break;
+    }
+    case "draft-status": draft.status = k; if (k !== "new" && !draft.startDate) draft.startDate = todayISO(); renderComposer(); break;
+    case "rm-media": { const m = draft.media.splice(+a.dataset.i, 1)[0]; if (m?.preview) URL.revokeObjectURL(m.preview); renderComposer(); break; }
+    case "rm-src": draft.sources.splice(+a.dataset.i, 1); renderComposer(); break;
+    case "add-doi": addDoi(); break;
+    case "ai-run": runAI(); break;
+    case "ai-stop": aiCtl?.abort(); break;
+    case "save": saveDraft(a); break;
+  }
+});
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches?.(".card")) { e.preventDefault(); openDetail(e.target.dataset.id); }
+  if (e.key === "Enter" && e.target.id === "f-adddoi") { e.preventDefault(); addDoi(); }
+});
+dlg.addEventListener("input", e => { if (e.target.dataset.f && e.target.dataset.f !== "sub") syncField(e.target); });
+dlg.addEventListener("change", e => {
+  if (e.target.dataset.f === "sub") syncField(e.target);
+  if (e.target.dataset.kind === "pick") { addFiles(e.target.files); }
+});
+let qTimer;
+$("#q").addEventListener("input", e => { clearTimeout(qTimer); qTimer = setTimeout(() => { S.f.q = e.target.value.trim(); render(); }, 120); });
+$("#sort").addEventListener("change", e => { S.f.sort = e.target.value; lsSet("nn-sort", S.f.sort); render(); });
+
+/* ---------- Boot ---------- */
+async function boot(){
+  render();
+  const use = n => (window.claude && typeof window.claude.use === "function") ? window.claude.use(n).catch(() => null) : Promise.resolve(null);
+  const [db, assets, sample, mcp] = await Promise.all([use("db"), use("assets"), use("sample"), use("mcp")]);
+  S.cap = {db, assets, sample, mcp, limits: null};
+  if (sample) { try { S.cap.limits = await sample.limits(); } catch { S.cap.limits = {}; } }
+  store = db ? DbStore(db, assets) : LocalStore();
+  const ok = await store.init(list => { S.notes = list; S.loaded = true; render(); });
+  if (store.kind === "local" && !ok) S.storeNote = "This browser blocks storage, so pins last only until you close the page.";
+  S.loaded = true; render();
+}
+boot();
+})();
+</script>
