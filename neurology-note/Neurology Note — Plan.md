@@ -83,8 +83,8 @@ Decided:
 
 Decided on 2026-11-09 (owner's answers):
 - [x] **D1 - Auto-fill goes through the app's own server.** The browser talks only to the app's own site. Pages Functions call Claude (owner's API key, stored as a Cloudflare secret) and PubMed/Crossref. Only the pin you tap Auto-fill on is sent. This is the one agreed exception to "no third parties".
-- [x] **D2 - Subcategories work like Round Mize, with bubbles inside.** Each subspecialty is its own page: swipe left or right, dots at the bottom, page order set in Settings. Inside each page, subtopics are round bubbles whose ring fills with % done. The first page is "All".
+- [x] **D2 - Subcategories as round bubbles; pages like Round Mize** (revised 2026-11-09). The swipe row is **All pins | Settings**: swipe left on All pins for Settings, right to come back, dots at the bottom on phones. Each subspecialty is its own page, opened from its bubble (a right swipe goes back). Inside it, subtopics are round bubbles whose ring fills with % done.
 - [x] **D3 - The code lives in a new private GitHub repo.** Deploy by direct upload with Wrangler from the Mac. The prototype stays in `for-claude` as the reference.
 
-Open questions:
-- [ ] **D4 - Sync in v1 or later.** Phase 4 can move earlier if you want the iPhone and Mac in step from day one.
+- [x] **D4 - Sync in v1, like Round Mize.** Username and password, end-to-end encrypted, same Settings card, sign-in and sign-out wording.
+- [x] **D5 - Its own account and database**, separate from Round Mize. The same username and password can be used in both; the data never mixes.
