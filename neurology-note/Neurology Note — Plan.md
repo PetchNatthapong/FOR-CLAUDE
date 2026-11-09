@@ -79,8 +79,10 @@ Decided:
 - Brand colour: cresyl violet (the Nissl stain) instead of Round Mize teal, so the two apps are easy to tell apart. The greys lean toward violet.
 - Names fixed before any real data: Pages project `neurology-note`, D1 `neurology-note` / `neurology-note-preview`, IndexedDB `neurology-note`, crypto salt prefix `neurology-note/sync/v2/`.
 
+Decided on 2026-11-09 (owner's answers):
+- [x] **D1 - Auto-fill goes through the app's own server.** The browser talks only to the app's own site. Pages Functions call Claude (owner's API key, stored as a Cloudflare secret) and PubMed/Crossref. Only the pin you tap Auto-fill on is sent. This is the one agreed exception to "no third parties".
+- [x] **D2 - Subcategories work like Round Mize, with bubbles inside.** Each subspecialty is its own page: swipe left or right, dots at the bottom, page order set in Settings. Inside each page, subtopics are round bubbles whose ring fills with % done. The first page is "All".
+- [x] **D3 - The code lives in a new private GitHub repo.** Deploy by direct upload with Wrangler from the Mac. The prototype stays in `for-claude` as the reference.
+
 Open questions:
-- [ ] **D1 - Auto-fill vs "no third parties".** Auto-summary and DOI finding need outside services. Proposed: the browser talks only to the app's own site; Pages Functions call Claude (your API key, stored as a Cloudflare secret) and PubMed/Crossref. Only the pin you tap Auto-fill on is sent. Alternative: summarize on the device only (weaker summaries), plus PubMed lookup through the server function.
-- [ ] **D2 - What "Subcategories as Round Mize" means.** The prototype uses round bubbles with a progress ring. Should subspecialties instead be swipeable pages with dots at the bottom and a page order set in Settings, as Round Mize does?
-- [ ] **D3 - Where the code lives.** `petchnatthapong/for-claude` is public and already holds the prototype. Move the new app to a private repo, or keep it only on the Mac and deploy by direct upload as Round Mize does?
 - [ ] **D4 - Sync in v1 or later.** Phase 4 can move earlier if you want the iPhone and Mac in step from day one.
