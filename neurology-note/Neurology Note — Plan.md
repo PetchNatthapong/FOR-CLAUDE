@@ -88,3 +88,4 @@ Decided on 2026-11-09 (owner's answers):
 
 - [x] **D4 - Sync in v1, like Round Mize.** Username and password, end-to-end encrypted, same Settings card, sign-in and sign-out wording.
 - [x] **D5 - Its own account and database**, separate from Round Mize. The same username and password can be used in both; the data never mixes.
+- [x] **D6 - Code in a private GitHub repo** (2026-11-10), so any chat can edit the app, including a cloud chat while the Mac is off. GitHub puts it online with the same Wrangler direct upload: the `preview` branch updates the preview copy, and `main` updates the live app only after NPC's Yes. Every chat runs `git pull` before changing anything. The repo stays private; the Round Mize guide's rule is no *public* repo.
